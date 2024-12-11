@@ -12,11 +12,95 @@
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	debug = true;
+
+	world = new b2World(b2Vec2(0, 0));
+	world->SetContactListener(this);
+
+	b2BodyDef bd;
+	ground = world->CreateBody(&bd);
 }
 
 // Destructor
 ModulePhysics::~ModulePhysics()
 {
+}
+
+void PhysBody::GetPhysicPosition(int& x, int& y) const
+{
+	b2Vec2 pos = body->GetPosition();
+	x = METERS_TO_PIXELS(pos.x);
+	y = METERS_TO_PIXELS(pos.y);
+}
+
+float PhysBody::GetRotation() const
+{
+	return body->GetAngle();
+}
+
+bool PhysBody::Contains(int x, int y) const
+{
+	b2Vec2 p(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	for (b2Fixture* f = body->GetFixtureList(); f; f = f->GetNext()) {
+		if (f->GetShape()->TestPoint(body->GetTransform(), p)) return true;
+	}
+
+	return false;
+}
+
+int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const
+{
+	int ret = -1;
+
+	b2Transform transform;
+	transform.SetIdentity();
+
+	b2RayCastInput input;
+	input.p1 = { PIXEL_TO_METERS(x1),PIXEL_TO_METERS(y1) };
+	input.p2 = { PIXEL_TO_METERS(x2),PIXEL_TO_METERS(y2) };
+	input.maxFraction = 1.0f;
+	int32 childIndex = 0;
+
+	b2RayCastOutput output;
+
+	for (b2Fixture* f = body->GetFixtureList(); f; f = f->GetNext()) {
+		if (f->GetShape()->RayCast(&output, input, body->GetTransform(), childIndex)) {
+			normal_x = output.normal.x;
+			normal_y = output.normal.y;
+
+			float dx = (x2 - x1);
+			float dy = (y2 - y1);
+			float dist = sqrt((dx * dx) - (dy * dy));
+			return (dist * output.fraction);
+		}
+	}
+
+	return ret;
+}
+
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+{
+	b2BodyDef body;
+	body.type = b2_dynamicBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f);
+	b2FixtureDef fixture;
+	fixture.shape = &box;
+	fixture.density = 1.0f;
+
+	b->CreateFixture(&fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	pbody->width = (int)(width * 0.5f);
+	pbody->height = (int)(height * 0.5f);
+
+	return pbody;
 }
 
 bool ModulePhysics::Start()

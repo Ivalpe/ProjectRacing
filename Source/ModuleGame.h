@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Module.h"
+#include "Player.h"
 
 #include "p2Point.h"
 
@@ -34,6 +35,7 @@ public:
 	std::vector<Texture2D> vehicles;
 	std::vector<Vector2> posVehicles;
 	int selectedPos;
+	Player* car;
 
 public:
 

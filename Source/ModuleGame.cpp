@@ -4,11 +4,10 @@
 #include "ModuleGame.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "Player.h"
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
-{
-
-}
+{}
 
 ModuleGame::~ModuleGame()
 {}
@@ -29,10 +28,13 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
+	car = new Player();
+	car->SetParameters(App->physics, vehicles[0]);
+
 	selectedPos = 0;
 	
-	int width = 16 * 3;
-	int height = 32 * 3;
+	int width = SPRITE_WIDTH * 3;
+	int height = SPRITE_HEIGHT * 3;
 	float posX = 100, posY = 100;
 	for (int i = 0; i < vehicles.size(); i++) {
 		posVehicles.push_back(Vector2{ posX,posY });
@@ -43,6 +45,7 @@ bool ModuleGame::Start()
 		}
 		else posX += 100;
 	}
+
 	
 
 	return ret;
@@ -109,16 +112,19 @@ void ModuleGame::SelectCharacter() {
 
 	rect.x = 0;
 	rect.y = 0;
-	rect.width = 16 * 3;
-	rect.height = 32 * 3;
+	rect.width = SPRITE_WIDTH * 3;
+	rect.height = SPRITE_HEIGHT * 3;
 	for (int i = 0; i < vehicles.size(); i++) App->renderer->Draw(vehicles[i], posVehicles[i].x, posVehicles[i].y, &rect);
 
 	rect.x = 0;
 	rect.y = 0;
-	rect.width = 16 * 3;
-	rect.height = 32 * 3;
+	rect.width = SPRITE_WIDTH * 3;
+	rect.height = SPRITE_HEIGHT * 3;
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
 
+	if (IsKeyPressed(KEY_SPACE)) {
+		stateGame = GAME;
+	}
 	
 }
 
@@ -129,4 +135,15 @@ void ModuleGame::Game() {
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
 	App->renderer->Draw(background_layer3, 0, 0, &rect);
+
+
+	int x, y;
+	car->getBody()->GetPhysicPosition(x, y);
+	Vector2 position{ (float)x, (float)y };
+	float scale = 1.6f;
+	Rectangle source = { 0.0f, 0.0f, (float)car->getTexture().width, (float)car->getTexture().height};
+	Rectangle dest = { position.x , position.y , (float)car->getTexture().width * scale , (float)car->getTexture().height * scale };
+	Vector2 origin = { ((float)car->getTexture().width / (2.0f)) * scale, ((float)car->getTexture().height / (2.0f)) * scale };
+	float rotation = car->getBody()->GetRotation() * RAD2DEG;
+	DrawTexturePro(car->getTexture(), source, dest, origin, rotation, WHITE);
 }
