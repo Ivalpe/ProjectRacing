@@ -24,4 +24,8 @@ public:
 	Texture2D getTexture() {
 		return texture;
 	}
+
+	void Update() {
+		nullptr;
+	}
 };

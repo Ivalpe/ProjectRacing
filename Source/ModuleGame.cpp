@@ -137,13 +137,5 @@ void ModuleGame::Game() {
 	App->renderer->Draw(background_layer3, 0, 0, &rect);
 
 
-	int x, y;
-	car->getBody()->GetPhysicPosition(x, y);
-	Vector2 position{ (float)x, (float)y };
-	float scale = 1.6f;
-	Rectangle source = { 0.0f, 0.0f, (float)car->getTexture().width, (float)car->getTexture().height};
-	Rectangle dest = { position.x , position.y , (float)car->getTexture().width * scale , (float)car->getTexture().height * scale };
-	Vector2 origin = { ((float)car->getTexture().width / (2.0f)) * scale, ((float)car->getTexture().height / (2.0f)) * scale };
-	float rotation = car->getBody()->GetRotation() * RAD2DEG;
-	DrawTexturePro(car->getTexture(), source, dest, origin, rotation, WHITE);
+	car->Update();
 }

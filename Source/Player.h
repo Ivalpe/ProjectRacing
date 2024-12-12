@@ -15,13 +15,7 @@ public:
 
 	virtual ~Player(){};
 
-	void SetParameters(ModulePhysics* physics, Texture2D txt) {
-		texture = txt;
-		body = physics->CreateRectangle(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-		position.Set(0, 0);
-	}
+	void Update();
 
-	void SetPosition(b2Vec2 pos) {
-		position.Set(pos.x, pos.y);
-	}
+	void SetParameters(ModulePhysics* physics, Texture2D txt);
 };
