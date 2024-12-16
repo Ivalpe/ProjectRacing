@@ -80,7 +80,7 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 
 PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 {
-	b2BodyDef body;
+	/*b2BodyDef body;
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
@@ -92,11 +92,74 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 	b2FixtureDef fixture;
 	fixture.shape = &box;
 	fixture.density = 1.0f;
+	fixture.friction = 0.3f;
 
-	b->CreateFixture(&fixture);
+	b->CreateFixture(&fixture);*/
+
+	b2Transform xf1;
+	xf1.q.Set(0.3524f * b2_pi);
+	xf1.p = xf1.q.GetXAxis();
+
+	b2Vec2 vertices[3];
+	vertices[0] = b2Mul(xf1, b2Vec2(-1.0f, 0.0f));
+	vertices[1] = b2Mul(xf1, b2Vec2(1.0f, 0.0f));
+	vertices[2] = b2Mul(xf1, b2Vec2(0.0f, 0.5f));
+
+	b2PolygonShape poly1;
+	poly1.Set(vertices, 3);
+
+	b2FixtureDef sd1;
+	sd1.shape = &poly1;
+	sd1.density = 2.0f;
+
+	b2Transform xf2;
+	xf2.q.Set(-0.3524f * b2_pi);
+	xf2.p = -xf2.q.GetXAxis();
+
+	vertices[0] = b2Mul(xf2, b2Vec2(-1.0f, 0.0f));
+	vertices[1] = b2Mul(xf2, b2Vec2(1.0f, 0.0f));
+	vertices[2] = b2Mul(xf2, b2Vec2(0.0f, 0.5f));
+
+	b2PolygonShape poly2;
+	poly2.Set(vertices, 3);
+
+	b2FixtureDef sd2;
+	sd2.shape = &poly2;
+	sd2.density = 2.0f;
+
+	b2BodyDef bd;
+	bd.type = b2_dynamicBody;
+
+	bd.position.Set(0.0f, 3.0);
+	bd.angle = b2_pi;
+	bd.allowSleep = false;
+	auto m_body = world->CreateBody(&bd);
+	m_body->CreateFixture(&sd1);
+	m_body->CreateFixture(&sd2);
+
+	float gravity = 10.0f;
+	float I = m_body->GetInertia();
+	float mass = m_body->GetMass();
+
+	// Compute an effective radius that can be used to
+	// set the max torque for a friction joint
+	// For a circle: I = 0.5 * m * r * r ==> r = sqrt(2 * I / m)
+	float radius = b2Sqrt(2.0f * I / mass);
+
+	b2FrictionJointDef jd;
+	jd.bodyA = ground;
+	jd.bodyB = m_body;
+	jd.localAnchorA.SetZero();
+	jd.localAnchorB = m_body->GetLocalCenter();
+	jd.collideConnected = true;
+	jd.maxForce = 0.5f * mass * gravity;
+	jd.maxTorque = 0.2f * mass * radius * gravity;
+
+	world->CreateJoint(&jd);
+
 
 	PhysBody* pbody = new PhysBody();
-	pbody->body = b;
+	pbody->body = m_body;
 	pbody->width = (int)(width * 0.5f);
 	pbody->height = (int)(height * 0.5f);
 
@@ -112,6 +175,8 @@ bool ModulePhysics::Start()
 
 update_status ModulePhysics::PreUpdate()
 {
+
+	world->Step(1.f / 60.f, 6, 2);
 
 	return UPDATE_CONTINUE;
 }
@@ -133,7 +198,7 @@ update_status ModulePhysics::PostUpdate()
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
-	/*for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
+	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
 	{
 		for(b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
 		{
@@ -204,7 +269,7 @@ update_status ModulePhysics::PostUpdate()
 
 			
 		}
-	}//*/
+	}
 
 	
 	return UPDATE_CONTINUE;

@@ -136,6 +136,5 @@ void ModuleGame::Game() {
 	rect.height = SCREEN_HEIGHT;
 	App->renderer->Draw(background_layer3, 0, 0, &rect);
 
-
 	car->Update();
 }

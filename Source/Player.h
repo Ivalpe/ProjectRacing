@@ -15,7 +15,7 @@ public:
 
 	virtual ~Player(){};
 
-	void Update();
+	void Update() override;
 
 	void SetParameters(ModulePhysics* physics, Texture2D txt);
 };

@@ -9,23 +9,24 @@ class PhysBody;
 class Entity
 {
 public:
-	Entity(){};
+	Entity() {};
 
-	virtual ~Entity(){};
+	virtual ~Entity() {};
 
-	b2Vec2 position;
+	int x, y;
+	float rot;
 	Texture2D texture;
-	PhysBody* body;
+	PhysBody* body = nullptr;
 
-	PhysBody* getBody() {
+	PhysBody* GetBody() {
 		return body;
 	}
 
-	Texture2D getTexture() {
+	void GetPosition(int& x, int& y) const;
+
+	Texture2D GetTexture() {
 		return texture;
 	}
 
-	void Update() {
-		nullptr;
-	}
+	virtual void Update() = 0;
 };
