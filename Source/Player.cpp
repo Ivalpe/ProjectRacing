@@ -6,6 +6,7 @@
 
 Player::Player() : Entity()
 {
+	speed = 0.f;
 }
 
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
@@ -20,17 +21,20 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 void Player::Update() {
 	static b2Vec2 velocity = b2Vec2(0, 0);
 
-	if (IsKeyDown(KEY_RIGHT)) body->body->ApplyTorque(10.0f, true);
-	else if (IsKeyDown(KEY_LEFT)) body->body->ApplyTorque(-10.0f, true);
+	if (IsKeyDown(KEY_RIGHT)) body->body->ApplyTorque(0.01f, true);
+	else if (IsKeyDown(KEY_LEFT)) body->body->ApplyTorque(-0.01f, true);
 
 	if (IsKeyDown(KEY_UP)) {
-		b2Vec2 f = body->body->GetWorldVector(b2Vec2(0.0f, -50.0f));
-		b2Vec2 p = body->body->GetWorldPoint(b2Vec2_zero);
-		body->body->ApplyForce(f, p, true);
-
-	} else if (IsKeyDown(KEY_DOWN)) {
-		velocity.y -= 10.f;
+		if (speed >= -0.5f) speed -= 0.001f;
 	}
+	else if (IsKeyDown(KEY_DOWN))
+		if (speed <= 0.5f) speed += 0.001f;
+
+	if (IsKeyUp(KEY_UP) && IsKeyUp(KEY_DOWN)) speed = 0.0f;
+
+	b2Vec2 f = body->body->GetWorldVector(b2Vec2(0.0f, speed));
+	b2Vec2 p = body->body->GetWorldPoint(b2Vec2_zero);
+	body->body->ApplyForce(f, p, true);
 
 	TraceLog(LOG_INFO, "Position: %f, velocity: %f, Force: %f", x, body->body->GetLinearVelocity().y, body->body->GetAngle());
 	//body->body->ApplyForceToCenter({ 200, 100 }, true);
@@ -48,7 +52,7 @@ void Player::Update() {
 
 	//int x, y;
 	//body->body.GetPhysicPosition(x, y);
-	float scale = 1.6f;
+	float scale = 1.0f;
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
 	Rectangle dest = { position.x , position.y , (float)texture.width * scale , (float)texture.height * scale };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * scale, ((float)texture.height / (2.0f)) * scale };
