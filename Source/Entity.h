@@ -29,4 +29,6 @@ public:
 	}
 
 	virtual void Update() = 0;
+
+	float MaxSpeed = 10;
 };

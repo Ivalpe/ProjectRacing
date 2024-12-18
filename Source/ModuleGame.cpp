@@ -29,7 +29,6 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
 	car = new Player();
-	car->SetParameters(App->physics, vehicles[0]);
 
 	selectedPos = 0;
 	
@@ -123,6 +122,7 @@ void ModuleGame::SelectCharacter() {
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
 
 	if (IsKeyPressed(KEY_SPACE)) {
+		car->SetParameters(App->physics, vehicles[selectedPos]);
 		stateGame = GAME;
 	}
 	

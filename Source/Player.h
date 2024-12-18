@@ -20,4 +20,5 @@ public:
 	void SetParameters(ModulePhysics* physics, Texture2D txt);
 
 	float speed;
+private:
 };

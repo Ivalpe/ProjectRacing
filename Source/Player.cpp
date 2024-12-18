@@ -2,6 +2,7 @@
 #include "Globals.h"
 #include "Entity.h"
 #include "Player.h"
+#include <algorithm>
 
 
 Player::Player() : Entity()
@@ -20,38 +21,43 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 
 void Player::Update() {
 	static b2Vec2 velocity = b2Vec2(0, 0);
-
-	if (IsKeyDown(KEY_RIGHT)) body->body->ApplyTorque(0.01f, true);
-	else if (IsKeyDown(KEY_LEFT)) body->body->ApplyTorque(-0.01f, true);
+	if (abs(speed) >= 1) {
+		if (IsKeyDown(KEY_RIGHT)) body->body->ApplyTorque(0.02f / abs(speed), true);
+		else if (IsKeyDown(KEY_LEFT)) body->body->ApplyTorque(-0.02f / abs(speed), true);
+		else body->body->SetAngularVelocity(0.f);
+	}
+	else body->body->SetAngularVelocity(0.f);
 
 	if (IsKeyDown(KEY_UP)) {
-		if (speed >= -0.5f) speed -= 0.001f;
+		if (speed >= -MaxSpeed) speed -= 0.1f;
 	}
-	else if (IsKeyDown(KEY_DOWN))
-		if (speed <= 0.5f) speed += 0.001f;
+	else if (IsKeyDown(KEY_DOWN)) {
+		if (speed <= MaxSpeed) speed += 0.1f;
+	}
 
-	if (IsKeyUp(KEY_UP) && IsKeyUp(KEY_DOWN)) speed = 0.0f;
+
+	if (IsKeyUp(KEY_UP) && IsKeyUp(KEY_DOWN)) {
+		if (speed > 0) {
+			speed -= 0.1;
+		}
+		else if (speed < 0) {
+			speed += 0.1;
+		}
+	}
 
 	b2Vec2 f = body->body->GetWorldVector(b2Vec2(0.0f, speed));
 	b2Vec2 p = body->body->GetWorldPoint(b2Vec2_zero);
-	body->body->ApplyForce(f, p, true);
+	body->body->SetLinearVelocity(b2Vec2({ f.x, f.y }));
 
-	TraceLog(LOG_INFO, "Position: %f, velocity: %f, Force: %f", x, body->body->GetLinearVelocity().y, body->body->GetAngle());
-	//body->body->ApplyForceToCenter({ 200, 100 }, true);
 
-	//body->body->ApplyForce({ 0.f, 10.f }, b2Vec2_zero, true);
-	//body->body->SetLinearVelocity(velocity);
-	//body->body->SetTransform(body->body->GetPosition(), body->body->GetTransform().q.GetAngle());
-	//body->body->ApplyForceToCenter()
+	body->body->GetAngularVelocity();
+	//body->body->SetLinearVelocity();
+
+	TraceLog(LOG_INFO, "Position: %f, WV (%.2f, %.2f), velocity: (%.2f, %.2f), Force: f", x, f.x, f.y, body->body->GetLinearVelocity().x, body->body->GetLinearVelocity().y);
 
 	GetPosition(x, y);
 	Vector2 position = { x,y };
 
-	//b2Transform pbodyPos = body->body->GetTransform();
-	//position.Set(METERS_TO_PIXELS(pbodyPos.p.x) - 32 / 2, METERS_TO_PIXELS(pbodyPos.p.y) - 16 / 2);
-
-	//int x, y;
-	//body->body.GetPhysicPosition(x, y);
 	float scale = 1.0f;
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
 	Rectangle dest = { position.x , position.y , (float)texture.width * scale , (float)texture.height * scale };
