@@ -6,7 +6,9 @@
 #include "box2d\box2d.h"
 
 enum ColliderType {
-	CAR
+	CAR,
+	
+
 };
 
 // Module --------------------------------------

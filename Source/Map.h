@@ -61,15 +61,15 @@ struct TileSet
 	int margin;
 	int tileCount;
 	int columns;
-	SDL_Texture* texture;
+	Texture* texture;
 
 	// L07: TODO 7: Implement the method that receives the gid and returns a Rect
-	SDL_Rect GetRect(unsigned int gid) {
-		SDL_Rect rect = { 0 };
+	Rectangle GetRect(unsigned int gid) {
+		Rectangle rect = { 0 };
 
 		int relativeIndex = gid - firstGid;
-		rect.w = tileWidth;
-		rect.h = tileHeight;
+		rect.width = tileWidth;
+		rect.height = tileHeight;
 		rect.x = margin + (tileWidth + spacing) * (relativeIndex % columns);
 		rect.y = margin + (tileHeight + spacing) * (relativeIndex / columns);
 
@@ -95,7 +95,7 @@ class Map : public Module
 {
 public:
 
-	Map();
+	Map(Application* parent, bool start_enabled = true);
 
 	// Destructor
 	virtual ~Map();
@@ -118,15 +118,15 @@ public:
 	
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
-	Vector2D MapToWorld(int x, int y) const;
+	Vector2 MapToWorld(int x, int y) const;
 
-	Vector2D WorldToMap(int x, int y);
+	Vector2 WorldToMap(int x, int y);
 
 	// L09: TODO 2: Implement function to the Tileset based on a tile id
 	TileSet* GetTilesetFromTileId(int gid) const;
 
 	// L09: TODO 6: Load a group of properties 
-	bool LoadProperties(pugi::xml_node& node, Properties& properties);
+	/*bool LoadProperties(pugi::xml_node& node, Properties& properties);*/
 
 	MapLayer* GetNavigationLayer();
 
@@ -160,7 +160,7 @@ private:
 	// L06: DONE 1: Declare a variable data of the struct MapData
 	MapData mapData;
 	std::list<PhysBody*> collisions;
-	std::list<Vector2D> posBonfire;
-	std::list<Vector2D> posPoison;
-	std::list<Vector2D> posEnemies;
+	std::list<Vector2> posBonfire;
+	std::list<Vector2> posPoison;
+	std::list<Vector2> posEnemies;
 };

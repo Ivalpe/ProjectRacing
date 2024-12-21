@@ -295,7 +295,7 @@ RMAPI float Vector2LengthSqr(Vector2 v)
 }
 
 // Calculate two vectors dot product
-RMAPI float Vector2DotProduct(Vector2 v1, Vector2 v2)
+RMAPI float Vector2otProduct(Vector2 v1, Vector2 v2)
 {
     float result = (v1.x*v2.x + v1.y*v2.y);
 
@@ -303,7 +303,7 @@ RMAPI float Vector2DotProduct(Vector2 v1, Vector2 v2)
 }
 
 // Calculate distance between two vectors
-RMAPI float Vector2Distance(Vector2 v1, Vector2 v2)
+RMAPI float Vector2istance(Vector2 v1, Vector2 v2)
 {
     float result = sqrtf((v1.x - v2.x)*(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y));
 
@@ -311,7 +311,7 @@ RMAPI float Vector2Distance(Vector2 v1, Vector2 v2)
 }
 
 // Calculate square distance between two vectors
-RMAPI float Vector2DistanceSqr(Vector2 v1, Vector2 v2)
+RMAPI float Vector2istanceSqr(Vector2 v1, Vector2 v2)
 {
     float result = ((v1.x - v2.x)*(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y));
 
@@ -370,7 +370,7 @@ RMAPI Vector2 Vector2Negate(Vector2 v)
 }
 
 // Divide vector by vector
-RMAPI Vector2 Vector2Divide(Vector2 v1, Vector2 v2)
+RMAPI Vector2 Vector2ivide(Vector2 v1, Vector2 v2)
 {
     Vector2 result = { v1.x/v2.x, v1.y/v2.y };
 
