@@ -115,8 +115,7 @@ public:
 	// Load new map
 	bool Load(std::string path, std::string mapFileName);
 
-	std::list<Vector2D> GetBonfireList();
-	std::list<Vector2D> GetPoisonList();
+	
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 	Vector2D MapToWorld(int x, int y) const;
