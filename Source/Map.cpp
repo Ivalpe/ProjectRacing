@@ -108,6 +108,9 @@ bool Map::CleanUp()
 // Load new map
 bool Map::Load(std::string path, std::string fileName)
 {
+	Map map;
+	bool result = map.Load("Assets/Maps/racing.tmx");
+
 	for (const auto& layer : collisions) {
 		Engine::GetInstance().physics->DeletePhysBody(layer);
 	}
@@ -192,10 +195,14 @@ bool Map::Load(std::string path, std::string fileName)
 		else
 			h = tileNode.attribute("height").as_int();
 
-		PhysBody* pb = Engine::GetInstance().physics.get()->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, STATIC);
+		PhysBody* pb = App->physics->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, STATIC);
 		if(p == "CAR")
 		{
 			pb->ctype = ColliderType::CAR;
+		}
+		if (p == "WALL")
+		{
+			pb->ctype = ColliderType::WALL;
 		}
 		//if (p == "WALL")
 		//	pb->ctype = ColliderType::WALL;

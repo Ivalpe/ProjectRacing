@@ -7,6 +7,7 @@
 
 enum ColliderType {
 	CAR,
+	WALL,
 	
 
 };
