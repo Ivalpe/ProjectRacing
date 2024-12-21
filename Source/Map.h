@@ -146,9 +146,7 @@ public:
 		return mapData.tileHeight;
 	}
 
-	void ClearListBonfire() {
-		posBonfire.clear();
-	}
+	
 
 	
 public:
@@ -160,7 +158,6 @@ private:
 	// L06: DONE 1: Declare a variable data of the struct MapData
 	MapData mapData;
 	std::list<PhysBody*> collisions;
-	std::list<Vector2> posBonfire;
 	std::list<Vector2> posPoison;
 	std::list<Vector2> posEnemies;
 };

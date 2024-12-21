@@ -106,19 +106,15 @@ bool Map::CleanUp()
 }
 
 // Load new map
-bool Map::Load(std::string path, std::string fileName)
+bool Map::Load(std::string path)
 {
 	Map map;
 	bool result = map.Load("Assets/Maps/racing.tmx");
 
-	for (const auto& layer : collisions) {
-		Engine::GetInstance().physics->DeletePhysBody(layer);
-	}
+	/*for (const auto& layer : collisions) {
+		App->physics->DeletePhysBody(layer);
+	}*/
 
-	collisions.clear();
-	posBonfire.clear();
-	posPoison.clear();
-	mapData.layers.clear();
 
 	bool ret = false;
 
