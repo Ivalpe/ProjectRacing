@@ -1,7 +1,9 @@
 #include "ModuleRender.h"
 #include "Map.h"
+#include "ModuleTextures.h"
 #include "ModulePhysics.h"
 #include "Module.h"
+#include "Globals.h"
 
 
 
@@ -31,9 +33,9 @@ bool Map::Start() {
 	return true;
 }
 
-bool Map::Update(float dt)
+update_status Map::Update()
 {
-	bool ret = true;
+	update_status ret = UPDATE_CONTINUE;
 
 	if (mapLoaded) {
 
@@ -106,16 +108,8 @@ bool Map::CleanUp()
 }
 
 // Load new map
-bool Map::Load(std::string path)
+bool Map::Load(std::string path, std::string fileName)
 {
-	Map map;
-	bool result = map.Load("Assets/Maps/racing.tmx");
-
-	/*for (const auto& layer : collisions) {
-		App->physics->DeletePhysBody(layer);
-	}*/
-
-
 	bool ret = false;
 
 	// Assigns the name of the map file and the path
@@ -123,14 +117,14 @@ bool Map::Load(std::string path)
 	mapPath = path;
 	std::string mapPathName = mapPath + mapFileName;
 
-	//pugi::xml_document mapFileXML;
-	//pugi::xml_parse_result result = mapFileXML.load_file(mapPathName.c_str());
+	pugi::xml_document mapFileXML;
+	pugi::xml_parse_result result = mapFileXML.load_file(mapPathName.c_str());
 
-	//if (result == NULL)
-	//{
-	//	LOG("Could not load map xml file %s. pugi error: %s", mapPathName.c_str(), result.description());
-	//	ret = false;
-	//}
+	if (result == NULL)
+	{
+		LOG("Could not load map xml file %s. pugi error: %s", mapPathName.c_str(), result.description());
+		ret = false;
+	}
 	/*else {*/
 
 	mapData.width = mapFileXML.child("map").attribute("width").as_int();
@@ -154,7 +148,8 @@ bool Map::Load(std::string path)
 
 		//Load the tileset image
 		std::string imgName = tilesetNode.child("image").attribute("source").as_string();
-		tileSet->texture = Engine::GetInstance().textures->Load((mapPath + imgName).c_str());
+		tileSet->texture = App->textures->Load((mapPath + imgName).c_str());
+
 
 		mapData.tilesets.push_back(tileSet);
 	}
@@ -171,12 +166,12 @@ bool Map::Load(std::string path)
 		mapLayer->height = layerNode.attribute("height").as_int();
 
 		//L09: TODO 6 Call Load Layer Properties
-		/*LoadProperties(layerNode, mapLayer->properties);*/
+		LoadProperties(layerNode, mapLayer->properties);
 
 		//Iterate over all the tiles and assign the values in the data array
-		/*for (pugi::xml_node tileNode = layerNode.child("data").child("tile"); tileNode != NULL; tileNode = tileNode.next_sibling("tile")) {
+		for (pugi::xml_node tileNode = layerNode.child("data").child("tile"); tileNode != NULL; tileNode = tileNode.next_sibling("tile")) {
 			mapLayer->tiles.push_back(tileNode.attribute("gid").as_int());
-		}*/
+		}
 
 		//add the layer to the map
 		mapData.layers.push_back(mapLayer);
@@ -191,7 +186,7 @@ bool Map::Load(std::string path)
 		else
 			h = tileNode.attribute("height").as_int();
 
-		PhysBody* pb = App->physics->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, STATIC);
+		PhysBody* pb = App->physics->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, b2BodyType::b2_staticBody);
 		if(p == "CAR")
 		{
 			pb->ctype = ColliderType::CAR;
@@ -231,19 +226,12 @@ bool Map::Load(std::string path)
 				//Check if the gid is different from 0 - some tiles are empty
 				if (gid != 0) {
 
-					if (gid == 1025) {
+					if (gid == 1) {
 						Vector2 mapCoord = MapToWorld(i, j);
-						PhysBody* c1 = App->physics->CreateRectangle(mapCoord.getX() + 8, mapCoord.getY() + 8, 16, 16, STATIC);
-						c1->ctype = ColliderType::GROUND;
+						/*PhysBody* c1 = App->physics->CreateRectangle(mapCoord.x + 16, mapCoord.y + 16, 32, 32, b2BodyType::b2_staticBody);
+						c1->ctype = ColliderType::WALL;*/
 					}
-					else if (gid == 2) {
-						Vector2 mapCoord = { (float)i * 8, (float)j * 8 };
-						posBonfire.push_back(mapCoord);
-					}
-					else if (gid == 3) {
-						Vector2 mapCoord = { (float)i * 8, (float)j * 8 };
-						posPoison.push_back(mapCoord);
-					}
+				
 				}
 			}
 		}
@@ -315,22 +303,22 @@ Vector2 Map::WorldToMap(int x, int y) {
 	return ret;
 }
 
-// L09: TODO 6: Load a group of properties from a node and fill a list with it
-//bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
-//{
-//	bool ret = false;
-//
-//	for (pugi::xml_node propertieNode = node.child("properties").child("property"); propertieNode; propertieNode = propertieNode.next_sibling("property"))
-//	{
-//		Properties::Property* p = new Properties::Property();
-//		p->name = propertieNode.attribute("name").as_string();
-//		p->value = propertieNode.attribute("value").as_bool(); // (!!) I'm assuming that all values are bool !!
-//
-//		properties.propertyList.push_back(p);
-//	}
-//
-//	return ret;
-//}
+ //L09: TODO 6: Load a group of properties from a node and fill a list with it
+bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
+{
+	bool ret = false;
+
+	for (pugi::xml_node propertieNode = node.child("properties").child("property"); propertieNode; propertieNode = propertieNode.next_sibling("property"))
+	{
+		Properties::Property* p = new Properties::Property();
+		p->name = propertieNode.attribute("name").as_string();
+		p->value = propertieNode.attribute("value").as_bool(); // (!!) I'm assuming that all values are bool !!
+
+		properties.propertyList.push_back(p);
+	}
+
+	return ret;
+}
 
 MapLayer* Map::GetNavigationLayer() {
 	for (const auto& layer : mapData.layers) {

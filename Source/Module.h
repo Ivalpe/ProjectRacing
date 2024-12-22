@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Globals.h"
 #include <string>
+#include "pugixml.hpp"
 
 class Application;
 class PhysBody;

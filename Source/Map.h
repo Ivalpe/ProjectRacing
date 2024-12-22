@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 
+
 // L09: TODO 5: Add attributes to the property structure
 struct Properties
 {
@@ -86,8 +87,6 @@ struct MapData
 	int tileWidth;
 	int tileHeight;
 	std::list<TileSet*> tilesets;
-
-	// L07: TODO 2: Add the info to the MapLayer Struct
 	std::list<MapLayer*> layers;
 };
 
@@ -107,7 +106,7 @@ public:
 	bool Start();
 
 	// Called each loop iteration
-	bool Update(float dt);
+	update_status Update();
 
 	// Called before quitting
 	bool CleanUp();
@@ -126,7 +125,7 @@ public:
 	TileSet* GetTilesetFromTileId(int gid) const;
 
 	// L09: TODO 6: Load a group of properties 
-	/*bool LoadProperties(pugi::xml_node& node, Properties& properties);*/
+	bool LoadProperties(pugi::xml_node& node, Properties& properties);
 
 	MapLayer* GetNavigationLayer();
 
@@ -155,9 +154,10 @@ public:
 
 private:
 	bool mapLoaded;
-	// L06: DONE 1: Declare a variable data of the struct MapData
+
 	MapData mapData;
 	std::list<PhysBody*> collisions;
-	std::list<Vector2> posPoison;
-	std::list<Vector2> posEnemies;
+
+
+	pugi::xml_node mapParameters;
 };

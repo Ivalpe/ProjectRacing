@@ -12,7 +12,7 @@ Player::Player() : Entity()
 
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
-	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT, b2_dynamicBody);
 	x = 300;
 	y = 300;
 
