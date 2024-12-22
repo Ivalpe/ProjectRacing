@@ -78,10 +78,10 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 	return ret;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2BodyType bodyType)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	body.type = bodyType;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 
@@ -216,6 +216,7 @@ update_status ModulePhysics::PostUpdate()
 // Called before quitting
 bool ModulePhysics::CleanUp()
 {
+	
 	LOG("Destroying physics world");
 
 	// Delete the whole physics world!

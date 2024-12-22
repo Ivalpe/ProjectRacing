@@ -5,6 +5,8 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "ModuleGame.h"
+#include "ModuleTextures.h"
+#include "Map.h"
 
 #include "Application.h"
 
@@ -12,7 +14,9 @@ Application::Application()
 {
 	window = new ModuleWindow(this);
 	renderer = new ModuleRender(this);
+	textures = new ModuleTextures(this);
 	audio = new ModuleAudio(this, true);
+	map = new Map(this, true);
 	physics = new ModulePhysics(this);
 	scene_intro = new ModuleGame(this);
 
@@ -23,8 +27,10 @@ Application::Application()
 	// Main Modules
 	AddModule(window);
 	AddModule(physics);
+	AddModule(textures);
 	AddModule(audio);
-	
+	// Map
+	AddModule(map);
 	// Scenes
 	AddModule(scene_intro);
 

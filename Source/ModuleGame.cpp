@@ -5,6 +5,7 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "Player.h"
+#include "Map.h"
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {}
@@ -22,6 +23,7 @@ bool ModuleGame::Start()
 	background_layer2 = LoadTexture("Assets/background2.png");
 	background_layer3 = LoadTexture("Assets/background3.png");
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
+	App->map->Load("Assets/Maps/","racing.tmx");
 
 
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
@@ -84,7 +86,7 @@ void ModuleGame::MainMenu() {
 	rect.y = 208;
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
-	App->renderer->Draw(background_layer, 0, 0, &rect);
+	//App->renderer->Draw(background_layer, 0, 0, &rect);
 
 
 	if (IsKeyPressed(KEY_SPACE)) {
@@ -103,11 +105,13 @@ void ModuleGame::SelectCharacter() {
 	}
 
 	Rectangle rect;
-	rect.x = 0;
-	rect.y = 208;
-	rect.width = SCREEN_WIDTH;
-	rect.height = SCREEN_HEIGHT;
-	App->renderer->Draw(background_layer2, 0, 0, &rect);
+	//rect.x = 0;
+	//rect.y = 208;
+	//rect.width = SCREEN_WIDTH;
+	//rect.height = SCREEN_HEIGHT;
+	//App->renderer->Draw(background_layer2, 0, 0, &rect);
+
+	
 
 	rect.x = 0;
 	rect.y = 0;
@@ -134,7 +138,7 @@ void ModuleGame::Game() {
 	rect.y = 208;
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
-	App->renderer->Draw(background_layer3, 0, 0, &rect);
-
+	//App->renderer->Draw(background_layer3, 0, 0, &rect);
+	
 	car->Update();
 }

@@ -7,7 +7,9 @@
 class Module;
 class ModuleWindow;
 class ModuleRender;
+class ModuleTextures;
 class ModuleAudio;
+class Map;
 class ModulePhysics;
 class ModuleGame;
 
@@ -17,7 +19,9 @@ public:
 
 	ModuleRender* renderer;
 	ModuleWindow* window;
+	ModuleTextures* textures;
 	ModuleAudio* audio;
+	Map* map;
 	ModulePhysics* physics;
 	ModuleGame* scene_intro;
 

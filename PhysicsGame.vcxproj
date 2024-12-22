@@ -93,6 +93,9 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -191,6 +194,7 @@
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\Map.h" />
     <ClInclude Include="Source\ModuleGame.h" />
+    <ClInclude Include="Source\ModuleTextures.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Timer.h" />
   </ItemGroup>
@@ -205,6 +209,7 @@
     <ClCompile Include="Source\Entity.cpp" />
     <ClCompile Include="Source\Map.cpp" />
     <ClCompile Include="Source\ModuleGame.cpp" />
+    <ClCompile Include="Source\ModuleTextures.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
   </ItemGroup>

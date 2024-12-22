@@ -1,7 +1,8 @@
 #pragma once
-
+#include "Application.h"
 #include "Globals.h"
 #include <string>
+#include "pugixml.hpp"
 
 class Application;
 class PhysBody;
@@ -13,6 +14,8 @@ private :
 
 public:
 	Application* App;
+
+	
 
 	Module(Application* parent, bool start_enabled = true) : App(parent), enabled(start_enabled)
 	{}

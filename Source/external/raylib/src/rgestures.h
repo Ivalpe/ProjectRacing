@@ -241,7 +241,7 @@ static GesturesData GESTURES = {
 // Module specific Functions Declaration
 //----------------------------------------------------------------------------------
 static float rgVector2Angle(Vector2 initialPosition, Vector2 finalPosition);
-static float rgVector2Distance(Vector2 v1, Vector2 v2);
+static float rgVector2istance(Vector2 v1, Vector2 v2);
 static double rgGetCurrentTime(void);
 
 //----------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ void ProcessGestureEvent(GestureEvent event)
             GESTURES.Touch.tapCounter++;    // Tap counter
 
             // Detect GESTURE_DOUBLE_TAP
-            if ((GESTURES.current == GESTURE_NONE) && (GESTURES.Touch.tapCounter >= 2) && ((rgGetCurrentTime() - GESTURES.Touch.eventTime) < TAP_TIMEOUT) && (rgVector2Distance(GESTURES.Touch.downPositionA, event.position[0]) < DOUBLETAP_RANGE))
+            if ((GESTURES.current == GESTURE_NONE) && (GESTURES.Touch.tapCounter >= 2) && ((rgGetCurrentTime() - GESTURES.Touch.eventTime) < TAP_TIMEOUT) && (rgVector2istance(GESTURES.Touch.downPositionA, event.position[0]) < DOUBLETAP_RANGE))
             {
                 GESTURES.current = GESTURE_DOUBLETAP;
                 GESTURES.Touch.tapCounter = 0;
@@ -301,7 +301,7 @@ void ProcessGestureEvent(GestureEvent event)
             if (GESTURES.current == GESTURE_DRAG || GESTURES.current == GESTURE_HOLD) GESTURES.Touch.upPosition = event.position[0];
 
             // NOTE: GESTURES.Drag.intensity dependent on the resolution of the screen
-            GESTURES.Drag.distance = rgVector2Distance(GESTURES.Touch.downPositionA, GESTURES.Touch.upPosition);
+            GESTURES.Drag.distance = rgVector2istance(GESTURES.Touch.downPositionA, GESTURES.Touch.upPosition);
             GESTURES.Drag.intensity = GESTURES.Drag.distance/(float)((rgGetCurrentTime() - GESTURES.Swipe.startTime));
 
             // Detect GESTURE_SWIPE
@@ -360,7 +360,7 @@ void ProcessGestureEvent(GestureEvent event)
             GESTURES.Touch.previousPositionA = GESTURES.Touch.downPositionA;
             GESTURES.Touch.previousPositionB = GESTURES.Touch.downPositionB;
 
-            //GESTURES.Pinch.distance = rgVector2Distance(GESTURES.Touch.downPositionA, GESTURES.Touch.downPositionB);
+            //GESTURES.Pinch.distance = rgVector2istance(GESTURES.Touch.downPositionA, GESTURES.Touch.downPositionB);
 
             GESTURES.Pinch.vector.x = GESTURES.Touch.downPositionB.x - GESTURES.Touch.downPositionA.x;
             GESTURES.Pinch.vector.y = GESTURES.Touch.downPositionB.y - GESTURES.Touch.downPositionA.y;
@@ -370,7 +370,7 @@ void ProcessGestureEvent(GestureEvent event)
         }
         else if (event.touchAction == TOUCH_ACTION_MOVE)
         {
-            GESTURES.Pinch.distance = rgVector2Distance(GESTURES.Touch.moveDownPositionA, GESTURES.Touch.moveDownPositionB);
+            GESTURES.Pinch.distance = rgVector2istance(GESTURES.Touch.moveDownPositionA, GESTURES.Touch.moveDownPositionB);
 
             GESTURES.Touch.moveDownPositionA = event.position[0];
             GESTURES.Touch.moveDownPositionB = event.position[1];
@@ -378,9 +378,9 @@ void ProcessGestureEvent(GestureEvent event)
             GESTURES.Pinch.vector.x = GESTURES.Touch.moveDownPositionB.x - GESTURES.Touch.moveDownPositionA.x;
             GESTURES.Pinch.vector.y = GESTURES.Touch.moveDownPositionB.y - GESTURES.Touch.moveDownPositionA.y;
 
-            if ((rgVector2Distance(GESTURES.Touch.previousPositionA, GESTURES.Touch.moveDownPositionA) >= MINIMUM_PINCH) || (rgVector2Distance(GESTURES.Touch.previousPositionB, GESTURES.Touch.moveDownPositionB) >= MINIMUM_PINCH))
+            if ((rgVector2istance(GESTURES.Touch.previousPositionA, GESTURES.Touch.moveDownPositionA) >= MINIMUM_PINCH) || (rgVector2istance(GESTURES.Touch.previousPositionB, GESTURES.Touch.moveDownPositionB) >= MINIMUM_PINCH))
             {
-                if ( rgVector2Distance(GESTURES.Touch.previousPositionA, GESTURES.Touch.previousPositionB) > rgVector2Distance(GESTURES.Touch.moveDownPositionA, GESTURES.Touch.moveDownPositionB) ) GESTURES.current = GESTURE_PINCH_IN;
+                if ( rgVector2istance(GESTURES.Touch.previousPositionA, GESTURES.Touch.previousPositionB) > rgVector2istance(GESTURES.Touch.moveDownPositionA, GESTURES.Touch.moveDownPositionB) ) GESTURES.current = GESTURE_PINCH_IN;
                 else GESTURES.current = GESTURE_PINCH_OUT;
             }
             else
@@ -494,7 +494,7 @@ static float rgVector2Angle(Vector2 v1, Vector2 v2)
 }
 
 // Calculate distance between two Vector2
-static float rgVector2Distance(Vector2 v1, Vector2 v2)
+static float rgVector2istance(Vector2 v1, Vector2 v2)
 {
     float result;
 

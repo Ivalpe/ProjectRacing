@@ -6,7 +6,10 @@
 #include "box2d\box2d.h"
 
 enum ColliderType {
-	CAR
+	CAR,
+	WALL,
+	
+
 };
 
 // Module --------------------------------------
@@ -33,7 +36,7 @@ public:
 	ModulePhysics(Application* app, bool start_enabled = true);
 	~ModulePhysics();
 
-	PhysBody* CreateRectangle(int x, int y, int width, int height);
+	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType bodyType);
 
 	bool Start();
 	update_status PreUpdate();

@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 
+
 // L09: TODO 5: Add attributes to the property structure
 struct Properties
 {
@@ -61,15 +62,15 @@ struct TileSet
 	int margin;
 	int tileCount;
 	int columns;
-	SDL_Texture* texture;
+	Texture* texture;
 
 	// L07: TODO 7: Implement the method that receives the gid and returns a Rect
-	SDL_Rect GetRect(unsigned int gid) {
-		SDL_Rect rect = { 0 };
+	Rectangle GetRect(unsigned int gid) {
+		Rectangle rect = { 0 };
 
 		int relativeIndex = gid - firstGid;
-		rect.w = tileWidth;
-		rect.h = tileHeight;
+		rect.width = tileWidth;
+		rect.height = tileHeight;
 		rect.x = margin + (tileWidth + spacing) * (relativeIndex % columns);
 		rect.y = margin + (tileHeight + spacing) * (relativeIndex / columns);
 
@@ -86,8 +87,6 @@ struct MapData
 	int tileWidth;
 	int tileHeight;
 	std::list<TileSet*> tilesets;
-
-	// L07: TODO 2: Add the info to the MapLayer Struct
 	std::list<MapLayer*> layers;
 };
 
@@ -95,7 +94,7 @@ class Map : public Module
 {
 public:
 
-	Map();
+	Map(Application* parent, bool start_enabled = true);
 
 	// Destructor
 	virtual ~Map();
@@ -107,7 +106,7 @@ public:
 	bool Start();
 
 	// Called each loop iteration
-	bool Update(float dt);
+	update_status Update();
 
 	// Called before quitting
 	bool CleanUp();
@@ -115,13 +114,12 @@ public:
 	// Load new map
 	bool Load(std::string path, std::string mapFileName);
 
-	std::list<Vector2D> GetBonfireList();
-	std::list<Vector2D> GetPoisonList();
+	
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
-	Vector2D MapToWorld(int x, int y) const;
+	Vector2 MapToWorld(int x, int y) const;
 
-	Vector2D WorldToMap(int x, int y);
+	Vector2 WorldToMap(int x, int y);
 
 	// L09: TODO 2: Implement function to the Tileset based on a tile id
 	TileSet* GetTilesetFromTileId(int gid) const;
@@ -147,9 +145,7 @@ public:
 		return mapData.tileHeight;
 	}
 
-	void ClearListBonfire() {
-		posBonfire.clear();
-	}
+	
 
 	
 public:
@@ -158,10 +154,10 @@ public:
 
 private:
 	bool mapLoaded;
-	// L06: DONE 1: Declare a variable data of the struct MapData
+
 	MapData mapData;
 	std::list<PhysBody*> collisions;
-	std::list<Vector2D> posBonfire;
-	std::list<Vector2D> posPoison;
-	std::list<Vector2D> posEnemies;
+
+
+	pugi::xml_node mapParameters;
 };
