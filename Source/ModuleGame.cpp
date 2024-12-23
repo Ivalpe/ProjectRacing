@@ -5,6 +5,7 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "Player.h"
+#include "ModuleWindow.h"
 #include "Map.h"
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -104,15 +105,8 @@ void ModuleGame::SelectCharacter() {
 		selectedPos--;
 	}
 
-	Rectangle rect;
-	//rect.x = 0;
-	//rect.y = 208;
-	//rect.width = SCREEN_WIDTH;
-	//rect.height = SCREEN_HEIGHT;
-	//App->renderer->Draw(background_layer2, 0, 0, &rect);
-
 	
-
+	Rectangle rect;
 	rect.x = 0;
 	rect.y = 0;
 	rect.width = SPRITE_WIDTH * 3;
@@ -139,6 +133,23 @@ void ModuleGame::Game() {
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
 	//App->renderer->Draw(background_layer3, 0, 0, &rect);
+
+	//camera
+	int carX, carY;
+	/*car->GetPosition(carX, carY);
+	car->body->GetPhysicPosition(carX, carY);*/
+	carX = METERS_TO_PIXELS(car->body->body->GetTransform().p.x);
+	carY = METERS_TO_PIXELS(car->body->body->GetTransform().p.y);
+	
+	App->renderer->camera.x = (carX + SCREEN_WIDTH / 2) * -SCREEN_SIZE;
+	App->renderer->camera.y = (carY + SCREEN_HEIGHT / 2) * -SCREEN_SIZE ;
+
+	//just a test to check the received position was correct
+	//DrawRectangle(carX - 25, carY - 40, 50, 80, Color({ 0,0,255,255 }));
+
+	//drew the camera outline and yep, it encloses the map
+	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
+
 	
 	car->Update();
 }

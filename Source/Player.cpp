@@ -51,14 +51,14 @@ void Player::Update() {
 
 
 	body->body->GetAngularVelocity();
-	//body->body->SetLinearVelocity();
+	
 
 	TraceLog(LOG_INFO, "Position: %f, WV (%.2f, %.2f), velocity: (%.2f, %.2f), Force: f", x, f.x, f.y, body->body->GetLinearVelocity().x, body->body->GetLinearVelocity().y);
 
 	GetPosition(x, y);
 	Vector2 position = { x,y };
 
-	float scale = 1.0f;
+	
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
 	Rectangle dest = { position.x , position.y , (float)texture.width * scale , (float)texture.height * scale };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * scale, ((float)texture.height / (2.0f)) * scale };

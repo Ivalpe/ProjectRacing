@@ -18,7 +18,13 @@ public:
 	void Update() override;
 
 	void SetParameters(ModulePhysics* physics, Texture2D txt);
+	
 
 	float speed;
+
+	float scale = 1.0f;
+	
+public:
+
 private:
 };

@@ -19,6 +19,13 @@ bool ModuleRender::Init()
 	LOG("Creating Renderer context");
 	bool ret = true;
 
+	
+	camera.width = App->window->GetWidth() / 2;
+	camera.height = App->window->GetHeight() / 2;
+	camera.x = 0;
+	camera.y = 0;
+	
+
 	return ret;
 }
 
@@ -95,3 +102,5 @@ bool ModuleRender::DrawText(const char * text, int x, int y, Font font, int spac
 
     return ret;
 }
+
+
