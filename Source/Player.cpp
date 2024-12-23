@@ -22,9 +22,22 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 void Player::Update() {
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(speed) >= 1) {
-		if (IsKeyDown(KEY_RIGHT)) body->body->ApplyTorque(0.02f / abs(speed), true);
-		else if (IsKeyDown(KEY_LEFT)) body->body->ApplyTorque(-0.02f / abs(speed), true);
-		else body->body->SetAngularVelocity(0.f);
+		isSpinning = false;
+		if (IsKeyDown(KEY_RIGHT)) {
+			if (isSpinningRight) body->body->ApplyTorque(0.09f / abs(speed), true);
+			body->body->ApplyTorque(0.02f / abs(speed), true);
+			isSpinningRight = false;
+			isSpinning = true;
+		}
+		
+		if (IsKeyDown(KEY_LEFT)) {
+			if(!isSpinningRight) body->body->ApplyTorque(-0.09f / abs(speed), true);
+			body->body->ApplyTorque(-0.02f / abs(speed), true);
+			isSpinningRight = true;
+			isSpinning = true;
+		}
+
+		if (!isSpinning) body->body->SetAngularVelocity(0.f);
 	}
 	else body->body->SetAngularVelocity(0.f);
 
@@ -53,7 +66,7 @@ void Player::Update() {
 	body->body->GetAngularVelocity();
 	
 
-	TraceLog(LOG_INFO, "Position: %f, WV (%.2f, %.2f), velocity: (%.2f, %.2f), Force: f", x, f.x, f.y, body->body->GetLinearVelocity().x, body->body->GetLinearVelocity().y);
+	//TraceLog(LOG_INFO, "Position: %f, WV (%.2f, %.2f), velocity: (%.2f, %.2f), Force: f", x, f.x, f.y, body->body->GetLinearVelocity().x, body->body->GetLinearVelocity().y);
 
 	GetPosition(x, y);
 	Vector2 position = { x,y };

@@ -27,4 +27,6 @@ public:
 public:
 
 private:
+	bool isSpinningRight = false;
+	bool isSpinning = false;
 };
