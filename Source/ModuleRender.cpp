@@ -75,17 +75,18 @@ bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* sectio
 {
 	bool ret = true;
 
-	float scale = 1.0f;
     Vector2 position = { (float)x, (float)y };
-    Rectangle rect = { 0.f, 0.f, (float)texture.width, (float)texture.height };
+	texture.width *= SCALE;
+	texture.height *= SCALE;
+    Rectangle rect = { 0.f, 0.f, (float)texture.width, (float)texture.height};
 
     if (section != NULL) rect = *section;
 
-    position.x = (float)(x-pivot_x) * scale + camera.x;
-    position.y = (float)(y-pivot_y) * scale + camera.y;
+    position.x = (float)(x-pivot_x) + camera.x;
+    position.y = (float)(y-pivot_y) + camera.y;
 
-	rect.width *= scale;
-	rect.height *= scale;
+	rect.width;
+	rect.height;
 
     DrawTextureRec(texture, rect, position, WHITE);
 

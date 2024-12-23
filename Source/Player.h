@@ -21,8 +21,6 @@ public:
 	
 
 	float speed;
-
-	float scale = 1.0f;
 	
 public:
 

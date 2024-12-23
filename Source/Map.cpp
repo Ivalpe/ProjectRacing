@@ -59,7 +59,7 @@ update_status Map::Update()
 								Vector2 mapCoord = MapToWorld(i, j);
 								//Draw the texture
 								
-								App->renderer->Draw(*tileSet->texture, mapCoord.x, mapCoord.y, &tileRect);
+								App->renderer->Draw(*tileSet->texture, mapCoord.x , mapCoord.y, &tileRect);
 							}
 						}
 					}
@@ -129,8 +129,8 @@ bool Map::Load(std::string path, std::string fileName)
 
 	mapData.width = mapFileXML.child("map").attribute("width").as_int();
 	mapData.height = mapFileXML.child("map").attribute("height").as_int();
-	mapData.tileWidth = mapFileXML.child("map").attribute("tilewidth").as_int();
-	mapData.tileHeight = mapFileXML.child("map").attribute("tileheight").as_int();
+	mapData.tileWidth = mapFileXML.child("map").attribute("tilewidth").as_int() * SCALE;
+	mapData.tileHeight = mapFileXML.child("map").attribute("tileheight").as_int() * SCALE;
 
 	//Iterate the Tileset
 	for (pugi::xml_node tilesetNode = mapFileXML.child("map").child("tileset"); tilesetNode != NULL; tilesetNode = tilesetNode.next_sibling("tileset"))
@@ -139,8 +139,8 @@ bool Map::Load(std::string path, std::string fileName)
 		TileSet* tileSet = new TileSet();
 		tileSet->firstGid = tilesetNode.attribute("firstgid").as_int();
 		tileSet->name = tilesetNode.attribute("name").as_string();
-		tileSet->tileWidth = tilesetNode.attribute("tilewidth").as_int();
-		tileSet->tileHeight = tilesetNode.attribute("tileheight").as_int();
+		tileSet->tileWidth = tilesetNode.attribute("tilewidth").as_int() * SCALE;
+		tileSet->tileHeight = tilesetNode.attribute("tileheight").as_int() * SCALE;
 		tileSet->spacing = tilesetNode.attribute("spacing").as_int();
 		tileSet->margin = tilesetNode.attribute("margin").as_int();
 		tileSet->tileCount = tilesetNode.attribute("tilecount").as_int();

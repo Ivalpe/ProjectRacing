@@ -24,7 +24,7 @@ bool ModuleGame::Start()
 	background_layer2 = LoadTexture("Assets/background2.png");
 	background_layer3 = LoadTexture("Assets/background3.png");
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
-	App->map->Load("Assets/Maps/","racing.tmx");
+	App->map->Load("Assets/Maps/", "racing.tmx");
 
 
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
@@ -34,7 +34,7 @@ bool ModuleGame::Start()
 	car = new Player();
 
 	selectedPos = 0;
-	
+
 	int width = SPRITE_WIDTH * 3;
 	int height = SPRITE_HEIGHT * 3;
 	float posX = 100, posY = 100;
@@ -48,7 +48,7 @@ bool ModuleGame::Start()
 		else posX += 100;
 	}
 
-	
+
 
 	return ret;
 }
@@ -105,25 +105,25 @@ void ModuleGame::SelectCharacter() {
 		selectedPos--;
 	}
 
-	
+
 	Rectangle rect;
 	rect.x = 0;
 	rect.y = 0;
-	rect.width = SPRITE_WIDTH * 3;
-	rect.height = SPRITE_HEIGHT * 3;
+	rect.width = SPRITE_WIDTH;
+	rect.height = SPRITE_HEIGHT;
 	for (int i = 0; i < vehicles.size(); i++) App->renderer->Draw(vehicles[i], posVehicles[i].x, posVehicles[i].y, &rect);
 
 	rect.x = 0;
 	rect.y = 0;
-	rect.width = SPRITE_WIDTH * 3;
-	rect.height = SPRITE_HEIGHT * 3;
+	rect.width = SPRITE_WIDTH;
+	rect.height = SPRITE_HEIGHT;
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
 
 	if (IsKeyPressed(KEY_SPACE)) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
 		stateGame = GAME;
 	}
-	
+
 }
 
 void ModuleGame::Game() {
@@ -140,12 +140,12 @@ void ModuleGame::Game() {
 	int carX, carY;
 	/*car->GetPosition(carX, carY);
 	car->body->GetPhysicPosition(carX, carY);*/
-	carX = METERS_TO_PIXELS(car->body->body->GetTransform().p.x );
-	carY = METERS_TO_PIXELS(car->body->body->GetTransform().p.y );
-	
-	App->renderer->camera.x = ((carX + SCREEN_WIDTH  / 2) * -(SCREEN_SIZE));
-	App->renderer->camera.y = ((carY + SCREEN_HEIGHT / 2) * -(SCREEN_SIZE));
-
+	carX = METERS_TO_PIXELS(car->body->body->GetTransform().p.x);
+	carY = METERS_TO_PIXELS(car->body->body->GetTransform().p.y);
+	/*
+	App->renderer->camera.x = ((carX) * -(SCREEN_SIZE));
+	App->renderer->camera.y = ((carY) * -(SCREEN_SIZE));
+	*/
 	TraceLog(LOG_INFO, "Postion %d, %d // Camera %f, %f", carX, carY, App->renderer->camera.x, App->renderer->camera.y);
 
 	//just a test to check the received position was correct
@@ -154,5 +154,5 @@ void ModuleGame::Game() {
 	//drew the camera outline and yep, it encloses the map
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
-	
+
 }
