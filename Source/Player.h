@@ -18,6 +18,10 @@ public:
 	void Update() override;
 
 	void SetParameters(ModulePhysics* physics, Texture2D txt);
+
+	void SetCamera(Rectangle cam) {
+		camera = cam;
+	}
 	
 
 	float speed;
@@ -27,4 +31,5 @@ public:
 private:
 	bool isSpinningRight = false;
 	bool isSpinning = false;
+	Rectangle camera;
 };
