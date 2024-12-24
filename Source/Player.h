@@ -19,11 +19,6 @@ public:
 
 	void SetParameters(ModulePhysics* physics, Texture2D txt);
 
-	void SetCamera(Rectangle cam) {
-		camera = cam;
-	}
-	
-
 	float speed;
 	
 public:
@@ -31,5 +26,4 @@ public:
 private:
 	bool isSpinningRight = false;
 	bool isSpinning = false;
-	Rectangle camera;
 };

@@ -28,7 +28,12 @@ public:
 		return texture;
 	}
 
+	void SetCamera(Rectangle cam) {
+		camera = cam;
+	}
+
 	virtual void Update() = 0;
 
 	float MaxSpeed = 10;
+	Rectangle camera;
 };
