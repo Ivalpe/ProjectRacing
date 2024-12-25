@@ -33,8 +33,6 @@ public:
 
 	update_status Update() = 0;
 
-	float MaxSpeed = 10;
-
 	virtual void OnCollision(PhysBody* physA, PhysBody* physB) {
 
 	};
