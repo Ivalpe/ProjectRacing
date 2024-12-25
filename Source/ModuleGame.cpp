@@ -5,6 +5,7 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "ModuleWindow.h"
 #include "Map.h"
 
@@ -32,6 +33,7 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
 	car = new Player(App);
+	carEntity = new Enemy(App);
 
 	selectedPos = 0;
 
@@ -47,8 +49,6 @@ bool ModuleGame::Start()
 		}
 		else posX += 100;
 	}
-
-
 
 	return ret;
 }
@@ -121,6 +121,7 @@ void ModuleGame::SelectCharacter() {
 
 	if (IsKeyPressed(KEY_SPACE)) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
+		carEntity->SetParameters(App->physics, vehicles[0]);
 		stateGame = GAME;
 	}
 
@@ -129,6 +130,7 @@ void ModuleGame::SelectCharacter() {
 void ModuleGame::Game() {
 
 	car->Update();
+	carEntity->Update();
 
 	//camera
 	int carX, carY;

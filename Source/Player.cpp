@@ -24,7 +24,7 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 
 update_status Player::Update() {
 
-  update_status ret = UPDATE_CONTINUE;
+	update_status ret = UPDATE_CONTINUE;
 
 	b2Vec2 currentvelocity = body->body->GetLinearVelocity();
 	currentSpeed = (float)sqrt(currentvelocity.x * currentvelocity.x + currentvelocity.y * currentvelocity.y);
@@ -46,7 +46,7 @@ update_status Player::Update() {
 			isSpinningRight = false;
 			isSpinning = true;
 		}
-		
+
 		if (IsKeyDown(KEY_LEFT)) {
 			if (forward) {
 				if (!isSpinningRight) body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
@@ -98,8 +98,9 @@ update_status Player::Update() {
 				if (forward) speed += forceIncrement / 2;
 				else speed -= forceIncrement / 2;
 			}
-		} else body->body->SetLinearVelocity(b2Vec2(0.f, 0.f));
-	} 
+		}
+		else body->body->SetLinearVelocity(b2Vec2(0.f, 0.f));
+	}
 
 	b2Vec2 f = body->body->GetWorldVector(b2Vec2(0.0f, speed));
 	b2Vec2 p = body->body->GetWorldPoint(b2Vec2_zero);
@@ -109,13 +110,13 @@ update_status Player::Update() {
 
 
 	body->body->GetAngularVelocity();
-	
+
 
 	GetPosition(x, y);
 	//x = body->body->GetTransform().p.x;
 	//y = body->body->GetTransform().p.y;
-	
-	
+
+
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
 	Rectangle dest = { x + App->renderer->camera.x , y + App->renderer->camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * SCALE, ((float)texture.height / (2.0f)) * SCALE };

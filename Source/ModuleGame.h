@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "Module.h"
 #include "Player.h"
-
+#include "Enemy.h"
 #include "p2Point.h"
 
 #include "raylib.h"
@@ -36,6 +36,7 @@ public:
 	std::vector<Vector2> posVehicles;
 	int selectedPos;
 	Player* car;
+	Enemy* carEntity;
 
 public:
 
