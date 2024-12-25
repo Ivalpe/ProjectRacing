@@ -185,5 +185,6 @@ private:
 
 	MapData mapData;
 	std::list<PhysBody*> collisions;
+	std::vector<b2Vec2> initialPos;
 	pugi::xml_node mapParameters;
 };

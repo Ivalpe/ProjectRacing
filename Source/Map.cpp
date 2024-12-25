@@ -83,16 +83,18 @@ update_status Map::Update()
 				}
 			}
 		}
-		
+
+		int pos = 0;
 		for (PhysBody* col : collisions) {
 			//int a, b;
-			float x = PIXEL_TO_METERS(col->body->GetTransform().p.x) + (App->renderer->camera.x / 50);
-			float y = PIXEL_TO_METERS(col->body->GetTransform().p.y) + (App->renderer->camera.y / 50);
-			TraceLog(LOG_INFO, "x: %f, y: %f", x, y);
+			float x = PIXEL_TO_METERS(initialPos.at(pos).x * 2) + (App->renderer->camera.x / 50);
+			float y = PIXEL_TO_METERS(initialPos.at(pos).y * 2) + (App->renderer->camera.y / 50);
+			TraceLog(LOG_INFO, "x: %f, y: %f", initialPos.at(pos).x, 0);
 			//col->GetPhysicPositionWithCamera(a, b, App->renderer->camera);
 			col->body->SetTransform({ x, y }, 0);
+			pos++;
 		}
-		
+
 	}
 
 	return ret;
@@ -287,6 +289,7 @@ bool Map::Load(std::string path, std::string fileName)
 				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				c->ctype = ColliderType::WALL;
 				collisions.push_back(c);
+				initialPos.push_back({ (float)object->x, (float)object->y });
 			}
 		}
 
