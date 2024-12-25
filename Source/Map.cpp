@@ -13,23 +13,23 @@
 
 
 int* Map::ConvertToIntArray(const std::vector<b2Vec2>& vertices) {
-	
+
 	vertNum = vertices.size();
 	intVertices = new int[vertNum * 2];
-	
+
 	for (size_t i = 0; i < vertices.size(); ++i) {
 		size_t j = vertNum - 1 - i; //reversed index
-		intVertices[j * 2] = static_cast<int>(std::round(vertices[i].x)) * SCALE; 
-		intVertices[j * 2 + 1] = static_cast<int>(std::round(vertices[i].y)) * SCALE; 
+		intVertices[j * 2] = static_cast<int>(std::round(vertices[i].x)) * SCALE;
+		intVertices[j * 2 + 1] = static_cast<int>(std::round(vertices[i].y)) * SCALE;
 	}
-	
+
 	return intVertices;
 }
 
 
 Map::Map(Application* app, bool start_enabled) : Module(app, start_enabled), mapLoaded(false)
 {
-	
+
 }
 
 // Destructor
@@ -75,14 +75,24 @@ update_status Map::Update()
 								//Get the screen coordinates from the tile coordinates
 								Vector2 mapCoord = MapToWorld(i, j);
 								//Draw the texture
-								
-								App->renderer->Draw(*tileSet->texture, mapCoord.x , mapCoord.y, &tileRect);
+
+								App->renderer->Draw(*tileSet->texture, mapCoord.x, mapCoord.y, &tileRect);
 							}
 						}
 					}
 				}
 			}
 		}
+		
+		for (PhysBody* col : collisions) {
+			//int a, b;
+			float x = PIXEL_TO_METERS(col->body->GetTransform().p.x) + (App->renderer->camera.x / 50);
+			float y = PIXEL_TO_METERS(col->body->GetTransform().p.y) + (App->renderer->camera.y / 50);
+			TraceLog(LOG_INFO, "x: %f, y: %f", x, y);
+			//col->GetPhysicPositionWithCamera(a, b, App->renderer->camera);
+			col->body->SetTransform({ x, y }, 0);
+		}
+		
 	}
 
 	return ret;
@@ -250,7 +260,7 @@ bool Map::Load(std::string path, std::string fileName)
 				std::stringstream ss(object->pointString);
 				std::string point;
 				while (std::getline(ss, point, ' ')) {
-					
+
 					float x, y;
 					sscanf_s(point.c_str(), "%f,%f", &x, &y);
 					vertices.emplace_back(x, y);
@@ -260,7 +270,7 @@ bool Map::Load(std::string path, std::string fileName)
 				object->vertNum = vertNum * 2;
 				vertices.clear();
 			}
-			
+
 			objectGroup->object.push_back(object);
 		}
 		mapData.objectsGroups.push_back(objectGroup);
@@ -272,12 +282,14 @@ bool Map::Load(std::string path, std::string fileName)
 		{
 			for (Object* object : objectGroup->object)
 			{
+				//TraceLog(LOG_INFO, "%d", object->x);
 				PhysBody* c = App->physics->CreateChain((object->x) * SCALE, (object->y) * SCALE, object->vertices, object->vertNum, STATIC);
 				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				c->ctype = ColliderType::WALL;
+				collisions.push_back(c);
 			}
 		}
-		
+
 	}
 
 
@@ -296,7 +308,7 @@ bool Map::Load(std::string path, std::string fileName)
 						/*PhysBody* c1 = App->physics->CreateRectangle(mapCoord.x + 16, mapCoord.y + 16, 32, 32, b2BodyType::b2_staticBody);
 						c1->ctype = ColliderType::WALL;*/
 					}
-				
+
 				}
 			}
 		}
@@ -339,14 +351,6 @@ bool Map::Load(std::string path, std::string fileName)
 	return ret;
 }
 
-//std::list<Vector2> Map::GetBonfireList() {
-//	return posBonfire;
-//}
-//
-//std::list<Vector2> Map::GetPoisonList() {
-//	return posPoison;
-//}
-
 // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 Vector2 Map::MapToWorld(int x, int y) const
 {
@@ -368,7 +372,7 @@ Vector2 Map::WorldToMap(int x, int y) {
 	return ret;
 }
 
- //L09: TODO 6: Load a group of properties from a node and fill a list with it
+//L09: TODO 6: Load a group of properties from a node and fill a list with it
 bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
 	bool ret = false;

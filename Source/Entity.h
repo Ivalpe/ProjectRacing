@@ -2,14 +2,16 @@
 
 #include "Globals.h"
 #include <box2d/b2_math.h>
+#include "Module.h"
+
 
 class Application;
 class PhysBody;
 
-class Entity
+class Entity : public Module
 {
 public:
-	Entity() {};
+	Entity(Application* parent);
 
 	virtual ~Entity() {};
 
@@ -29,12 +31,7 @@ public:
 		return texture;
 	}
 
-	void SetCamera(Rectangle cam) {
-		camera = cam;
-	}
-
-	virtual void Update() = 0;
+	update_status Update() = 0;
 
 	float MaxSpeed = 10;
-	Rectangle camera;
 };

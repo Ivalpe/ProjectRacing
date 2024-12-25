@@ -31,7 +31,7 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
-	car = new Player();
+	car = new Player(App);
 
 	selectedPos = 0;
 
@@ -127,14 +127,7 @@ void ModuleGame::SelectCharacter() {
 }
 
 void ModuleGame::Game() {
-	Rectangle rect;
-	rect.x = 0;
-	rect.y = 208;
-	rect.width = SCREEN_WIDTH;
-	rect.height = SCREEN_HEIGHT;
-	//App->renderer->Draw(background_layer3, 0, 0, &rect);
 
-	car->SetCamera(App->renderer->camera);
 	car->Update();
 
 	//camera
@@ -148,12 +141,4 @@ void ModuleGame::Game() {
 	App->renderer->camera.y = ((carY - SCREEN_HEIGHT / 2) * -(SCREEN_SIZE));
 	
 	TraceLog(LOG_INFO, "Postion %d, %d // Camera %f, %f", carX, carY, App->renderer->camera.x, App->renderer->camera.y);
-
-	//just a test to check the received position was correct
-	//DrawRectangle(carX - 25, carY - 40, 50, 80, Color({ 0,0,255,255 }));
-
-	//drew the camera outline and yep, it encloses the map
-	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
-
-
 }

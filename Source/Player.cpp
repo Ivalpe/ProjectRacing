@@ -1,11 +1,12 @@
 
 #include "Globals.h"
 #include "Entity.h"
+#include "Module.h"
 #include "Player.h"
 #include <algorithm>
 
 
-Player::Player() : Entity()
+Player::Player(Application* parent) : Entity(parent)
 {
 	speed = 0.f;
 }
@@ -13,16 +14,17 @@ Player::Player() : Entity()
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	x = SCREEN_WIDTH / 6;
-	y = SCREEN_HEIGHT / 6;
-
+	x = SCREEN_WIDTH / 2;
+	y = SCREEN_HEIGHT / 2;
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, body->body->GetTransform().q.GetAngle());
 }
 
-void Player::Update() {
-	float torqueSpeed = 1.f * SCALE;
-	static b2Vec2 velocity = b2Vec2(0, 0);
+update_status Player::Update() {
+
+	update_status ret = UPDATE_CONTINUE;
+
+	float torqueSpeed = 1.f;
 	if (abs(speed) >= 1) {
 		isSpinning = false;
 		if (IsKeyDown(KEY_RIGHT)) {
@@ -74,16 +76,17 @@ void Player::Update() {
 	//x = body->body->GetTransform().p.x;
 	//y = body->body->GetTransform().p.y;
 	
+	
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
-	Rectangle dest = { x + camera.x , y + camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
+	Rectangle dest = { x + App->renderer->camera.x , y + App->renderer->camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * SCALE, ((float)texture.height / (2.0f)) * SCALE };
 	float rotation = body->GetRotation() * RAD2DEG;
 	DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 
 
-	/*SetPosition({ (float)dest.x, (float)dest.y });*/
+	//SetPosition({ (float)dest.x, (float)dest.y });
 
-	
+	return ret;
 }
 
 void Entity::GetPosition(int& x, int& y) const {
