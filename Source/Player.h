@@ -20,10 +20,19 @@ public:
 	void SetParameters(ModulePhysics* physics, Texture2D txt);
 
 	float speed;
+
+	void OnCollision(PhysBody* physA, PhysBody* physB);
+
+	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 	
 public:
 
 private:
+	float currentSpeed = 0.f;
+
 	bool isSpinningRight = false;
 	bool isSpinning = false;
+
+	bool forward = false;
+	bool Stopped = true;
 };

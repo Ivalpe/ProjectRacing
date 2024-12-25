@@ -2,6 +2,7 @@
 #include "Globals.h"
 #include "Entity.h"
 #include "Player.h"
+#include "box2d/b2_math.h"
 #include <algorithm>
 
 
@@ -18,23 +19,41 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, body->body->GetTransform().q.GetAngle());
+	body->listenerptr = this;
 }
 
 void Player::Update() {
-	float torqueSpeed = 1.f * SCALE;
+
+	b2Vec2 currentvelocity = body->body->GetLinearVelocity();
+	currentSpeed = (float)sqrt(currentvelocity.x * currentvelocity.x + currentvelocity.y * currentvelocity.y);
+	TraceLog(LOG_INFO, "velocity: %.2f, %.2f, speed = %.10f", currentvelocity.x, currentvelocity.y, currentSpeed);
+
+	float torqueSpeed = 0.7f * SCALE;
 	static b2Vec2 velocity = b2Vec2(0, 0);
-	if (abs(speed) >= 1) {
+	if (abs(currentSpeed) >= 0.75) {
 		isSpinning = false;
 		if (IsKeyDown(KEY_RIGHT)) {
-			if (isSpinningRight) body->body->ApplyTorque(torqueSpeed / abs(speed), true);
-			body->body->ApplyTorque(torqueSpeed / abs(speed), true);
+			if (forward) {
+				if (isSpinningRight) body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
+				body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
+			}
+			else {
+				if (isSpinningRight) body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
+				body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
+			}
 			isSpinningRight = false;
 			isSpinning = true;
 		}
 		
 		if (IsKeyDown(KEY_LEFT)) {
-			if(!isSpinningRight) body->body->ApplyTorque(-torqueSpeed / abs(speed), true);
-			body->body->ApplyTorque(-torqueSpeed / abs(speed), true);
+			if (forward) {
+				if (!isSpinningRight) body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
+				body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
+			}
+			else {
+				if (!isSpinningRight) body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
+				body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
+			}
 			isSpinningRight = true;
 			isSpinning = true;
 		}
@@ -43,32 +62,52 @@ void Player::Update() {
 	}
 	else body->body->SetAngularVelocity(0.f);
 
+	float forceIncrement = 10.f;
+
+	speed = 0;
+
 	if (IsKeyDown(KEY_UP)) {
-		if (speed >= -MaxSpeed) speed -= 0.1f;
+		Stopped = false;
+		forward = true;
+		if ((int)currentSpeed * 10000 == 0) {
+			TraceLog(LOG_INFO, "FASTER");
+			if (currentSpeed <= MaxSpeed) speed -= forceIncrement * 2;
+		}
+		else if (currentSpeed <= MaxSpeed) speed -= forceIncrement;
 	}
 	else if (IsKeyDown(KEY_DOWN)) {
-		if (speed <= MaxSpeed) speed += 0.1f;
+		Stopped = false;
+		forward = false;
+		if ((int)currentSpeed * 10000 == 0) {
+			TraceLog(LOG_INFO, "FASTER");
+			if (currentSpeed <= MaxSpeed) speed += forceIncrement * 2;
+		}
+		else if (currentSpeed <= MaxSpeed) speed += forceIncrement;
 	}
 
 
 	if (IsKeyUp(KEY_UP) && IsKeyUp(KEY_DOWN)) {
-		if (speed > 0) {
-			speed -= 0.1;
-		}
-		else if (speed < 0) {
-			speed += 0.1;
-		}
-	}
+		if (!Stopped) {
+			if (currentSpeed <= 0.5) {
+				Stopped = true;
+				body->body->SetLinearVelocity(b2Vec2(0.f, 0.f));
+			}
+			else {
+				if (forward) speed += forceIncrement / 2;
+				else speed -= forceIncrement / 2;
+			}
+		} else body->body->SetLinearVelocity(b2Vec2(0.f, 0.f));
+	} 
 
 	b2Vec2 f = body->body->GetWorldVector(b2Vec2(0.0f, speed));
 	b2Vec2 p = body->body->GetWorldPoint(b2Vec2_zero);
-	body->body->SetLinearVelocity(b2Vec2({ f.x, f.y }));
+	//body->body->SetLinearVelocity(b2Vec2({ f.x, f.y }));
+
+	body->body->ApplyForceToCenter(b2Vec2({ f.x, f.y }), true);
 
 
 	body->body->GetAngularVelocity();
 	
-
-	//TraceLog(LOG_INFO, "Position: %f, WV (%.2f, %.2f), velocity: (%.2f, %.2f), Force: f", x, f.x, f.y, body->body->GetLinearVelocity().x, body->body->GetLinearVelocity().y);
 
 	GetPosition(x, y);
 	//x = body->body->GetTransform().p.x;
@@ -84,6 +123,26 @@ void Player::Update() {
 	/*SetPosition({ (float)dest.x, (float)dest.y });*/
 
 	
+}
+
+void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
+	switch (physB->ctype) {
+	case ColliderType::WALL:
+		TraceLog(LOG_INFO, "COLLISION");
+		Stopped = true;
+		break;
+	default:
+		break;
+	}
+}
+
+void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
+	switch (physB->ctype) {
+	case ColliderType::WALL:
+		break;
+	default:
+		break;
+	}
 }
 
 void Entity::GetPosition(int& x, int& y) const {

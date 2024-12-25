@@ -33,8 +33,16 @@ public:
 		camera = cam;
 	}
 
+	virtual void OnCollision(PhysBody* physA, PhysBody* physB) {
+
+	};
+
+	virtual void OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
+
+	};
+
 	virtual void Update() = 0;
 
-	float MaxSpeed = 10;
+	float MaxSpeed = 5;
 	Rectangle camera;
 };

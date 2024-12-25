@@ -147,7 +147,7 @@ void ModuleGame::Game() {
 	App->renderer->camera.x = ((carX - SCREEN_WIDTH / 2) * -(SCREEN_SIZE));
 	App->renderer->camera.y = ((carY - SCREEN_HEIGHT / 2) * -(SCREEN_SIZE));
 	
-	TraceLog(LOG_INFO, "Postion %d, %d // Camera %f, %f", carX, carY, App->renderer->camera.x, App->renderer->camera.y);
+	//TraceLog(LOG_INFO, "Postion %d, %d // Camera %f, %f", carX, carY, App->renderer->camera.x, App->renderer->camera.y);
 
 	//just a test to check the received position was correct
 	//DrawRectangle(carX - 25, carY - 40, 50, 80, Color({ 0,0,255,255 }));
