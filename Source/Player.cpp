@@ -71,16 +71,28 @@ void Player::Update() {
 	//TraceLog(LOG_INFO, "Position: %f, WV (%.2f, %.2f), velocity: (%.2f, %.2f), Force: f", x, f.x, f.y, body->body->GetLinearVelocity().x, body->body->GetLinearVelocity().y);
 
 	GetPosition(x, y);
-	Vector2 position = { x,y };
-
+	//x = body->body->GetTransform().p.x;
+	//y = body->body->GetTransform().p.y;
 	
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
-	Rectangle dest = { position.x + camera.x , position.y + camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
+	Rectangle dest = { x + camera.x , y + camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * SCALE, ((float)texture.height / (2.0f)) * SCALE };
 	float rotation = body->GetRotation() * RAD2DEG;
 	DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+
+
+	/*SetPosition({ (float)dest.x, (float)dest.y });*/
+
+	
 }
 
 void Entity::GetPosition(int& x, int& y) const {
 	body->GetPhysicPosition(x, y);
+}
+
+void Entity::SetPosition(Vector2 pos) {
+
+	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.x), PIXEL_TO_METERS(pos.y));
+	body->body->SetTransform(bodyPos, body->GetRotation());
+
 }

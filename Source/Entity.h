@@ -23,6 +23,7 @@ public:
 	}
 
 	void GetPosition(int& x, int& y) const;
+	void SetPosition(Vector2 pos);
 
 	Texture2D GetTexture() {
 		return texture;

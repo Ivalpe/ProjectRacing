@@ -5,9 +5,26 @@
 #include "Module.h"
 #include "Globals.h"
 
-
-
+#include <sstream>
+#include <string>
+#include <iostream>
+#include <cmath>
 #include <math.h>
+
+
+int* Map::ConvertToIntArray(const std::vector<b2Vec2>& vertices) {
+	
+	vertNum = vertices.size();
+	intVertices = new int[vertNum * 2];
+	
+	for (size_t i = 0; i < vertices.size(); ++i) {
+		size_t j = vertNum - 1 - i; //reversed index
+		intVertices[j * 2] = static_cast<int>(std::round(vertices[i].x)) * SCALE; 
+		intVertices[j * 2 + 1] = static_cast<int>(std::round(vertices[i].y)) * SCALE; 
+	}
+	
+	return intVertices;
+}
 
 
 Map::Map(Application* app, bool start_enabled) : Module(app, start_enabled), mapLoaded(false)
@@ -178,41 +195,89 @@ bool Map::Load(std::string path, std::string fileName)
 	}
 
 	//Collisions
-	for (pugi::xml_node tileNode = mapFileXML.child("map").child("objectgroup").child("object"); tileNode != NULL; tileNode = tileNode.next_sibling("object")) {
-		int h;
-		std::string p = tileNode.child("properties").child("property").attribute("value").as_string();
-		if (p == "PLATFORM")
-			h = 1;
-		else
-			h = tileNode.attribute("height").as_int();
+	//for (pugi::xml_node tileNode = mapFileXML.child("map").child("objectgroup").child("object"); tileNode != NULL; tileNode = tileNode.next_sibling("object")) {
+	//	int h;
+	//	std::string p = tileNode.child("properties").child("property").attribute("value").as_string();
+	//	if (p == "PLATFORM")
+	//		h = 1;
+	//	else
+	//		h = tileNode.attribute("height").as_int();
 
-		PhysBody* pb = App->physics->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, b2BodyType::b2_staticBody);
-		if(p == "CAR")
-		{
-			pb->ctype = ColliderType::CAR;
-		}
-		if (p == "WALL")
-		{
-			pb->ctype = ColliderType::WALL;
-		}
-		//if (p == "WALL")
-		//	pb->ctype = ColliderType::WALL;
-		//else if (p == "PLATFORM")
-		//	pb->ctype = ColliderType::GROUND;
-		//else if (p == "DIE")
-		//	pb->ctype = ColliderType::DIE;
-		//else if (p == "NEW")
-		//	pb->ctype = ColliderType::NEW;
-		//else if (p == "LOAD")
-		//	pb->ctype = ColliderType::LOAD;
-		//else if (p == "LEV2")
-		//	pb->ctype = ColliderType::LEV2;
-		//else if (p == "LEV2")
-		//	pb->ctype = ColliderType::WIN;
-		//else
-		//	pb->ctype = ColliderType::GROUND;
+	//	PhysBody* pb = App->physics->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, b2BodyType::b2_staticBody);
+	//	if(p == "CAR")
+	//	{
+	//		pb->ctype = ColliderType::CAR;
+	//	}
+	//	if (p == "WALL")
+	//	{
+	//		pb->ctype = ColliderType::WALL;
+	//	}
+	//	//if (p == "WALL")
+	//	//	pb->ctype = ColliderType::WALL;
+	//	//else if (p == "PLATFORM")
+	//	//	pb->ctype = ColliderType::GROUND;
+	//	//else if (p == "DIE")
+	//	//	pb->ctype = ColliderType::DIE;
+	//	//else if (p == "NEW")
+	//	//	pb->ctype = ColliderType::NEW;
+	//	//else if (p == "LOAD")
+	//	//	pb->ctype = ColliderType::LOAD;
+	//	//else if (p == "LEV2")
+	//	//	pb->ctype = ColliderType::LEV2;
+	//	//else if (p == "LEV2")
+	//	//	pb->ctype = ColliderType::WIN;
+	//	//else
+	//	//	pb->ctype = ColliderType::GROUND;
 
-		collisions.push_back(pb);
+	//	collisions.push_back(pb);
+	//}
+
+	for (pugi::xml_node objectGroupNode = mapFileXML.child("map").child("objectgroup"); objectGroupNode != NULL; objectGroupNode = objectGroupNode.next_sibling("objectgroup")) {
+
+		ObjectGroup* objectGroup = new ObjectGroup();
+		objectGroup->id = objectGroupNode.attribute("id").as_int();
+		objectGroup->name = objectGroupNode.attribute("name").as_string();
+		for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
+			Object* object = new Object();
+			object->id = objectNode.attribute("id").as_int();
+			object->x = objectNode.attribute("x").as_int();
+			object->y = objectNode.attribute("y").as_int();
+			object->width = objectNode.attribute("width").as_int();
+			object->height = objectNode.attribute("height").as_int();
+			object->pointString = objectNode.child("polygon").attribute("points").as_string();
+			if (object->pointString) {
+
+				std::stringstream ss(object->pointString);
+				std::string point;
+				while (std::getline(ss, point, ' ')) {
+					
+					float x, y;
+					sscanf_s(point.c_str(), "%f,%f", &x, &y);
+					vertices.emplace_back(x, y);
+				}
+				LOG("vertices:", vertices);
+				object->vertices = ConvertToIntArray(vertices);
+				object->vertNum = vertNum * 2;
+				vertices.clear();
+			}
+			
+			objectGroup->object.push_back(object);
+		}
+		mapData.objectsGroups.push_back(objectGroup);
+	}
+
+	for (ObjectGroup* objectGroup : mapData.objectsGroups)
+	{
+		if (objectGroup->name == "Collisions")
+		{
+			for (Object* object : objectGroup->object)
+			{
+				PhysBody* c = App->physics->CreateChain((object->x) * SCALE, (object->y) * SCALE, object->vertices, object->vertNum, STATIC);
+				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
+				c->ctype = ColliderType::WALL;
+			}
+		}
+		
 	}
 
 
@@ -269,7 +334,7 @@ bool Map::Load(std::string path, std::string fileName)
 	if (mapFileXML) mapFileXML.reset();
 
 	/*}*/
-
+	delete[] intVertices;
 	mapLoaded = ret;
 	return ret;
 }

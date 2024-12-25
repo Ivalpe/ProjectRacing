@@ -49,8 +49,31 @@ struct MapLayer
 	}
 };
 
+
+struct Object
+{
+	int id;
+	int x;
+	int y;
+	int width;
+	int height;
+	const char* pointString;
+	int* vertices;
+	int vertNum;
+};
+
+struct ObjectGroup
+{
+	int id;
+	std::string name;
+	std::vector<Object*> object;
+};
+
+
 // L06: TODO 2: Create a struct to hold information for a TileSet
 // Ignore Terrain Types and Tile Types for now, but we want the image!
+
+
 
 struct TileSet
 {
@@ -88,6 +111,7 @@ struct MapData
 	int tileHeight;
 	std::list<TileSet*> tilesets;
 	std::list<MapLayer*> layers;
+	std::list<ObjectGroup*> objectsGroups;
 };
 
 class Map : public Module
@@ -145,19 +169,21 @@ public:
 		return mapData.tileHeight;
 	}
 
+	int* ConvertToIntArray(const std::vector<b2Vec2>& vertices);
 	
 
 	
 public:
 	std::string mapFileName;
 	std::string mapPath;
+	std::vector<b2Vec2> vertices;
+	int* intVertices;
+	int vertNum;
 
 private:
 	bool mapLoaded;
 
 	MapData mapData;
 	std::list<PhysBody*> collisions;
-
-
 	pugi::xml_node mapParameters;
 };
