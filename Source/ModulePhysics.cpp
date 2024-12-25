@@ -97,6 +97,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	b->GetUserData().pointer = (uintptr_t)pbody;
 	pbody->width = (int)(width * 0.5f);
 	pbody->height = (int)(height * 0.5f);
 
@@ -242,7 +243,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bodyTy
 	// Create FIXTURE
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-
+	
 	// Add fixture to the BODY
 	b->CreateFixture(&fixture);
 
@@ -252,6 +253,8 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bodyTy
 	// Create our custom PhysBody class
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->ctype = ColliderType::WALL;
+	b->GetUserData().pointer = (uintptr_t)pbody;
 	//b->SetUserData(pbody);
 	pbody->width = pbody->height = 0;
 
@@ -379,4 +382,53 @@ bool ModulePhysics::CleanUp()
 	
 
 	return true;
+}
+
+void ModulePhysics::BeginContact(b2Contact* contact)
+{
+	// Call the OnCollision listener function to bodies A and B, passing as inputs our custom PhysBody classes
+	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+
+	b2Filter disabledFilter;
+	disabledFilter.categoryBits = 0;
+	disabledFilter.maskBits = 0;
+
+
+
+	if (physA && physA->listenerptr != NULL) {
+		if (physB) // Ensure physB is also valid
+		{
+			physA->listenerptr->OnCollision(physA, physB);
+		}
+	}
+
+	if (physB && physB->listenerptr != NULL) {
+		if (physA) // Ensure physA is also valid
+		{
+			physB->listenerptr->OnCollision(physB, physA);
+		}
+	}
+}
+
+// Callback function to collisions with Box2D
+void ModulePhysics::EndContact(b2Contact* contact)
+{
+	// Call the OnCollision listener function to bodies A and B, passing as inputs our custom PhysBody classes
+	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+
+	if (physA && physA->listenerptr != NULL) {
+		if (physB) // Ensure physB is also valid
+		{
+			physA->listenerptr->OnCollisionEnd(physA, physB);
+		}
+	}
+
+	if (physB && physB->listenerptr != NULL) {
+		if (physA) // Ensure physA is also valid
+		{
+			physB->listenerptr->OnCollisionEnd(physB, physA);
+		}
+	}
 }

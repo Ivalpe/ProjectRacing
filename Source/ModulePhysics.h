@@ -2,7 +2,7 @@
 
 #include "Module.h"
 #include "Globals.h"
-
+#include "Entity.h"
 #include "box2d\box2d.h"
 
 enum ColliderType {
@@ -20,7 +20,7 @@ enum bodyType {
 class PhysBody
 {
 public:
-	PhysBody() : body(NULL)
+	PhysBody() : listenerptr(NULL), body(NULL)
 	{}
 
 	void GetPhysicPosition(int& x, int& y) const;
@@ -30,7 +30,7 @@ public:
 public:
 	int width, height;
 	b2Body* body;
-	Module* listenerptr = nullptr;
+	Entity* listenerptr = nullptr;
 	ColliderType ctype;
 };
 
@@ -55,7 +55,8 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	
+	void BeginContact(b2Contact* contact);
+	void EndContact(b2Contact* contact);
 
 private:
 	bool debug;
