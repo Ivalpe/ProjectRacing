@@ -31,7 +31,7 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
-	car = new Player();
+	car = new Player(App);
 
 	selectedPos = 0;
 
@@ -127,14 +127,7 @@ void ModuleGame::SelectCharacter() {
 }
 
 void ModuleGame::Game() {
-	Rectangle rect;
-	rect.x = 0;
-	rect.y = 208;
-	rect.width = SCREEN_WIDTH;
-	rect.height = SCREEN_HEIGHT;
-	//App->renderer->Draw(background_layer3, 0, 0, &rect);
 
-	car->SetCamera(App->renderer->camera);
 	car->Update();
 
 	//camera

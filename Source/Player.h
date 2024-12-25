@@ -4,6 +4,12 @@
 #include <box2d/b2_math.h>
 #include "Entity.h"
 #include "ModulePhysics.h"
+#include "ModuleRender.h"
+#include "Map.h"
+#include "ModuleTextures.h"
+#include "Module.h"
+#include "Globals.h"
+
 
 class Application;
 class PhysBody;
@@ -11,11 +17,11 @@ class PhysBody;
 class Player : public Entity
 {
 public:
-	Player();
+	Player(Application* parent);
 
 	virtual ~Player(){};
 
-	void Update() override;
+	update_status Update() override;
 
 	void SetParameters(ModulePhysics* physics, Texture2D txt);
 
