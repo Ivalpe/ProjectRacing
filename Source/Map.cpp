@@ -238,6 +238,7 @@ bool Map::Load(std::string path, std::string fileName)
 	//	//	pb->ctype = ColliderType::LEV2;
 	//	//else if (p == "LEV2")
 	//	//	pb->ctype = ColliderType::WIN;
+	//	//	pb->ctype = ColliderType::WIN;
 	//	//else
 	//	//	pb->ctype = ColliderType::GROUND;
 
