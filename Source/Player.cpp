@@ -118,7 +118,7 @@ update_status Player::Update() {
 
 
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
-	Rectangle dest = { x + App->renderer->camera.x , y + App->renderer->camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
+	Rectangle dest = { x , y , (float)texture.width * SCALE , (float)texture.height * SCALE };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * SCALE, ((float)texture.height / (2.0f)) * SCALE };
 	float rotation = body->GetRotation() * RAD2DEG;
 	DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
