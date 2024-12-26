@@ -7,6 +7,7 @@
 #include "ModuleGame.h"
 #include "ModuleTextures.h"
 #include "Map.h"
+#include "GuiManager.h"
 
 #include "Application.h"
 
@@ -19,6 +20,7 @@ Application::Application()
 	map = new Map(this, true);
 	physics = new ModulePhysics(this);
 	scene_intro = new ModuleGame(this);
+	guiManager = new GuiManager(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -33,7 +35,7 @@ Application::Application()
 	AddModule(map);
 	// Scenes
 	AddModule(scene_intro);
-
+	AddModule(guiManager);
 	// Rendering happens at the end
 	AddModule(renderer);
 }
