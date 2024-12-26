@@ -89,9 +89,20 @@ update_status Map::Update()
 			//int a, b;
 			float x = PIXEL_TO_METERS(initialPos.at(pos).x * 2) + (App->renderer->camera.x / 50);
 			float y = PIXEL_TO_METERS(initialPos.at(pos).y * 2) + (App->renderer->camera.y / 50);
-			TraceLog(LOG_INFO, "x: %f, y: %f", initialPos.at(pos).x, 0);
+			//TraceLog(LOG_INFO, "x: %f, y: %f", initialPos.at(pos).x, 0);
 			//col->GetPhysicPositionWithCamera(a, b, App->renderer->camera);
 			col->body->SetTransform({ x, y }, 0);
+			pos++;
+		}
+
+		pos = 0;
+		for (PhysBody* sensor : sensors) {
+			//int a, b;
+			float x = PIXEL_TO_METERS(sensorsInitialPos.at(pos).x * 2) + (App->renderer->camera.x / 50);
+			float y = PIXEL_TO_METERS(sensorsInitialPos.at(pos).y * 2) + (App->renderer->camera.y / 50);
+			//TraceLog(LOG_INFO, "x: %f, y: %f", sensorsInitialPos.at(pos).x, 0);
+			//col->GetPhysicPositionWithCamera(a, b, App->renderer->camera);
+			sensor->body->SetTransform({ x, y }, 0);
 			pos++;
 		}
 
@@ -273,6 +284,7 @@ bool Map::Load(std::string path, std::string fileName)
 				object->vertNum = vertNum * 2;
 				vertices.clear();
 			}
+			object->finishLine = objectNode.child("properties").child("property").attribute("value").as_bool();
 
 			objectGroup->object.push_back(object);
 		}
@@ -291,6 +303,19 @@ bool Map::Load(std::string path, std::string fileName)
 				c->ctype = ColliderType::WALL;
 				collisions.push_back(c);
 				initialPos.push_back({ (float)object->x, (float)object->y });
+			}
+		}
+		else if (objectGroup->name == "Sensors") {
+			for (Object* object : objectGroup->object)
+			{
+				//TraceLog(LOG_INFO, "%d", object->x);
+				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width*SCALE, object->height*SCALE, STATIC);
+				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
+				if(object->finishLine) s->ctype = ColliderType::FINISH_LINE;
+				else s->ctype = ColliderType::SENSOR;
+				s->id = object->id;
+				sensors.push_back(s);
+				sensorsInitialPos.push_back({ (float)(object->x + object->width / 2), (float)(object->y + object->height / 2) });
 			}
 		}
 
@@ -353,6 +378,21 @@ bool Map::Load(std::string path, std::string fileName)
 	delete[] intVertices;
 	mapLoaded = ret;
 	return ret;
+}
+
+std::vector<Object*> Map::GetSensors() {
+	std::vector<Object*> checkpoints;
+	for (ObjectGroup* objectGroup : mapData.objectsGroups)
+	{
+		if (objectGroup->name == "Sensors") {
+			for (Object* object : objectGroup->object)
+			{
+				checkpoints.push_back(object);
+			}
+		}
+
+	}
+	return checkpoints;
 }
 
 // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions

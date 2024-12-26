@@ -56,7 +56,12 @@ bool ModuleGame::Start()
 // Load assets
 bool ModuleGame::CleanUp()
 {
-	LOG("Unloading Intro scene");
+	LOG("Unloading scene");
+	for (auto e : enemies) delete e;
+	enemies.clear();
+
+	for (auto c : checkpoints) delete c;
+	checkpoints.clear();
 
 	return true;
 }
@@ -122,7 +127,21 @@ void ModuleGame::SelectCharacter() {
 	if (IsKeyPressed(KEY_SPACE)) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
 		carEntity->SetParameters(App->physics, vehicles[0]);
+		enemies.push_back(carEntity);
 		stateGame = GAME;
+		checkpoints = App->map->GetSensors();
+		for (auto c : checkpoints) {
+			if (!c->finishLine) {
+				CheckpointSensor* s = new CheckpointSensor;
+
+				s->id = c->id;
+				s->active = false;
+				s->changeable = true;
+
+				car->sensors.push_back(s);
+				for (auto e : enemies) e->sensors.push_back(s);
+			}
+		}
 	}
 
 }

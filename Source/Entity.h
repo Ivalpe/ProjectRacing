@@ -8,12 +8,21 @@
 class Application;
 class PhysBody;
 
+struct CheckpointSensor {
+	int id;
+	bool active;
+	bool changeable;
+};
+
 class Entity : public Module
 {
 public:
 	Entity(Application* parent);
 
-	virtual ~Entity() {};
+	virtual ~Entity() {
+		for (auto s : sensors) delete s;
+		sensors.clear();
+	};
 
 	int x, y;
 	float rot;
@@ -51,4 +60,11 @@ public:
 	float MinSpeed = 0.75f;
 	float forceIncrement = 10.f;
 	float torqueSpeed = 0.8f * SCALE;
+	int Lap = 1;
+
+	std::vector<CheckpointSensor*> sensors;
+
+	void CheckSensor(PhysBody* sensor, bool collisionEnd);
+	void CheckFinishLine();
+
 };
