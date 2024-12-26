@@ -34,14 +34,14 @@ update_status Player::Update() {
 	if (abs(currentSpeed) >= MinSpeed) {
 		isSpinning = false;
 		if (IsKeyDown(KEY_RIGHT) && GetBodyAngle() < MaxAngle) {
-			if (isSpinningRight) body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
+			if (isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			isSpinningRight = true;
 			isSpinning = true;
-			body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
+			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 		}
 		
 		if (IsKeyDown(KEY_LEFT) && GetBodyAngle() > -MaxAngle) {
-			if (!isSpinningRight) body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
+			if (!isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			isSpinningRight = false;
 			isSpinning = true;
 			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);

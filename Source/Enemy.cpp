@@ -54,18 +54,18 @@ update_status Enemy::Update() {
 		isSpinning = false;
 		if (test != -1) {
 			if (GetBodyAngle() < MaxAngle) {
-				if (isSpinningRight) body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
+				if (isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 				isSpinningRight = true;
 				isSpinning = true;
-				body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
+				TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			}
 		}
 		else if (test2 != -1) {
 			if (GetBodyAngle() > -MaxAngle) {
-				if (!isSpinningRight) body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
+				if (!isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 				isSpinningRight = false;
 				isSpinning = true;
-				body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
+				TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			}
 		}
 

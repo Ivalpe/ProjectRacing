@@ -62,7 +62,7 @@ bool ModuleGame::CleanUp()
 	LOG("Unloading scene");
 	for (auto c : checkpoints) delete c;
 	checkpoints.clear();
-=======
+
 	LOG("Unloading Intro scene");
 	for (auto car : enemyCars) {
 		car->CleanUp();
@@ -140,12 +140,13 @@ void ModuleGame::SelectCharacter() {
 	Vector2 pos = { 153 * SCALE, 350 * SCALE };
 	if (IsKeyPressed(KEY_SPACE)) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
-  for (auto car : enemyCars) {
+		for (auto car : enemyCars) {
 
 			car->SetParameters(App->physics, vehicles[dist6(rng)]);
 			car->SetPosition(pos);
 			pos.x += 100;
 		}
+
 		stateGame = GAME;
 		checkpoints = App->map->GetSensors();
 		for (auto c : checkpoints) {
@@ -157,7 +158,7 @@ void ModuleGame::SelectCharacter() {
 				s->changeable = true;
 
 				car->sensors.push_back(s);
-				for (auto e : enemies) e->sensors.push_back(s);
+				for (auto e : enemyCars) e->sensors.push_back(s);
 			}
 		}
 	}
