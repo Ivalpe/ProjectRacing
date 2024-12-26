@@ -37,6 +37,33 @@ float PhysBody::GetRotation() const
 	return body->GetAngle();
 }
 
+float PhysBody::GetAngleRotation() const
+{
+	return body->GetTransform().q.GetAngle();
+}
+
+float PhysBody::ScalarLinearVelocity() const {
+	b2Vec2 currentvelocity = body->GetLinearVelocity();
+	return (float)sqrt(currentvelocity.x * currentvelocity.x + currentvelocity.y * currentvelocity.y);
+}
+
+void PhysBody::ResetLinearVelocity() const {
+	body->SetLinearVelocity(b2Vec2(0.f, 0.f));
+}
+
+void PhysBody::ResetAngularVelocity() const {
+	body->SetAngularVelocity(0.f);
+}
+
+void PhysBody::ApplyMovingForce(float speed) const {
+	b2Vec2 f = body->GetWorldVector(b2Vec2(0.0f, speed));
+	body->ApplyForceToCenter(b2Vec2({ f.x, f.y }), true);
+}
+
+void PhysBody::TurnWithTorque(float torque) const {
+	body->ApplyTorque(torque, true);
+}
+
 bool PhysBody::Contains(int x, int y) const
 {
 	b2Vec2 p(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));

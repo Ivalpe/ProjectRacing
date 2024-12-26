@@ -25,6 +25,11 @@ public:
 	}
 
 	void GetPosition(int& x, int& y) const;
+
+	float GetBodyAngle() const;
+
+	void TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const;
+
 	void SetPosition(Vector2 pos);
 
 	Texture2D GetTexture() {
@@ -41,5 +46,9 @@ public:
 
 	};
   
-	float MaxSpeed = 5;
+	float MaxSpeed = 5.f;
+	float MaxAngle = 3.14f;
+	float MinSpeed = 0.75f;
+	float forceIncrement = 10.f;
+	float torqueSpeed = 0.8f * SCALE;
 };

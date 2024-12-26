@@ -26,48 +26,32 @@ update_status Player::Update() {
 
 	update_status ret = UPDATE_CONTINUE;
 
-	b2Vec2 currentvelocity = body->body->GetLinearVelocity();
-	currentSpeed = (float)sqrt(currentvelocity.x * currentvelocity.x + currentvelocity.y * currentvelocity.y);
-	TraceLog(LOG_INFO, "velocity: %.2f, %.2f, speed = %.10f", currentvelocity.x, currentvelocity.y, currentSpeed);
+	currentSpeed = body->ScalarLinearVelocity();
+	TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
+	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());
 
-	float torqueSpeed = 0.7f * SCALE;
 	static b2Vec2 velocity = b2Vec2(0, 0);
-	if (abs(currentSpeed) >= 0.75) {
+	if (abs(currentSpeed) >= MinSpeed) {
 		isSpinning = false;
-		if (IsKeyDown(KEY_RIGHT)) {
-			if (forward) {
-				if (isSpinningRight) body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
-				body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
-			}
-			else {
-				if (isSpinningRight) body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
-				body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
-			}
-			isSpinningRight = false;
-			isSpinning = true;
-		}
-
-		if (IsKeyDown(KEY_LEFT)) {
-			if (forward) {
-				if (!isSpinningRight) body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
-				body->body->ApplyTorque(-torqueSpeed / abs(currentSpeed), true);
-			}
-			else {
-				if (!isSpinningRight) body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
-				body->body->ApplyTorque(torqueSpeed / abs(currentSpeed), true);
-			}
+		if (IsKeyDown(KEY_RIGHT) && GetBodyAngle() < MaxAngle) {
+			if (isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			isSpinningRight = true;
 			isSpinning = true;
+			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 		}
 
-		if (!isSpinning) body->body->SetAngularVelocity(0.f);
-	}
-	else body->body->SetAngularVelocity(0.f);
+		if (IsKeyDown(KEY_LEFT) && GetBodyAngle() > -MaxAngle) {
+			if (!isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
+			isSpinningRight = false;
+			isSpinning = true;
+			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
+		}
 
-	float forceIncrement = 10.f;
+		if (!isSpinning) body->ResetAngularVelocity();
+	}
+	else body->ResetAngularVelocity();
 
 	speed = 0;
-
 	if (IsKeyDown(KEY_UP)) {
 		Stopped = false;
 		forward = true;
@@ -90,41 +74,27 @@ update_status Player::Update() {
 
 	if (IsKeyUp(KEY_UP) && IsKeyUp(KEY_DOWN)) {
 		if (!Stopped) {
-			if (currentSpeed <= 0.5) {
+			if (currentSpeed <= MinSpeed) {
 				Stopped = true;
-				body->body->SetLinearVelocity(b2Vec2(0.f, 0.f));
+				body->ResetLinearVelocity();
 			}
 			else {
 				if (forward) speed += forceIncrement / 2;
 				else speed -= forceIncrement / 2;
 			}
 		}
-		else body->body->SetLinearVelocity(b2Vec2(0.f, 0.f));
+		else body->ResetLinearVelocity();
 	}
 
-	b2Vec2 f = body->body->GetWorldVector(b2Vec2(0.0f, speed));
-	b2Vec2 p = body->body->GetWorldPoint(b2Vec2_zero);
-	//body->body->SetLinearVelocity(b2Vec2({ f.x, f.y }));
-
-	body->body->ApplyForceToCenter(b2Vec2({ f.x, f.y }), true);
-
-
-	body->body->GetAngularVelocity();
-
+	body->ApplyMovingForce(speed);
 
 	GetPosition(x, y);
-	//x = body->body->GetTransform().p.x;
-	//y = body->body->GetTransform().p.y;
-
-
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
 	Rectangle dest = { x , y , (float)texture.width * SCALE , (float)texture.height * SCALE };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * SCALE, ((float)texture.height / (2.0f)) * SCALE };
 	float rotation = body->GetRotation() * RAD2DEG;
 	DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 
-
-	//SetPosition({ (float)dest.x, (float)dest.y });
 
 	return ret;
 }
@@ -149,6 +119,8 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 	}
 }
 
+// Entity -----------------------------------------
+
 void Entity::GetPosition(int& x, int& y) const {
 	body->GetPhysicPosition(x, y);
 }
@@ -158,4 +130,21 @@ void Entity::SetPosition(Vector2 pos) {
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.x), PIXEL_TO_METERS(pos.y));
 	body->body->SetTransform(bodyPos, body->GetRotation());
 
+}
+
+float Entity::GetBodyAngle() const{
+	return body->GetAngleRotation();
+}
+
+void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const {
+	float FinalTorque = 0.f;
+	if (isGoingRight) {
+		if (isGoingForward) FinalTorque = torque / abs(speed);
+		else FinalTorque = -torque / abs(speed);
+	} else {
+		if (isGoingForward) FinalTorque = -torque / abs(speed);
+		else FinalTorque = torque / abs(speed);
+	}
+
+	body->TurnWithTorque(FinalTorque);
 }

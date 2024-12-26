@@ -25,6 +25,12 @@ public:
 
 	void GetPhysicPosition(int& x, int& y) const;
 	float GetRotation() const;
+	float GetAngleRotation() const;
+	float ScalarLinearVelocity() const;
+	void ResetLinearVelocity() const;
+	void ResetAngularVelocity() const;
+	void ApplyMovingForce(float speed) const;
+	void TurnWithTorque(float torque) const;
 	bool Contains(int x, int y) const;
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 public:
