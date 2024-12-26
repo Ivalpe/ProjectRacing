@@ -8,6 +8,8 @@
 #include "Enemy.h"
 #include "ModuleWindow.h"
 #include "Map.h"
+#include "GuiControl.h"
+#include "GuiManager.h"
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {}
@@ -21,11 +23,19 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 	stateGame = MAIN_MENU;
-	background_layer = LoadTexture("Assets/background.png");
-	background_layer2 = LoadTexture("Assets/background2.png");
-	background_layer3 = LoadTexture("Assets/background3.png");
+	
+
+	titleBG = LoadTexture("Assets/Main Menu/title screen.png");
+	playBtTex = LoadTexture("Assets/Main Menu/Play Button.png");
+	optBtTex = LoadTexture("Assets/Main Menu/Options Button.png");
+	credBtTex = LoadTexture("Assets/Main Menu/Credits Button.png");
+
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	App->map->Load("Assets/Maps/", "racing.tmx");
+
+	Rectangle playBtPos = { 703, 239, 482, 149 };
+	playButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 1,"", playBtPos, this, {0,0,0,0}, &playBtTex);
+	
 
 
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
@@ -84,15 +94,22 @@ update_status ModuleGame::Update()
 void ModuleGame::MainMenu() {
 	Rectangle rect;
 	rect.x = 0;
-	rect.y = 208;
+	rect.y = 0;
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
-	//App->renderer->Draw(background_layer, 0, 0, &rect);
+
+	
+	/*GuiControlType type, int id, const char* text, Rectangle bounds, Module* observer, Rectangle sliderBounds, Texture2D* texture*/
+
+	App->renderer->Draw(titleBG, 0, 0, &rect);
+	playButton->Update();
+	DrawTexture(titleBG, 0, 0, WHITE);
 
 
-	if (IsKeyPressed(KEY_SPACE)) {
-		stateGame = SELECT_CHARACTER;
-	}
+	//TODO: Change to click button
+	OnGuiMouseClickEvent(playButton);
+		
+	
 }
 
 void ModuleGame::SelectCharacter() {
@@ -151,4 +168,14 @@ void ModuleGame::Game() {
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
 
+}
+
+bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
+
+	if(control->id == 1 && control->state == GuiControlState::PRESSED)
+	{
+		stateGame = SELECT_CHARACTER;
+		control->active = false;
+	}
+	return true;
 }

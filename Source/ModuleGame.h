@@ -8,6 +8,7 @@
 
 #include "raylib.h"
 #include <vector>
+#include "GuiControlButton.h"
 
 class PhysBody;
 class PhysicEntity;
@@ -30,15 +31,20 @@ public:
 	void SelectCharacter();
 	void Game();
 	bool CleanUp();
+	bool OnGuiMouseClickEvent(GuiControl* control) override;
+
+
 	GameState stateGame;
-	Texture2D background_layer, background_layer2, background_layer3, selectedVehicle;
-	std::vector<Texture2D> vehicles;
+	Texture2D titleBG, selectedVehicle;
+	Texture2D playBtTex, optBtTex, credBtTex;
 	std::vector<Vector2> posVehicles;
+	std::vector<Texture2D> vehicles;
 	int selectedPos;
 	Player* car;
 	Enemy* carEntity;
 
-public:
+private:
 
+	GuiControlButton* playButton;
 	
 };

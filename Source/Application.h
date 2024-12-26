@@ -12,6 +12,7 @@ class ModuleAudio;
 class Map;
 class ModulePhysics;
 class ModuleGame;
+class GuiManager;
 
 class Application
 {
@@ -24,6 +25,7 @@ public:
 	Map* map;
 	ModulePhysics* physics;
 	ModuleGame* scene_intro;
+	GuiManager* guiManager;
 
 private:
 

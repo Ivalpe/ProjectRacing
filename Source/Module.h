@@ -6,6 +6,7 @@
 
 class Application;
 class PhysBody;
+class GuiControl;
 
 class Module
 {
@@ -14,8 +15,6 @@ private :
 
 public:
 	Application* App;
-
-	
 
 	Module(Application* parent, bool start_enabled = true) : App(parent), enabled(start_enabled)
 	{}
@@ -83,4 +82,12 @@ public:
 	virtual void OnCollisionEnd(PhysBody* bodyA, PhysBody* bodyB)
 	{
 	}
+
+
+	virtual bool OnGuiMouseClickEvent(GuiControl* control)
+	{
+		return true;
+	}
+
+
 };

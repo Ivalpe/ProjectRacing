@@ -43,6 +43,12 @@
     <ClCompile Include="Source\Enemy.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GuiControlButton.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GuiManager.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source/p2Point.h">
@@ -88,6 +94,15 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GuiControl.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GuiControlButton.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GuiManager.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
