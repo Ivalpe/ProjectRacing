@@ -27,8 +27,8 @@ update_status Player::Update() {
 	update_status ret = UPDATE_CONTINUE;
 
 	currentSpeed = body->ScalarLinearVelocity();
-	TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
-	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());
+	/*TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
+	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());*/
 
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {
@@ -107,6 +107,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		TraceLog(LOG_INFO, "COLLISION");
 		stopped = true;
 		break;
+	case ColliderType::SENSOR:
+		CheckSensor(physB, false);
+		break;
+	case ColliderType::FINISH_LINE:
+		CheckFinishLine();
+		break;
 	default:
 		break;
 	}
@@ -115,6 +121,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::WALL:
+		break;
+	case ColliderType::SENSOR:
+		CheckSensor(physB, true);
+		break;
+	case ColliderType::FINISH_LINE:
 		break;
 	default:
 		break;
@@ -136,4 +147,56 @@ void Entity::SetPosition(Vector2 pos) {
 
 float Entity::GetBodyAngle() const {
 	return body->GetAngleRotation();
+
+}
+
+void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const {
+	float FinalTorque = 0.f;
+	if (isGoingRight) {
+		if (isGoingForward) FinalTorque = torque / abs(speed);
+		else FinalTorque = -torque / abs(speed);
+	} else {
+		if (isGoingForward) FinalTorque = -torque / abs(speed);
+		else FinalTorque = torque / abs(speed);
+	}
+
+	body->TurnWithTorque(FinalTorque);
+}
+
+void Entity::CheckSensor(PhysBody* sensor, bool collisionEnd) {
+	for (auto s : sensors) {
+		if (s->id == sensor->id) {
+			if (collisionEnd) {
+				if(!s->changeable) s->changeable = true;
+			}
+			else {
+				if (s->changeable) {
+					if (s->active) {
+						s->active = false;
+						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s->id);
+
+					}
+					else {
+						s->active = true;
+						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s->id);
+					}
+
+					s->changeable = false;
+				}
+			}
+		}
+	}
+}
+
+void Entity::CheckFinishLine() {
+	bool FinishedLap = true;
+	for (auto s : sensors) {
+		if (!s->active) FinishedLap = false;
+	}
+	
+	if (FinishedLap) {
+		Lap++;
+		TraceLog(LOG_INFO, "FINISHED LAP, STARTED LAP %d", Lap);
+		for (auto s : sensors) s->active = false;
+	}
 }

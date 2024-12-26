@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Map.h"
 #include "p2Point.h"
 
 #include "raylib.h"
@@ -30,13 +31,17 @@ public:
 	void SelectCharacter();
 	void Game();
 	bool CleanUp();
+
 	GameState stateGame;
 	Texture2D background_layer, background_layer2, background_layer3, selectedVehicle;
+
 	std::vector<Texture2D> vehicles;
 	std::vector<Vector2> posVehicles;
 	std::vector<Enemy*> enemyCars;
 	int selectedPos;
+
 	Player* car;
+	std::vector<Object*> checkpoints;
 
 public:
 
