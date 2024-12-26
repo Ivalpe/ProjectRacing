@@ -70,6 +70,9 @@ public:
 
 	void BeginContact(b2Contact* contact);
 	void EndContact(b2Contact* contact);
+	bool GetDebug() {
+		return debug;
+	}
 
 private:
 	bool debug;

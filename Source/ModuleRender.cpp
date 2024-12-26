@@ -104,4 +104,8 @@ bool ModuleRender::DrawText(const char * text, int x, int y, Font font, int spac
     return ret;
 }
 
+void ModuleRender::DrawRectangleDebug(float x, float y, float width, float height, Color color) {
+	DrawRectangle(x, y, width, height, color);
+}
+
 

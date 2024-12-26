@@ -14,7 +14,7 @@ Enemy::Enemy(Application* parent) : Entity(parent)
 void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	int rot = 280.0f * b2_pi / 180.0f;
+	int rot = -90 * PI / 180.0f;
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	body->listenerptr = this;
@@ -45,9 +45,10 @@ update_status Enemy::Update() {
 	int test = body->RayCast(x, y, x2, y2, normalX, normalY);
 	int test2 = body->RayCast(x, y, x3, y3, normalX, normalY);
 
-	DrawRectangle(x3, y3, 10, 10, RED);
-	DrawRectangle(x2, y2, 10, 10, YELLOW);
-	TraceLog(LOG_INFO, "%d", test);
+	if (App->physics->GetDebug()) {
+		App->renderer->DrawRectangleDebug(x3, y3, 10, 10, RED);
+		App->renderer->DrawRectangleDebug(x2, y2, 10, 10, YELLOW);
+	}
 
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {
@@ -75,7 +76,7 @@ update_status Enemy::Update() {
 	else body->ResetAngularVelocity();
 
 
-	body->ApplyMovingForce(speed);
+	//body->ApplyMovingForce(speed);
 
 
 	GetPosition(x, y);

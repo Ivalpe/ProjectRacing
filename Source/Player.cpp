@@ -15,10 +15,9 @@ Player::Player(Application* parent) : Entity(parent)
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	x = 200;
-	y = 100;
+	int rot = -90 * PI / 180.0f;
 
-	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, body->body->GetTransform().q.GetAngle());
+	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	body->listenerptr = this;
 }
 
@@ -85,7 +84,6 @@ update_status Player::Update() {
 		}
 		else body->ResetLinearVelocity();
 	}
-
 
 	body->ApplyMovingForce(speed);
 

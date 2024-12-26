@@ -47,7 +47,7 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
 	car = new Player(App);
-	for (auto i = 0; i < 3; i++) {
+	for (auto i = 0; i < 7; i++) {
 		enemyCars.push_back(new Enemy(App));
 	}
 
@@ -157,14 +157,18 @@ void ModuleGame::SelectCharacter() {
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
-	Vector2 pos = { 153 * SCALE, 350 * SCALE };
+	Vector2 pos = { 185 * SCALE, 297 * SCALE };
 	if (IsKeyPressed(KEY_SPACE)) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
-		for (auto car : enemyCars) {
+		car->SetPosition(pos);
+		pos.x += 20 * SCALE;
+		pos.y += 50 * SCALE;
 
+		for (auto car : enemyCars) {
 			car->SetParameters(App->physics, vehicles[dist6(rng)]);
 			car->SetPosition(pos);
-			pos.x += 100;
+			pos.x += 30 * SCALE;
+			pos.y = (pos.y == 297 * SCALE ? pos.y + (50 * SCALE) : pos.y - (50 * SCALE));
 		}
 
 		stateGame = GAME;
