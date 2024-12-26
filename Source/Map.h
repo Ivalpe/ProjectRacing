@@ -60,6 +60,7 @@ struct Object
 	const char* pointString;
 	int* vertices;
 	int vertNum;
+	bool finishLine;
 };
 
 struct ObjectGroup
@@ -170,8 +171,8 @@ public:
 	}
 
 	int* ConvertToIntArray(const std::vector<b2Vec2>& vertices);
-	
 
+	std::vector<Object*> GetSensors();
 	
 public:
 	std::string mapFileName;
@@ -185,6 +186,8 @@ private:
 
 	MapData mapData;
 	std::list<PhysBody*> collisions;
+	std::list<PhysBody*> sensors;
 	std::vector<b2Vec2> initialPos;
+	std::vector<b2Vec2> sensorsInitialPos;
 	pugi::xml_node mapParameters;
 };

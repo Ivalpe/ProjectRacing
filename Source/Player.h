@@ -40,5 +40,5 @@ private:
 	bool isSpinning = false;
 
 	bool forward = false;
-	bool Stopped = true;
+	bool stopped = true;
 };

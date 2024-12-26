@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Map.h"
 #include "p2Point.h"
 
 #include "raylib.h"
@@ -31,6 +32,7 @@ public:
 	void SelectCharacter();
 	void Game();
 	bool CleanUp();
+
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
 
 
@@ -39,9 +41,12 @@ public:
 	Texture2D playBtTex, optBtTex, credBtTex;
 	std::vector<Vector2> posVehicles;
 	std::vector<Texture2D> vehicles;
+	std::vector<Enemy*> enemyCars;
+  
 	int selectedPos;
+
 	Player* car;
-	Enemy* carEntity;
+	std::vector<Object*> checkpoints;
 
 private:
 
