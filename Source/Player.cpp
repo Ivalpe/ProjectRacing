@@ -15,7 +15,7 @@ Player::Player(Application* parent) : Entity(parent)
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	int rot = -90 * PI / 180.0f;
+	float rot = -90 * PI / 180.0f;
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	body->listenerptr = this;
@@ -26,8 +26,8 @@ update_status Player::Update() {
 	update_status ret = UPDATE_CONTINUE;
 
 	currentSpeed = body->ScalarLinearVelocity();
-	/*TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
-	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());*/
+	TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
+	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());
 
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {

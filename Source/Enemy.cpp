@@ -14,7 +14,7 @@ Enemy::Enemy(Application* parent) : Entity(parent)
 void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	int rot = -90 * PI / 180.0f;
+	float rot = -90 * PI / 180.0f;
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	body->listenerptr = this;
