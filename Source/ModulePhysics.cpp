@@ -104,12 +104,35 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 
 	return ret;
 }
-/*
+
 int ModulePhysics::RayCastGlobal(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const {
-	b2RayCastCallback* a;
-	world->RayCast(a, { (float)x1,(float)y1 }, { (float)x2, (float)y2 });
+	int ret = -1;
+
+	b2Transform transform;
+	transform.SetIdentity();
+
+	b2RayCastInput input;
+	input.p1 = { PIXEL_TO_METERS(x1),PIXEL_TO_METERS(y1) };
+	input.p2 = { PIXEL_TO_METERS(x2),PIXEL_TO_METERS(y2) };
+	input.maxFraction = 1.0f;
+	int32 childIndex = 0;
+
+	b2RayCastOutput output;
+	for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()) {
+		for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) {
+			if (f->GetShape()->GetType() == b2Shape::e_chain && f->GetShape()->RayCast(&output, input, b->GetTransform(), childIndex)) {
+				normal_x = output.normal.x;
+				normal_y = output.normal.y;
+
+				float dx = (x2 - x1);
+				float dy = (y2 - y1);
+				float dist = sqrt((dx * dx) - (dy * dy));
+				return (dist * output.fraction);
+			}
+		}
+	}
 }
-*/
+
 
 PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2BodyType bodyType)
 {
