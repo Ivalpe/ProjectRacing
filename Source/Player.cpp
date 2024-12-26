@@ -15,8 +15,8 @@ Player::Player(Application* parent) : Entity(parent)
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	x = SCREEN_WIDTH / 2;
-	y = SCREEN_HEIGHT / 2;
+	x = 200;
+	y = 100;
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, body->body->GetTransform().q.GetAngle());
 	body->listenerptr = this;
@@ -34,14 +34,14 @@ update_status Player::Update() {
 	if (abs(currentSpeed) >= MinSpeed) {
 		isSpinning = false;
 		if (IsKeyDown(KEY_RIGHT) && GetBodyAngle() < MaxAngle) {
-			if (isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
+			if (isSpinningRight) body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
 			isSpinningRight = true;
 			isSpinning = true;
-			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
+			body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
 		}
-
+		
 		if (IsKeyDown(KEY_LEFT) && GetBodyAngle() > -MaxAngle) {
-			if (!isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
+			if (!isSpinningRight) body->TurnWithTorque(TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed));
 			isSpinningRight = false;
 			isSpinning = true;
 			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
@@ -53,7 +53,7 @@ update_status Player::Update() {
 
 	speed = 0;
 	if (IsKeyDown(KEY_UP)) {
-		Stopped = false;
+		stopped = false;
 		forward = true;
 		if ((int)currentSpeed * 10000 == 0) {
 			TraceLog(LOG_INFO, "FASTER");
@@ -62,7 +62,7 @@ update_status Player::Update() {
 		else if (currentSpeed <= MaxSpeed) speed -= forceIncrement;
 	}
 	else if (IsKeyDown(KEY_DOWN)) {
-		Stopped = false;
+		stopped = false;
 		forward = false;
 		if ((int)currentSpeed * 10000 == 0) {
 			TraceLog(LOG_INFO, "FASTER");
@@ -73,9 +73,9 @@ update_status Player::Update() {
 
 
 	if (IsKeyUp(KEY_UP) && IsKeyUp(KEY_DOWN)) {
-		if (!Stopped) {
+		if (!stopped) {
 			if (currentSpeed <= MinSpeed) {
-				Stopped = true;
+				stopped = true;
 				body->ResetLinearVelocity();
 			}
 			else {
@@ -86,11 +86,13 @@ update_status Player::Update() {
 		else body->ResetLinearVelocity();
 	}
 
+
 	body->ApplyMovingForce(speed);
 
 	GetPosition(x, y);
+	//SetPosition({ x + App->renderer->camera.x, y + App->renderer->camera.y });
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
-	Rectangle dest = { x , y , (float)texture.width * SCALE , (float)texture.height * SCALE };
+	Rectangle dest = { x + App->renderer->camera.x, y + App->renderer->camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * SCALE, ((float)texture.height / (2.0f)) * SCALE };
 	float rotation = body->GetRotation() * RAD2DEG;
 	DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
@@ -103,7 +105,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::WALL:
 		TraceLog(LOG_INFO, "COLLISION");
-		Stopped = true;
+		stopped = true;
 		break;
 	default:
 		break;
@@ -132,19 +134,6 @@ void Entity::SetPosition(Vector2 pos) {
 
 }
 
-float Entity::GetBodyAngle() const{
+float Entity::GetBodyAngle() const {
 	return body->GetAngleRotation();
-}
-
-void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const {
-	float FinalTorque = 0.f;
-	if (isGoingRight) {
-		if (isGoingForward) FinalTorque = torque / abs(speed);
-		else FinalTorque = -torque / abs(speed);
-	} else {
-		if (isGoingForward) FinalTorque = -torque / abs(speed);
-		else FinalTorque = torque / abs(speed);
-	}
-
-	body->TurnWithTorque(FinalTorque);
 }

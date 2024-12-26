@@ -8,6 +8,7 @@
 #include "Enemy.h"
 #include "ModuleWindow.h"
 #include "Map.h"
+#include <random>
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {}
@@ -33,7 +34,9 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
 	car = new Player(App);
-	carEntity = new Enemy(App);
+	for (auto i = 0; i < 3; i++) {
+		enemyCars.push_back(new Enemy(App));
+	}
 
 	selectedPos = 0;
 
@@ -57,6 +60,11 @@ bool ModuleGame::Start()
 bool ModuleGame::CleanUp()
 {
 	LOG("Unloading Intro scene");
+	for (auto car : enemyCars) {
+		car->CleanUp();
+	}
+	car->CleanUp();
+	App->map->CleanUp();
 
 	return true;
 }
@@ -109,19 +117,31 @@ void ModuleGame::SelectCharacter() {
 	Rectangle rect;
 	rect.x = 0;
 	rect.y = 0;
-	rect.width = SPRITE_WIDTH;
-	rect.height = SPRITE_HEIGHT;
+	rect.width = SPRITE_WIDTH * SCALE;
+	rect.height = SPRITE_HEIGHT * SCALE;
 	for (int i = 0; i < vehicles.size(); i++) App->renderer->Draw(vehicles[i], posVehicles[i].x, posVehicles[i].y, &rect);
 
 	rect.x = 0;
 	rect.y = 0;
-	rect.width = SPRITE_WIDTH;
-	rect.height = SPRITE_HEIGHT;
+	rect.width = SPRITE_WIDTH * SCALE;
+	rect.height = SPRITE_HEIGHT * SCALE;
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
+	
+	//Random Car
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
+	Vector2 pos = { 153 * SCALE, 350 * SCALE };
 	if (IsKeyPressed(KEY_SPACE)) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
-		carEntity->SetParameters(App->physics, vehicles[0]);
+		for (auto car : enemyCars) {
+
+
+			car->SetParameters(App->physics, vehicles[dist6(rng)]);
+			car->SetPosition(pos);
+			pos.x += 100;
+		}
 		stateGame = GAME;
 	}
 
@@ -130,18 +150,20 @@ void ModuleGame::SelectCharacter() {
 void ModuleGame::Game() {
 
 	car->Update();
-	carEntity->Update();
+	for (auto car : enemyCars) {
+		car->Update();
+	}
 
 	//camera
 	int carX, carY;
 	/*car->GetPosition(carX, carY);
 	car->body->GetPhysicPosition(carX, carY);*/
-	carX = METERS_TO_PIXELS(car->body->body->GetTransform().p.x);
-	carY = METERS_TO_PIXELS(car->body->body->GetTransform().p.y);
-	
-	App->renderer->camera.x = ((carX - SCREEN_WIDTH / 2) * -(SCREEN_SIZE));
-	App->renderer->camera.y = ((carY - SCREEN_HEIGHT / 2) * -(SCREEN_SIZE));
-	
+	//carX = METERS_TO_PIXELS(car->body->body->GetTransform().p.x);
+	//carY = METERS_TO_PIXELS(car->body->body->GetTransform().p.y);
+
+	//App->renderer->camera.x = ((carX - SCREEN_WIDTH / 2) * -(SCREEN_SIZE));
+	//App->renderer->camera.y = ((carY - SCREEN_HEIGHT / 2) * -(SCREEN_SIZE));
+
 	//TraceLog(LOG_INFO, "Postion %d, %d // Camera %f, %f", carX, carY, App->renderer->camera.x, App->renderer->camera.y);
 
 	//just a test to check the received position was correct

@@ -28,7 +28,7 @@ public:
 
 	float GetBodyAngle() const;
 
-	void TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const;
+	float TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const;
 
 	void SetPosition(Vector2 pos);
 

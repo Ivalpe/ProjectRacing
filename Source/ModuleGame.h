@@ -34,9 +34,9 @@ public:
 	Texture2D background_layer, background_layer2, background_layer3, selectedVehicle;
 	std::vector<Texture2D> vehicles;
 	std::vector<Vector2> posVehicles;
+	std::vector<Enemy*> enemyCars;
 	int selectedPos;
 	Player* car;
-	Enemy* carEntity;
 
 public:
 
