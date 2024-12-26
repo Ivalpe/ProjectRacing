@@ -59,6 +59,7 @@ public:
 	
 	PhysBody* CreateCircleSensor(int x, int y, int radious, bodyType type);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, bodyType type);
+	int RayCastGlobal(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 
 
 
@@ -74,5 +75,5 @@ private:
 	bool debug;
 	b2World* world;
 	b2Body* ground;
-	
+	std::vector<b2Body*> bodies;
 };

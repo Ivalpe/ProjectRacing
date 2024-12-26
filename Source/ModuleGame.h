@@ -37,13 +37,11 @@ public:
 
 	std::vector<Texture2D> vehicles;
 	std::vector<Vector2> posVehicles;
+	std::vector<Enemy*> enemyCars;
 	int selectedPos;
 
 	Player* car;
-	Enemy* carEntity;
-	std::vector<Entity*> enemies;
 	std::vector<Object*> checkpoints;
-	
 
 public:
 
