@@ -42,11 +42,11 @@ update_status Enemy::Update() {
 
 
 	float normalX, normalY;
-	//int test = body->RayCast(x, y, x2, y2, normalX, normalY);
-	//int test2 = body->RayCast(x, y, x3, y3, normalX, normalY);
+	int test = body->RayCast(x, y, x2, y2, normalX, normalY);
+	int test2 = body->RayCast(x, y, x3, y3, normalX, normalY);
 
-	int test = App->physics->RayCastGlobal(x, y, x2, y2, normalX, normalY);
-	int test2 = App->physics->RayCastGlobal(x, y, x3, y3, normalX, normalY);
+	//int test = App->physics->RayCastGlobal(x, y, x2, y2, normalX, normalY);
+	//int test2 = App->physics->RayCastGlobal(x, y, x3, y3, normalX, normalY);
 	
 
 	if (App->physics->GetDebug()) {
