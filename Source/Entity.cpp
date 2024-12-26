@@ -15,3 +15,16 @@ update_status Entity::Update() {
 
 }
 
+//float Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const {
+//	float FinalTorque = 0.f;
+//	if (isGoingRight) {
+//		if (isGoingForward) FinalTorque = torque / abs(speed);
+//		else FinalTorque = -torque / abs(speed);
+//	}
+//	else {
+//		if (isGoingForward) FinalTorque = -torque / abs(speed);
+//		else FinalTorque = torque / abs(speed);
+//	}
+//
+//	return FinalTorque;
+//}
