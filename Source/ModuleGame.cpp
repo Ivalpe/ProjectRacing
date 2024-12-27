@@ -27,7 +27,7 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 	stateGame = MAIN_MENU;
-	
+
 
 	titleBG = LoadTexture("Assets/Main Menu/title screen.png");
 	playBtTex = LoadTexture("Assets/Main Menu/Play Button.png");
@@ -38,26 +38,73 @@ bool ModuleGame::Start()
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 	App->map->Load("Assets/Maps/", "racing.tmx");
 
+	//Random Map
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 2);
+
+	switch (dist6(rng))
+	{
+	case 1:
+		App->map->Load("Assets/Maps/", "map1.tmx");
+		mapLoaded = 1;
+		distanceX = 32 * SCALE;
+		distanceY = 49 * SCALE;
+		pos = { 191 * SCALE, 296 * SCALE };
+		initialY = pos.y;
+		rot = rot = -90 * PI / 180.0f;
+		break;
+	case 2:
+		App->map->Load("Assets/Maps/", "map2.tmx");
+		mapLoaded = 2;
+		distanceX = -(32 * SCALE);
+		distanceY = 49 * SCALE;
+		pos = { 464 * SCALE, 24 * SCALE };
+		initialY = pos.y;
+		rot = rot = 90 * PI / 180.0f;
+		break;
+	default: //If this switch dont work load level 1
+		App->map->Load("Assets/Maps/", "map1.tmx");
+		mapLoaded = 1;
+		distanceX = 32 * SCALE;
+		distanceY = 49 * SCALE;
+		pos = { 191 * SCALE, 296 * SCALE };
+		initialY = pos.y;
+		rot = rot = -90 * PI / 180.0f;
+		break;
+	}
+
 	Rectangle playBtPos = { 703, 239, 482, 149 };
-	playButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 1,"", playBtPos, this, {0,0,0,0}, &playBtTex);
-	
+	playButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "", playBtPos, this, { 0,0,0,0 }, &playBtTex);
+
 
 
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
+	vehicles.push_back(LoadTexture("Assets/car4.png"));
+	vehicles.push_back(LoadTexture("Assets/car5.png"));
+	vehicles.push_back(LoadTexture("Assets/car6.png"));
+	vehicles.push_back(LoadTexture("Assets/car7.png"));
+	vehicles.push_back(LoadTexture("Assets/car8.png"));
+	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	car = new Player(App);
 	if(TwoPlayerMode) car2 = new Player(App);
 	if (TwoPlayerMode) {
-		for (auto i = 0; i < 6; i++) {
-			enemyCars.push_back(new Enemy(App));
+		for (auto i = 0; i < 2; i++) {
+			Enemy* enemyCar = new Enemy(App);
+		  enemyCars.push_back(enemyCar);
+		  ranking.push_back(enemyCar);
 		}
 	}
 	else {
-		for (auto i = 0; i < 7; i++) {
-			enemyCars.push_back(new Enemy(App));
+		for (auto i = 0; i < 3; i++) {
+			Enemy* enemyCar = new Enemy(App);
+		  enemyCars.push_back(enemyCar);
+		  ranking.push_back(enemyCar);
 		}
+
 	}
 
 	selectedPos = 0;
@@ -124,7 +171,7 @@ void ModuleGame::MainMenu() {
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
 
-	
+
 	/*GuiControlType type, int id, const char* text, Rectangle bounds, Module* observer, Rectangle sliderBounds, Texture2D* texture*/
 
 	App->renderer->Draw(titleBG, 0, 0, &rect);
@@ -134,8 +181,8 @@ void ModuleGame::MainMenu() {
 
 	//TODO: Change to click button
 	OnGuiMouseClickEvent(playButton);
-		
-	
+
+
 }
 
 void ModuleGame::SelectCharacter() {
@@ -222,30 +269,6 @@ void ModuleGame::SelectCharacter() {
 	}
 	else if (Player1Ready) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
-		car->SetPosition(pos);
-		pos.x += 20 * SCALE;
-		pos.y += 50 * SCALE;
-
-		for (auto car : enemyCars) {
-			car->SetParameters(App->physics, vehicles[dist6(rng)]);
-			car->SetPosition(pos);
-			pos.x += 30 * SCALE;
-			pos.y = (pos.y == 297 * SCALE ? pos.y + (50 * SCALE) : pos.y - (50 * SCALE));
-		}
-
-		stateGame = GAME;
-		checkpoints = App->map->GetSensors();
-		for (auto c : checkpoints) {
-			if (!c->finishLine) {
-				CheckpointSensor s;
-
-				s.id = c->id;
-				s.active = false;
-				s.changeable = true;
-
-				car->sensors.push_back(s);
-				for (auto e : enemyCars) e->sensors.push_back(s);
-			}
 		}
 	}
 
@@ -275,6 +298,20 @@ void ModuleGame::Game() {
 	//DrawRectangle(carX - 25, carY - 40, 50, 80, Color({ 0,0,255,255 }));
 
 	//drew the camera outline and yep, it encloses the map
+
+	for (int i = 1; i < ranking.size(); ++i) {
+		if (ranking[i-1]->cpCount < ranking[i]->cpCount) {
+			Entity* tempCar = ranking[i-1];
+			ranking[i-1] = ranking[i];
+			ranking[i] = tempCar;
+		}
+		
+	}
+	
+
+	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
+	PrintRanking();
+
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
 
@@ -282,10 +319,22 @@ void ModuleGame::Game() {
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 
-	if(control->id == 1 && control->state == GuiControlState::PRESSED)
+	if (control->id == 1 && control->state == GuiControlState::PRESSED)
 	{
 		stateGame = SELECT_CHARACTER;
 		control->active = false;
 	}
 	return true;
+}
+
+
+void ModuleGame::PrintRanking() {
+	for (int i = 0; i < ranking.size(); ++i) {
+		const char* pilot;
+		if (ranking[i]->carType == 0) {
+			pilot = "Player";
+		}
+		else pilot = "AI";
+		TraceLog(LOG_INFO, "%d - %s (cpCount = %d)", i + 1, pilot, ranking[i]->cpCount);
+	}
 }

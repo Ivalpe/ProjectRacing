@@ -12,10 +12,12 @@ Player::Player(Application* parent) : Entity(parent)
 	speed = 0.f;
 }
 
-void Player::SetParameters(ModulePhysics* physics, Texture2D txt, int player) {
+
+void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int player) {
+
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	float rot = -90 * PI / 180.0f;
+	carType = PLAYER;
 
 	if (player == 1) {
 		TurnLeft = KEY_LEFT;
@@ -123,9 +125,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::SENSOR:
 		CheckSensor(physB, false);
+		
 		break;
 	case ColliderType::FINISH_LINE:
+		CheckSensor(physB, false);
 		CheckFinishLine();
+		
 		break;
 	default:
 		break;
@@ -177,7 +182,7 @@ void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, floa
 	body->TurnWithTorque(FinalTorque);
 }
 
-void Entity::CheckSensor(PhysBody* sensor, bool collisionEnd) {
+void Player::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 	for (auto s : sensors) {
 		if (s.id == sensor->id) {
 			if (collisionEnd) {
@@ -196,21 +201,32 @@ void Entity::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 					}
 
 					s.changeable = false;
+
 				}
 			}
 		}
 	}
 }
 
-void Entity::CheckFinishLine() {
-	bool FinishedLap = true;
+void Player::CheckFinishLine() {
+	finishedLap = true;
 	for (auto s : sensors) {
 		if (!s.active) FinishedLap = false;
 	}
 	
-	if (FinishedLap) {
+	if (finishedLap) {
 		Lap++;
-		TraceLog(LOG_INFO, "FINISHED LAP, STARTED LAP %d", Lap);
+
+		TraceLog(LOG_INFO, "PLAYER FINISHED LAP % d, STARTED LAP % d", Lap-1, Lap);
 		for (auto s : sensors) s.active = false;
+	}
+
+}
+
+void Player::PrintPosition(std::vector<Entity*> ranking) {
+	for (int i = 0; i < ranking.size(); ++i) {
+		if (ranking[i]->carType == PLAYER) {
+			TraceLog(LOG_INFO, "position: %d/%d", i+1 , ranking.size());
+		}
 	}
 }

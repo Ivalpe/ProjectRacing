@@ -20,6 +20,7 @@ enum GameState {
 	GAME
 };
 
+
 class ModuleGame : public Module
 {
 public:
@@ -35,6 +36,8 @@ public:
 
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
 
+	void PrintRanking();
+
 
 	GameState stateGame;
 	Texture2D titleBG, selectedVehicle, selectedVehicle2;
@@ -42,6 +45,7 @@ public:
 	std::vector<Vector2> posVehicles;
 	std::vector<Texture2D> vehicles;
 	std::vector<Enemy*> enemyCars;
+
   
 	int selectedPos;
 	int selectedPosPlayer2;
@@ -53,9 +57,13 @@ public:
 	Player* car2;
 	bool Player2Ready = false;
 	std::vector<Object*> checkpoints;
+	std::vector<Entity*> ranking;
 
 private:
 
 	GuiControlButton* playButton;
+	int mapLoaded;
+	float distanceX, distanceY, initialY, rot;
+	Vector2 pos;
 	
 };

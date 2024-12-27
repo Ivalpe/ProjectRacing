@@ -23,15 +23,19 @@ public:
 
 	update_status Update() override;
 
-	void SetParameters(ModulePhysics* physics, Texture2D txt, int player = 1);
+	void SetParameters(ModulePhysics* physics, Texture2D txt, float rot = 90*PI / 180.f, int player = 1);
 
 	float speed;
 
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
+
+	void CheckSensor(PhysBody* sensor, bool collisionEnd);
+	void CheckFinishLine();
+	void PrintPosition(std::vector<Entity*> ranking);
 	
-public:
+	bool finishedLap;
 
 private:
 	float currentSpeed = 0.f;

@@ -23,11 +23,18 @@ public:
 
 	update_status Update() override;
 
-	void SetParameters(ModulePhysics* physics, Texture2D txt);
+	void SetParameters(ModulePhysics* physics, Texture2D txt, float rot);
 
 	float speed;
+	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void OnCollisionEnd(PhysBody* bodyA, PhysBody* bodyB);
 
+	void CheckSensor(PhysBody* sensor, bool collisionEnd);
+	void CheckFinishLine();
+
+	
 public:
+	bool finishedLap;
 
 private:
 	float currentSpeed = 0.f;
