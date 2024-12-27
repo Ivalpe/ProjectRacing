@@ -27,7 +27,7 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 	stateGame = MAIN_MENU;
-	
+
 
 	titleBG = LoadTexture("Assets/Main Menu/title screen.png");
 	playBtTex = LoadTexture("Assets/Main Menu/Play Button.png");
@@ -35,11 +35,46 @@ bool ModuleGame::Start()
 	credBtTex = LoadTexture("Assets/Main Menu/Credits Button.png");
 
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
-	App->map->Load("Assets/Maps/", "racing.tmx");
+
+	//Random Map
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 2);
+
+	switch (dist6(rng))
+	{
+	case 1:
+		App->map->Load("Assets/Maps/", "map1.tmx");
+		mapLoaded = 1;
+		distanceX = 32 * SCALE;
+		distanceY = 49 * SCALE;
+		pos = { 191 * SCALE, 296 * SCALE };
+		initialY = pos.y;
+		rot = rot = -90 * PI / 180.0f;
+		break;
+	case 2:
+		App->map->Load("Assets/Maps/", "map2.tmx");
+		mapLoaded = 2;
+		distanceX = -(32 * SCALE);
+		distanceY = 49 * SCALE;
+		pos = { 464 * SCALE, 24 * SCALE };
+		initialY = pos.y;
+		rot = rot = 90 * PI / 180.0f;
+		break;
+	default: //If this switch dont work load level 1
+		App->map->Load("Assets/Maps/", "map1.tmx");
+		mapLoaded = 1;
+		distanceX = 32 * SCALE;
+		distanceY = 49 * SCALE;
+		pos = { 191 * SCALE, 296 * SCALE };
+		initialY = pos.y;
+		rot = rot = -90 * PI / 180.0f;
+		break;
+	}
 
 	Rectangle playBtPos = { 703, 239, 482, 149 };
-	playButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 1,"", playBtPos, this, {0,0,0,0}, &playBtTex);
-	
+	playButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "", playBtPos, this, { 0,0,0,0 }, &playBtTex);
+
 
 
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
@@ -123,7 +158,7 @@ void ModuleGame::MainMenu() {
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
 
-	
+
 	/*GuiControlType type, int id, const char* text, Rectangle bounds, Module* observer, Rectangle sliderBounds, Texture2D* texture*/
 
 	App->renderer->Draw(titleBG, 0, 0, &rect);
@@ -133,8 +168,8 @@ void ModuleGame::MainMenu() {
 
 	//TODO: Change to click button
 	OnGuiMouseClickEvent(playButton);
-		
-	
+
+
 }
 
 void ModuleGame::SelectCharacter() {
@@ -160,25 +195,23 @@ void ModuleGame::SelectCharacter() {
 	rect.width = SPRITE_WIDTH * SCALE;
 	rect.height = SPRITE_HEIGHT * SCALE;
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
-	
+
 	//Random Car
 	std::random_device dev;
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
-	float distanceX = 32 * SCALE, distanceY = 49 * SCALE;
-	Vector2 pos = { 191 * SCALE, 296 * SCALE };
 	if (IsKeyPressed(KEY_SPACE)) {
-		car->SetParameters(App->physics, vehicles[selectedPos]);
+		car->SetParameters(App->physics, vehicles[selectedPos], rot);
 		car->SetPosition(pos);
 		pos.x += distanceX;
 		pos.y += distanceY;
 
 		for (auto car : enemyCars) {
-			car->SetParameters(App->physics, vehicles[dist6(rng)]);
+			car->SetParameters(App->physics, vehicles[dist6(rng)], rot);
 			car->SetPosition(pos);
 			pos.x += distanceX;
-			pos.y = (pos.y == 296 * SCALE ? pos.y + distanceY : pos.y - distanceY);
+			pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
 		}
 
 		stateGame = GAME;
@@ -243,7 +276,7 @@ void ModuleGame::Game() {
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 
-	if(control->id == 1 && control->state == GuiControlState::PRESSED)
+	if (control->id == 1 && control->state == GuiControlState::PRESSED)
 	{
 		stateGame = SELECT_CHARACTER;
 		control->active = false;

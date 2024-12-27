@@ -56,5 +56,8 @@ public:
 private:
 
 	GuiControlButton* playButton;
+	int mapLoaded;
+	float distanceX, distanceY, initialY, rot;
+	Vector2 pos;
 	
 };

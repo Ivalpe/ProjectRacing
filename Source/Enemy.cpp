@@ -11,10 +11,9 @@ Enemy::Enemy(Application* parent) : Entity(parent)
 	speed = 0.f;
 }
 
-void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt) {
+void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt, float rot) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-	float rot = -90 * PI / 180.0f;
 
 	carType = AI;
 

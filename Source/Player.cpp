@@ -12,11 +12,11 @@ Player::Player(Application* parent) : Entity(parent)
 	speed = 0.f;
 }
 
-void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
+void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
 	carType = PLAYER;
-	float rot = -90 * PI / 180.0f;
+
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 
 	body->listenerptr = this;
