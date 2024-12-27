@@ -73,8 +73,5 @@ public:
 
 	std::vector<CheckpointSensor> sensors;
 
-	void CheckSensor(PhysBody* sensor, bool collisionEnd);
-	void CheckFinishLine();
-
 
 };

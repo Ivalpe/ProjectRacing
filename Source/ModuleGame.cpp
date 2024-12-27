@@ -365,6 +365,6 @@ void ModuleGame::PrintRanking() {
 			pilot = "Player";
 		}
 		else pilot = "AI";
-		TraceLog(LOG_INFO, "%d - %s (cpCount = %d)", i + 1, pilot, ranking[i]->cpCount);
+		//TraceLog(LOG_INFO, "%d - %s (cpCount = %d)", i + 1, pilot, ranking[i]->cpCount);
 	}
 }

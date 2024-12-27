@@ -36,8 +36,7 @@ public:
 	void CheckSensor(PhysBody* sensor, bool collisionEnd);
 	void CheckFinishLine();
 	void PrintPosition(std::vector<Entity*> ranking);
-	
-	bool finishedLap;
+
 
 private:
 	float currentSpeed = 0.f;
@@ -47,6 +46,8 @@ private:
 
 	bool forward = false;
 	bool stopped = true;
+
+	bool finishedLap;
 
 	KeyboardKey TurnRight, TurnLeft, MoveForward, MoveBack;
 };
