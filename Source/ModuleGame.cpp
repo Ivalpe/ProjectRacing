@@ -138,6 +138,7 @@ bool ModuleGame::CleanUp()
 		car->CleanUp();
 	}
 	car->CleanUp();
+	if(TwoPlayerMode) car2->CleanUp();
 	App->map->CleanUp();
 
 
