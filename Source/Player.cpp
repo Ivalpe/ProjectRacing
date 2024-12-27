@@ -15,17 +15,10 @@ Player::Player(Application* parent) : Entity(parent)
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
-<<<<<<< Updated upstream
 	carType = PLAYER;
 	float rot = -90 * PI / 180.0f;
-	
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
-=======
-	x = 200;
-	y = 100;
-	carType = PLAYER;
-	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, body->body->GetTransform().q.GetAngle());
->>>>>>> Stashed changes
+
 	body->listenerptr = this;
 }
 
@@ -118,6 +111,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		
 		break;
 	case ColliderType::FINISH_LINE:
+		CheckSensor(physB, false);
 		CheckFinishLine();
 		
 		break;
@@ -177,11 +171,6 @@ void Player::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 			if (collisionEnd) {
 				if(!s->changeable) 
 					s->changeable = true;
-<<<<<<< Updated upstream
-					
-=======
-					this->cpCount++;
->>>>>>> Stashed changes
 			}
 			else {
 				if (s->changeable) {
@@ -220,12 +209,8 @@ void Player::CheckFinishLine() {
 		
 		for (auto s : sensors) s->active = false;
 	}
-<<<<<<< Updated upstream
-	/*TraceLog(LOG_INFO, "Current Lap: %d", Lap);*/
-=======
-	TraceLog(LOG_INFO, "Current Lap: %d", Lap);
->>>>>>> Stashed changes
- }
+
+}
 
 void Player::PrintPosition(std::vector<Entity*> ranking) {
 	for (int i = 0; i < ranking.size(); ++i) {

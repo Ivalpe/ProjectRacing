@@ -232,12 +232,10 @@ void ModuleGame::Game() {
 		
 	}
 	
-<<<<<<< Updated upstream
+
 	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
 	PrintRanking();
-=======
-	/*if(car->finishedLap) */car->PrintPosition(ranking);
->>>>>>> Stashed changes
+
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
 
@@ -253,7 +251,7 @@ bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 	return true;
 }
 
-<<<<<<< Updated upstream
+
 void ModuleGame::PrintRanking() {
 	for (int i = 0; i < ranking.size(); ++i) {
 		const char* pilot;
@@ -264,5 +262,3 @@ void ModuleGame::PrintRanking() {
 		TraceLog(LOG_INFO, "%d - %s (cpCount = %d)", i + 1, pilot, ranking[i]->cpCount);
 	}
 }
-=======
->>>>>>> Stashed changes

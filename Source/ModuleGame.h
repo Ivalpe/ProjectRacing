@@ -35,11 +35,9 @@ public:
 	bool CleanUp();
 
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
-<<<<<<< Updated upstream
+
 	void PrintRanking();
-=======
-	/*void PrintRanking();*/
->>>>>>> Stashed changes
+
 
 	GameState stateGame;
 	Texture2D titleBG, selectedVehicle;

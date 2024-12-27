@@ -20,6 +20,8 @@ void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt) {
 
 	carType = AI;
 
+	carType = AI;
+
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	body->listenerptr = this;
 }
@@ -48,21 +50,14 @@ update_status Enemy::Update() {
 	float normalX, normalY;
 	int test = body->RayCast(x, y, x2, y2, normalX, normalY);
 	int test2 = body->RayCast(x, y, x3, y3, normalX, normalY);
-
-<<<<<<< Updated upstream
-	//int test = App->physics->RayCastGlobal(x, y, x2, y2, normalX, normalY);
-	//int test2 = App->physics->RayCastGlobal(x, y, x3, y3, normalX, normalY);
 	
 
 	if (App->physics->GetDebug()) {
 		App->renderer->DrawRectangleDebug(x3, y3, 10, 10, RED);
 		App->renderer->DrawRectangleDebug(x2, y2, 10, 10, YELLOW);
 	}
-=======
-	DrawRectangle(x3, y3, 10, 10, RED);
-	DrawRectangle(x2, y2, 10, 10, YELLOW);
-	/*TraceLog(LOG_INFO, "%d", test);*/
->>>>>>> Stashed changes
+
+
 
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {
@@ -109,17 +104,11 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		stopped = true;
 		break;
 	case ColliderType::SENSOR:
-<<<<<<< Updated upstream
 		CheckSensor(physB, false);
 		break;
 	case ColliderType::FINISH_LINE:
 		CheckFinishLine();
-=======
-		/*CheckSensor(physB, false);*/
-		break;
-	case ColliderType::FINISH_LINE:
-		/*CheckFinishLine();*/
->>>>>>> Stashed changes
+		CheckSensor(physB, false);
 		break;
 	default:
 		break;
@@ -131,8 +120,7 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::WALL:
 		break;
 	case ColliderType::SENSOR:
-		/*CheckSensor(physB, true);*/
-		
+		CheckSensor(physB, true);
 		break;
 	case ColliderType::FINISH_LINE:
 		
