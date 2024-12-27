@@ -223,12 +223,12 @@ void ModuleGame::SelectCharacter() {
 
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
-			car->SetParameters(App->physics, vehicles[selectedPos], rot);
+			car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
 			car->SetPosition(pos);
 			pos.x += distanceX;
 			pos.y += distanceY;
 
-			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot);
+			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot, 2);
 			car2->SetPosition(pos);
 			pos.x += distanceX;
 			pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
