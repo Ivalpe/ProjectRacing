@@ -15,8 +15,10 @@ Player::Player(Application* parent) : Entity(parent)
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
+	carType = PLAYER;
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
+
 	body->listenerptr = this;
 }
 
@@ -106,9 +108,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::SENSOR:
 		CheckSensor(physB, false);
+		
 		break;
 	case ColliderType::FINISH_LINE:
+		CheckSensor(physB, false);
 		CheckFinishLine();
+		
 		break;
 	default:
 		break;
@@ -160,40 +165,57 @@ void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, floa
 	body->TurnWithTorque(FinalTorque);
 }
 
-void Entity::CheckSensor(PhysBody* sensor, bool collisionEnd) {
+void Player::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 	for (auto s : sensors) {
 		if (s->id == sensor->id) {
 			if (collisionEnd) {
-				if(!s->changeable) s->changeable = true;
+				if(!s->changeable) 
+					s->changeable = true;
 			}
 			else {
 				if (s->changeable) {
 					if (s->active) {
 						s->active = false;
 						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s->id);
+						this->cpCount++;
 
 					}
 					else {
 						s->active = true;
 						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s->id);
+						
+						
 					}
 
 					s->changeable = false;
+					
 				}
 			}
 		}
 	}
 }
 
-void Entity::CheckFinishLine() {
-	bool FinishedLap = true;
+void Player::CheckFinishLine() {
+	finishedLap = true;
 	for (auto s : sensors) {
-		if (!s->active) FinishedLap = false;
+		if (!s->active) 
+			finishedLap = false;
 	}
 	
-	if (FinishedLap) {
+	if (finishedLap) {
 		Lap++;
-		TraceLog(LOG_INFO, "FINISHED LAP, STARTED LAP %d", Lap);
+		TraceLog(LOG_INFO, "PLAYER FINISHED LAP % d, STARTED LAP % d", Lap-1, Lap);
+		
+		
 		for (auto s : sensors) s->active = false;
+	}
+
+}
+
+void Player::PrintPosition(std::vector<Entity*> ranking) {
+	for (int i = 0; i < ranking.size(); ++i) {
+		if (ranking[i]->carType == PLAYER) {
+			TraceLog(LOG_INFO, "position: %d/%d", i+1 , ranking.size());
+		}
 	}
 }
