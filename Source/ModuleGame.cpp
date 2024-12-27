@@ -41,6 +41,10 @@ bool ModuleGame::Start()
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
+	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.mp3");
+	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.mp3");
+	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.mp3");
+
 	//Random Map
 	std::random_device dev;
 	std::mt19937 rng(dev());

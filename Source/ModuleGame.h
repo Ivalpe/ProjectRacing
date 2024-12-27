@@ -66,4 +66,8 @@ private:
 	float distanceX, distanceY, initialY, rot;
 	Vector2 pos;
 	int timer, delayTimer;
+
+	Music gameMusic;
+	Music charSelectMusic;
+	Music mainMenuMusic;
 };
