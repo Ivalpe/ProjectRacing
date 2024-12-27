@@ -103,7 +103,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::FINISH_LINE:
 		CheckFinishLine();
-		CheckSensor(physB, false);
+		CheckSensor(physB, true);
 		break;
 	default:
 		break;
@@ -126,38 +126,40 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 }
 
 void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
-	for (auto s : sensors) {
-		if (s.id == sensor->id) {
+	int i = 0;
+	while (i < sensors.size()) {
+		if (sensors[i].id == sensor->id) {
 			if (collisionEnd) {
-				if (!s.changeable) s.changeable = true;
+				if (!sensors[i].changeable) sensors[i].changeable = true;
 			}
 			else {
-				if (s.changeable) {
-					if (s.active) {
-						s.active = false;
-						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s.id);
+				if (sensors[i].changeable) {
+					if (sensors[i].active) {
+						sensors[i].active = false;
+						TraceLog(LOG_INFO, "ENEMY SENSOR %d NOT ACTIVE", sensors[i].id);
 
 					}
 					else {
-						s.active = true;
-						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s.id);
-
-						this->cpCount++;
+						sensors[i].active = true;
+						TraceLog(LOG_INFO, "ENEMY SENSOR %d ACTIVE", sensors[i].id);
 					}
 
-					s.changeable = false;
+					sensors[i].changeable = false;
 
 				}
 			}
 		}
+		++i;
 	}
 }
 
 void Enemy::CheckFinishLine() {
 	finishedLap = true;
-	for (auto s : sensors) {
-		if (!s.active) finishedLap = false;
-	}
+	int i = 0;
+	while (i < sensors.size()) {
+		if (!sensors[i].active) finishedLap = false;
+		++i;
+    }
 
 	if (finishedLap) {
 		Lap++;
