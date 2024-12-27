@@ -381,6 +381,22 @@ void ModuleGame::SelectCharacter() {
 
 	
 }
+void ModuleGame::DrawUI() {
+
+	float spacing = 1.0f;
+	Color color = BLACK;
+
+	char timeText[20];
+	char positionText[20];
+	char lapText[20];
+	
+
+
+	App->renderer->DrawText(TextFormat("%d TIME", timeText), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
+	App->renderer->DrawText(TextFormat("%d LAP", lapText), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
+	App->renderer->DrawText(TextFormat("%d POSITION", positionText), SCREEN_WIDTH - 120, 50, GetFontDefault(), (int)spacing, color);
+
+}
 
 void ModuleGame::Game() {
 
@@ -444,6 +460,7 @@ void ModuleGame::Game() {
 	PrintRanking();
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
+	DrawUI();
 
 
 }
