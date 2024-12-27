@@ -30,8 +30,12 @@ public:
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
+
+	void CheckSensor(PhysBody* sensor, bool collisionEnd);
+	void CheckFinishLine();
+	void PrintPosition(std::vector<Entity*> ranking);
 	
-public:
+	bool finishedLap;
 
 private:
 	float currentSpeed = 0.f;

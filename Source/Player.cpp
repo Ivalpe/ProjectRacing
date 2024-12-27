@@ -15,9 +15,17 @@ Player::Player(Application* parent) : Entity(parent)
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
+<<<<<<< Updated upstream
+	carType = PLAYER;
 	float rot = -90 * PI / 180.0f;
-
+	
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
+=======
+	x = 200;
+	y = 100;
+	carType = PLAYER;
+	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, body->body->GetTransform().q.GetAngle());
+>>>>>>> Stashed changes
 	body->listenerptr = this;
 }
 
@@ -107,9 +115,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::SENSOR:
 		CheckSensor(physB, false);
+		
 		break;
 	case ColliderType::FINISH_LINE:
 		CheckFinishLine();
+		
 		break;
 	default:
 		break;
@@ -161,40 +171,66 @@ void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, floa
 	body->TurnWithTorque(FinalTorque);
 }
 
-void Entity::CheckSensor(PhysBody* sensor, bool collisionEnd) {
+void Player::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 	for (auto s : sensors) {
 		if (s->id == sensor->id) {
 			if (collisionEnd) {
-				if(!s->changeable) s->changeable = true;
+				if(!s->changeable) 
+					s->changeable = true;
+<<<<<<< Updated upstream
+					
+=======
+					this->cpCount++;
+>>>>>>> Stashed changes
 			}
 			else {
 				if (s->changeable) {
 					if (s->active) {
 						s->active = false;
 						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s->id);
+						this->cpCount++;
 
 					}
 					else {
 						s->active = true;
 						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s->id);
+						
+						
 					}
 
 					s->changeable = false;
+					
 				}
 			}
 		}
 	}
 }
 
-void Entity::CheckFinishLine() {
-	bool FinishedLap = true;
+void Player::CheckFinishLine() {
+	finishedLap = true;
 	for (auto s : sensors) {
-		if (!s->active) FinishedLap = false;
+		if (!s->active) 
+			finishedLap = false;
 	}
 	
-	if (FinishedLap) {
+	if (finishedLap) {
 		Lap++;
-		TraceLog(LOG_INFO, "FINISHED LAP, STARTED LAP %d", Lap);
+		TraceLog(LOG_INFO, "PLAYER FINISHED LAP % d, STARTED LAP % d", Lap-1, Lap);
+		
+		
 		for (auto s : sensors) s->active = false;
+	}
+<<<<<<< Updated upstream
+	/*TraceLog(LOG_INFO, "Current Lap: %d", Lap);*/
+=======
+	TraceLog(LOG_INFO, "Current Lap: %d", Lap);
+>>>>>>> Stashed changes
+ }
+
+void Player::PrintPosition(std::vector<Entity*> ranking) {
+	for (int i = 0; i < ranking.size(); ++i) {
+		if (ranking[i]->carType == PLAYER) {
+			TraceLog(LOG_INFO, "position: %d/%d", i+1 , ranking.size());
+		}
 	}
 }

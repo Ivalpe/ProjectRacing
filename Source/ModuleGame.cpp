@@ -47,8 +47,11 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
 	car = new Player(App);
-	for (auto i = 0; i < 7; i++) {
-		enemyCars.push_back(new Enemy(App));
+	ranking.push_back(car);
+	for (auto i = 0; i < 3; i++) {
+		Enemy* enemyCar = new Enemy(App);
+		enemyCars.push_back(enemyCar);
+		ranking.push_back(enemyCar);
 	}
 
 	selectedPos = 0;
@@ -212,6 +215,22 @@ void ModuleGame::Game() {
 	//DrawRectangle(carX - 25, carY - 40, 50, 80, Color({ 0,0,255,255 }));
 
 	//drew the camera outline and yep, it encloses the map
+
+	for (int i = 1; i < ranking.size(); ++i) {
+		if (ranking[i-1]->cpCount < ranking[i]->cpCount) {
+			Entity* tempCar = ranking[i-1];
+			ranking[i-1] = ranking[i];
+			ranking[i] = tempCar;
+		}
+		
+	}
+	
+<<<<<<< Updated upstream
+	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
+	PrintRanking();
+=======
+	/*if(car->finishedLap) */car->PrintPosition(ranking);
+>>>>>>> Stashed changes
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
 
@@ -226,3 +245,17 @@ bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 	}
 	return true;
 }
+
+<<<<<<< Updated upstream
+void ModuleGame::PrintRanking() {
+	for (int i = 0; i < ranking.size(); ++i) {
+		const char* pilot;
+		if (ranking[i]->carType == 0) {
+			pilot = "Player";
+		}
+		else pilot = "AI";
+		TraceLog(LOG_INFO, "%d - %s (cpCount = %d)", i + 1, pilot, ranking[i]->cpCount);
+	}
+}
+=======
+>>>>>>> Stashed changes

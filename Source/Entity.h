@@ -5,6 +5,11 @@
 #include "Module.h"
 
 
+enum EntityType {
+	PLAYER,
+	AI
+};
+
 class Application;
 class PhysBody;
 
@@ -28,6 +33,10 @@ public:
 	float rot;
 	Texture2D texture;
 	PhysBody* body = nullptr;
+
+	EntityType carType;
+
+
 
 	PhysBody* GetBody() {
 		return body;
@@ -61,10 +70,12 @@ public:
 	float forceIncrement = 10.f;
 	float torqueSpeed = 0.8f * SCALE;
 	int Lap = 1;
+	int cpCount;
 
 	std::vector<CheckpointSensor*> sensors;
 
 	void CheckSensor(PhysBody* sensor, bool collisionEnd);
 	void CheckFinishLine();
+
 
 };
