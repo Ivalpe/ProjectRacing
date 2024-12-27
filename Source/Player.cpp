@@ -47,6 +47,7 @@ update_status Player::Update() {
 	/*TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
 	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());*/
 
+	//Turn
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {
 		isSpinning = false;
@@ -56,7 +57,7 @@ update_status Player::Update() {
 			isSpinning = true;
 			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 		}
-		
+
 		if (IsKeyDown(TurnLeft) && GetBodyAngle() > -MaxAngle) {
 			if (!isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			isSpinningRight = false;
@@ -68,6 +69,7 @@ update_status Player::Update() {
 	}
 	else body->ResetAngularVelocity();
 
+	//Forward Back
 	speed = 0;
 	if (IsKeyDown(MoveForward)) {
 		stopped = false;
@@ -88,7 +90,7 @@ update_status Player::Update() {
 		else if (currentSpeed <= MaxSpeed) speed += forceIncrement;
 	}
 
-
+	//Stop
 	if (IsKeyUp(MoveForward) && IsKeyUp(MoveBack)) {
 		if (!stopped) {
 			if (currentSpeed <= MinSpeed) {
@@ -106,15 +108,16 @@ update_status Player::Update() {
 	body->ApplyMovingForce(speed);
 
 	GetPosition(x, y);
-	//SetPosition({ x + App->renderer->camera.x, y + App->renderer->camera.y });
+	return ret;
+}
+
+void Player::Render() {
+	GetPosition(x, y);
 	Rectangle source = { 0.0f , 0.0f, (float)texture.width, (float)texture.height };
 	Rectangle dest = { x + App->renderer->camera.x, y + App->renderer->camera.y, (float)texture.width * SCALE , (float)texture.height * SCALE };
 	Vector2 origin = { ((float)texture.width / (2.0f)) * SCALE, ((float)texture.height / (2.0f)) * SCALE };
 	float rotation = body->GetRotation() * RAD2DEG;
 	DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
-
-
-	return ret;
 }
 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
@@ -125,12 +128,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::SENSOR:
 		CheckSensor(physB, false);
-		
+
 		break;
 	case ColliderType::FINISH_LINE:
 		CheckSensor(physB, false);
 		CheckFinishLine();
-		
+
 		break;
 	default:
 		break;
@@ -174,7 +177,8 @@ void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, floa
 	if (isGoingRight) {
 		if (isGoingForward) FinalTorque = torque / abs(speed);
 		else FinalTorque = -torque / abs(speed);
-	} else {
+	}
+	else {
 		if (isGoingForward) FinalTorque = -torque / abs(speed);
 		else FinalTorque = torque / abs(speed);
 	}
@@ -217,11 +221,11 @@ void Player::CheckFinishLine() {
 		if (!sensors[i].active) finishedLap = false;
 		++i;
 	}
-	
+
 	if (finishedLap) {
 		Lap++;
 
-		TraceLog(LOG_INFO, "PLAYER FINISHED LAP % d, STARTED LAP % d", Lap-1, Lap);
+		TraceLog(LOG_INFO, "PLAYER FINISHED LAP % d, STARTED LAP % d", Lap - 1, Lap);
 		for (auto s : sensors) s.active = false;
 	}
 
@@ -230,7 +234,7 @@ void Player::CheckFinishLine() {
 void Player::PrintPosition(std::vector<Entity*> ranking) {
 	for (int i = 0; i < ranking.size(); ++i) {
 		if (ranking[i]->carType == PLAYER) {
-			TraceLog(LOG_INFO, "position: %d/%d", i+1 , ranking.size());
+			TraceLog(LOG_INFO, "position: %d/%d", i + 1, ranking.size());
 		}
 	}
 }

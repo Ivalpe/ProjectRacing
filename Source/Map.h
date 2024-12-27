@@ -139,6 +139,8 @@ public:
 	// Load new map
 	bool Load(std::string path, std::string mapFileName);
 
+	int RayCastGlobal(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
+
 	
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions

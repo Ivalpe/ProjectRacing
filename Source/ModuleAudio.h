@@ -16,7 +16,7 @@ public:
 	bool CleanUp();
 
 	// Play a music file
-	bool PlayMusic(const char* path, float fade_time = DEFAULT_MUSIC_FADE_TIME);
+	bool ModuleAudio::PlayMusic(Music& selectedMusic, float fade_time);
 
 	// Load a sound in memory
 	unsigned int LoadFx(const char* path);
@@ -27,6 +27,7 @@ public:
 private:
 
 	Music music;
+	
 	Sound fx[MAX_SOUNDS];
     unsigned int fx_count;
 };

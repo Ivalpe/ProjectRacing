@@ -53,21 +53,18 @@ bool ModuleAudio::CleanUp()
 }
 
 // Play a music file
-bool ModuleAudio::PlayMusic(const char* path, float fade_time)
+bool ModuleAudio::PlayMusic(Music& selectedMusic, float fade_time)
 {
-	if(IsEnabled() == false)
+	if (!IsEnabled())
 		return false;
 
-	bool ret = true;
-	
-    StopMusicStream(music);
-    music = LoadMusicStream(path);
-    
-    PlayMusicStream(music);
+	StopMusicStream(music); 
+	music = selectedMusic;  
+	PlayMusicStream(music); 
 
-	LOG("Successfully playing %s", path);
+	LOG("Successfully playing music.");
 
-	return ret;
+	return true;
 }
 
 // Load WAV

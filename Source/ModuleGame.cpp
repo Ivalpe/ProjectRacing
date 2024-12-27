@@ -27,12 +27,13 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 	stateGame = MAIN_MENU;
-
+	timer = 3, delayTimer = 60;
 
 	titleBG = LoadTexture("Assets/Main Menu/title screen.png");
 	playBtTex = LoadTexture("Assets/Main Menu/Play Button.png");
 	optBtTex = LoadTexture("Assets/Main Menu/Options Button.png");
 	credBtTex = LoadTexture("Assets/Main Menu/Credits Button.png");
+
 
 	onePlayerBtTex = LoadTexture("Assets/Main Menu/1Player Button.png");
 	twoPlayersBtTex = LoadTexture("Assets/Main Menu/2Players Button.png");
@@ -41,8 +42,17 @@ bool ModuleGame::Start()
 	nextBtTex = LoadTexture("Assets/Main Menu/siguiente.png");
 	backBtTex = LoadTexture("Assets/Main Menu/atrás.png");
 
+	timer3 = LoadTexture("Assets/3.png");
+	timer2 = LoadTexture("Assets/2.png");
+	timer1 = LoadTexture("Assets/1.png");
+
+
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
+
+	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.mp3");
+	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.mp3");
+	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.mp3");
 
 	//Random Map
 	std::random_device dev;
@@ -113,7 +123,7 @@ bool ModuleGame::Start()
 
 	car = new Player(App);
 	if (TwoPlayerMode) car2 = new Player(App);
-	for (auto i = 0; i < 7; i++) {
+	for (auto i = 0; i < CARS; i++) {
 		Enemy* enemyCar = new Enemy(App);
 		enemyCars.push_back(enemyCar);
 		ranking.push_back(enemyCar);
@@ -335,15 +345,45 @@ void ModuleGame::SelectCharacter() {
 		}
 	}
 	else if (Player1Ready) {
+
 		nextButton->state = GuiControlState::NORMAL;
 		OnGuiMouseClickEvent(nextButton);
-		car->SetParameters(App->physics, vehicles[selectedPos], 90 * PI / 180.f);
+
+		car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
+		car->SetPosition(pos);
+		pos.x += distanceX;
+		pos.y += distanceY;
+
+		for (auto car : enemyCars) {
+			car->SetParameters(App->physics, vehicles[dist6(rng)], rot);
+			car->SetPosition(pos);
+			pos.x += distanceX;
+			pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
+		}
+
+		stateGame = GAME;
+		checkpoints = App->map->GetSensors();
+		for (auto c : checkpoints) {
+			if (!c->finishLine) {
+				CheckpointSensor s;
+
+				s.id = c->id;
+				s.active = false;
+				s.changeable = true;
+
+				car->sensors.push_back(s);
+				for (auto e : enemyCars) e->sensors.push_back(s);
+			}
+		}
+
+
 	}
 
 	
 }
 
 void ModuleGame::Game() {
+
 
 	nextButton->active = false;
 	backButton->active = false;
@@ -352,24 +392,45 @@ void ModuleGame::Game() {
 	if (TwoPlayerMode) car2->Update();
 	for (auto car : enemyCars) {
 		car->Update();
+
+		if (timer >= 0) delayTimer--;
+
+		if (delayTimer <= 0 && timer >= 0) {
+			delayTimer = 60;
+			timer--;
+		}
+
 	}
 
-	//camera
-	int carX, carY;
-	/*car->GetPosition(carX, carY);
-	car->body->GetPhysicPosition(carX, carY);*/
-	//carX = METERS_TO_PIXELS(car->body->body->GetTransform().p.x);
-	//carY = METERS_TO_PIXELS(car->body->body->GetTransform().p.y);
+	switch (timer)
+	{
+	case 1:
+		DrawTexture(timer1, (SCREEN_WIDTH / 2) - (timer1.width / 2), (SCREEN_HEIGHT / 2) - (timer1.height / 2), WHITE);
+		break;
+	case 2:
+		DrawTexture(timer2, (SCREEN_WIDTH / 2) - (timer2.width / 2), (SCREEN_HEIGHT / 2) - (timer2.height / 2), WHITE);
+		break;
+	case 3:
+		DrawTexture(timer3, (SCREEN_WIDTH / 2) - (timer3.width / 2), (SCREEN_HEIGHT / 2) - (timer3.height / 2), WHITE);
+		break;
+	default:
+		break;
+	}
 
-	//App->renderer->camera.x = ((carX - SCREEN_WIDTH / 2) * -(SCREEN_SIZE));
-	//App->renderer->camera.y = ((carY - SCREEN_HEIGHT / 2) * -(SCREEN_SIZE));
+	car->Render();
+	if (TwoPlayerMode) car2->Render();
+	for (auto car : enemyCars) {
+		car->Render();
+	}
 
-	//TraceLog(LOG_INFO, "Postion %d, %d // Camera %f, %f", carX, carY, App->renderer->camera.x, App->renderer->camera.y);
 
-	//just a test to check the received position was correct
-	//DrawRectangle(carX - 25, carY - 40, 50, 80, Color({ 0,0,255,255 }));
-
-	//drew the camera outline and yep, it encloses the map
+	if (timer <= 0) {
+		car->Update();
+		if (TwoPlayerMode) car2->Update();
+		for (auto car : enemyCars) {
+			car->Update();
+		}
+	}
 
 	for (int i = 1; i < ranking.size(); ++i) {
 		if (ranking[i - 1]->cpCount < ranking[i]->cpCount) {
@@ -377,9 +438,7 @@ void ModuleGame::Game() {
 			ranking[i - 1] = ranking[i];
 			ranking[i] = tempCar;
 		}
-
 	}
-
 
 	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
 	PrintRanking();
