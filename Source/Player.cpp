@@ -12,12 +12,28 @@ Player::Player(Application* parent) : Entity(parent)
 	speed = 0.f;
 }
 
-void Player::SetParameters(ModulePhysics* physics, Texture2D txt) {
+void Player::SetParameters(ModulePhysics* physics, Texture2D txt, int player) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
 	float rot = -90 * PI / 180.0f;
 
-	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
+	if (player == 1) {
+		TurnLeft = KEY_LEFT;
+		TurnRight = KEY_RIGHT;
+		MoveBack = KEY_DOWN;
+		MoveForward = KEY_UP;
+
+		body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
+	}
+	else {
+		TurnLeft = KEY_A;
+		TurnRight = KEY_D;
+		MoveBack = KEY_S;
+		MoveForward = KEY_W;
+
+		body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
+	}
+
 	body->listenerptr = this;
 }
 
@@ -26,20 +42,20 @@ update_status Player::Update() {
 	update_status ret = UPDATE_CONTINUE;
 
 	currentSpeed = body->ScalarLinearVelocity();
-	TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
-	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());
+	/*TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
+	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());*/
 
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {
 		isSpinning = false;
-		if (IsKeyDown(KEY_RIGHT) && GetBodyAngle() < MaxAngle) {
+		if (IsKeyDown(TurnRight) && GetBodyAngle() < MaxAngle) {
 			if (isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			isSpinningRight = true;
 			isSpinning = true;
 			TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 		}
 		
-		if (IsKeyDown(KEY_LEFT) && GetBodyAngle() > -MaxAngle) {
+		if (IsKeyDown(TurnLeft) && GetBodyAngle() > -MaxAngle) {
 			if (!isSpinningRight) TurnBody(forward, isSpinningRight, torqueSpeed, currentSpeed);
 			isSpinningRight = false;
 			isSpinning = true;
@@ -51,7 +67,7 @@ update_status Player::Update() {
 	else body->ResetAngularVelocity();
 
 	speed = 0;
-	if (IsKeyDown(KEY_UP)) {
+	if (IsKeyDown(MoveForward)) {
 		stopped = false;
 		forward = true;
 		if ((int)currentSpeed * 10000 == 0) {
@@ -60,7 +76,7 @@ update_status Player::Update() {
 		}
 		else if (currentSpeed <= MaxSpeed) speed -= forceIncrement;
 	}
-	else if (IsKeyDown(KEY_DOWN)) {
+	else if (IsKeyDown(MoveBack)) {
 		stopped = false;
 		forward = false;
 		if ((int)currentSpeed * 10000 == 0) {
@@ -71,7 +87,7 @@ update_status Player::Update() {
 	}
 
 
-	if (IsKeyUp(KEY_UP) && IsKeyUp(KEY_DOWN)) {
+	if (IsKeyUp(MoveForward) && IsKeyUp(MoveBack)) {
 		if (!stopped) {
 			if (currentSpeed <= MinSpeed) {
 				stopped = true;
@@ -163,23 +179,23 @@ void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, floa
 
 void Entity::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 	for (auto s : sensors) {
-		if (s->id == sensor->id) {
+		if (s.id == sensor->id) {
 			if (collisionEnd) {
-				if(!s->changeable) s->changeable = true;
+				if(!s.changeable) s.changeable = true;
 			}
 			else {
-				if (s->changeable) {
-					if (s->active) {
-						s->active = false;
-						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s->id);
+				if (s.changeable) {
+					if (s.active) {
+						s.active = false;
+						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s.id);
 
 					}
 					else {
-						s->active = true;
-						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s->id);
+						s.active = true;
+						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s.id);
 					}
 
-					s->changeable = false;
+					s.changeable = false;
 				}
 			}
 		}
@@ -189,12 +205,12 @@ void Entity::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 void Entity::CheckFinishLine() {
 	bool FinishedLap = true;
 	for (auto s : sensors) {
-		if (!s->active) FinishedLap = false;
+		if (!s.active) FinishedLap = false;
 	}
 	
 	if (FinishedLap) {
 		Lap++;
 		TraceLog(LOG_INFO, "FINISHED LAP, STARTED LAP %d", Lap);
-		for (auto s : sensors) s->active = false;
+		for (auto s : sensors) s.active = false;
 	}
 }

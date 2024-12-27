@@ -35,6 +35,7 @@ bool ModuleGame::Start()
 	credBtTex = LoadTexture("Assets/Main Menu/Credits Button.png");
 
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
+	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 	App->map->Load("Assets/Maps/", "racing.tmx");
 
 	Rectangle playBtPos = { 703, 239, 482, 149 };
@@ -47,11 +48,20 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
 
 	car = new Player(App);
-	for (auto i = 0; i < 7; i++) {
-		enemyCars.push_back(new Enemy(App));
+	if(TwoPlayerMode) car2 = new Player(App);
+	if (TwoPlayerMode) {
+		for (auto i = 0; i < 6; i++) {
+			enemyCars.push_back(new Enemy(App));
+		}
+	}
+	else {
+		for (auto i = 0; i < 7; i++) {
+			enemyCars.push_back(new Enemy(App));
+		}
 	}
 
 	selectedPos = 0;
+	selectedPosPlayer2 = 0;
 
 	int width = SPRITE_WIDTH * 3;
 	int height = SPRITE_HEIGHT * 3;
@@ -130,12 +140,24 @@ void ModuleGame::MainMenu() {
 
 void ModuleGame::SelectCharacter() {
 
-	if (IsKeyPressed(KEY_RIGHT) && selectedPos < vehicles.size() - 1) {
-		selectedPos++;
+	if (!Player1Ready) {
+		if (IsKeyPressed(KEY_RIGHT) && selectedPos < vehicles.size() - 1) {
+			selectedPos++;
+		}
+
+		if (IsKeyPressed(KEY_LEFT) && selectedPos > 0) {
+			selectedPos--;
+		}
 	}
 
-	if (IsKeyPressed(KEY_LEFT) && selectedPos > 0) {
-		selectedPos--;
+	if (TwoPlayerMode && !Player2Ready) {
+		if (IsKeyPressed(KEY_D) && selectedPosPlayer2 < vehicles.size() - 1) {
+			selectedPosPlayer2++;
+		}
+
+		if (IsKeyPressed(KEY_A) && selectedPosPlayer2 > 0) {
+			selectedPosPlayer2--;
+		}
 	}
 
 
@@ -151,6 +173,7 @@ void ModuleGame::SelectCharacter() {
 	rect.width = SPRITE_WIDTH * SCALE;
 	rect.height = SPRITE_HEIGHT * SCALE;
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
+	if (TwoPlayerMode) App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
 	
 	//Random Car
 	std::random_device dev;
@@ -158,7 +181,46 @@ void ModuleGame::SelectCharacter() {
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
 	Vector2 pos = { 185 * SCALE, 297 * SCALE };
-	if (IsKeyPressed(KEY_SPACE)) {
+	if (IsKeyPressed(KEY_SPACE)) Player1Ready = true;
+	if (TwoPlayerMode && IsKeyPressed(KEY_Q)) Player2Ready = true;
+
+	if (TwoPlayerMode) {
+		if (Player1Ready && Player2Ready) {
+			car->SetParameters(App->physics, vehicles[selectedPos]);
+			car->SetPosition(pos);
+			pos.x += 20 * SCALE;
+			pos.y += 50 * SCALE;
+
+			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], 2);
+			car2->SetPosition(pos);
+			pos.x += 20 * SCALE;
+			pos.y += 50 * SCALE;
+
+			for (auto car : enemyCars) {
+				car->SetParameters(App->physics, vehicles[dist6(rng)]);
+				car->SetPosition(pos);
+				pos.x += 30 * SCALE;
+				pos.y = (pos.y == 297 * SCALE ? pos.y + (50 * SCALE) : pos.y - (50 * SCALE));
+			}
+
+			stateGame = GAME;
+			checkpoints = App->map->GetSensors();
+			for (auto c : checkpoints) {
+				if (!c->finishLine) {
+					CheckpointSensor s;
+
+					s.id = c->id;
+					s.active = false;
+					s.changeable = true;
+
+					car->sensors.push_back(s);
+					car2->sensors.push_back(s);
+					for (auto e : enemyCars) e->sensors.push_back(s);
+				}
+			}
+		}
+	}
+	else if (Player1Ready) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
 		car->SetPosition(pos);
 		pos.x += 20 * SCALE;
@@ -175,11 +237,11 @@ void ModuleGame::SelectCharacter() {
 		checkpoints = App->map->GetSensors();
 		for (auto c : checkpoints) {
 			if (!c->finishLine) {
-				CheckpointSensor* s = new CheckpointSensor;
+				CheckpointSensor s;
 
-				s->id = c->id;
-				s->active = false;
-				s->changeable = true;
+				s.id = c->id;
+				s.active = false;
+				s.changeable = true;
 
 				car->sensors.push_back(s);
 				for (auto e : enemyCars) e->sensors.push_back(s);
@@ -192,6 +254,7 @@ void ModuleGame::SelectCharacter() {
 void ModuleGame::Game() {
 
 	car->Update();
+	if(TwoPlayerMode) car2->Update();
 	for (auto car : enemyCars) {
 		car->Update();
 	}

@@ -23,7 +23,7 @@ public:
 
 	update_status Update() override;
 
-	void SetParameters(ModulePhysics* physics, Texture2D txt);
+	void SetParameters(ModulePhysics* physics, Texture2D txt, int player = 1);
 
 	float speed;
 
@@ -41,4 +41,6 @@ private:
 
 	bool forward = false;
 	bool stopped = true;
+
+	KeyboardKey TurnRight, TurnLeft, MoveForward, MoveBack;
 };
