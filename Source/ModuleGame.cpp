@@ -35,6 +35,8 @@ bool ModuleGame::Start()
 	credBtTex = LoadTexture("Assets/Main Menu/Credits Button.png");
 
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
+	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
+	App->map->Load("Assets/Maps/", "racing.tmx");
 
 	//Random Map
 	std::random_device dev;
@@ -88,14 +90,25 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	car = new Player(App);
-	ranking.push_back(car);
-	for (auto i = 0; i < 3; i++) {
-		Enemy* enemyCar = new Enemy(App);
-		enemyCars.push_back(enemyCar);
-		ranking.push_back(enemyCar);
+	if(TwoPlayerMode) car2 = new Player(App);
+	if (TwoPlayerMode) {
+		for (auto i = 0; i < 2; i++) {
+			Enemy* enemyCar = new Enemy(App);
+		  enemyCars.push_back(enemyCar);
+		  ranking.push_back(enemyCar);
+		}
+	}
+	else {
+		for (auto i = 0; i < 3; i++) {
+			Enemy* enemyCar = new Enemy(App);
+		  enemyCars.push_back(enemyCar);
+		  ranking.push_back(enemyCar);
+		}
+
 	}
 
 	selectedPos = 0;
+	selectedPosPlayer2 = 0;
 
 	int width = SPRITE_WIDTH * 3;
 	int height = SPRITE_HEIGHT * 3;
@@ -174,12 +187,24 @@ void ModuleGame::MainMenu() {
 
 void ModuleGame::SelectCharacter() {
 
-	if (IsKeyPressed(KEY_RIGHT) && selectedPos < vehicles.size() - 1) {
-		selectedPos++;
+	if (!Player1Ready) {
+		if (IsKeyPressed(KEY_RIGHT) && selectedPos < vehicles.size() - 1) {
+			selectedPos++;
+		}
+
+		if (IsKeyPressed(KEY_LEFT) && selectedPos > 0) {
+			selectedPos--;
+		}
 	}
 
-	if (IsKeyPressed(KEY_LEFT) && selectedPos > 0) {
-		selectedPos--;
+	if (TwoPlayerMode && !Player2Ready) {
+		if (IsKeyPressed(KEY_D) && selectedPosPlayer2 < vehicles.size() - 1) {
+			selectedPosPlayer2++;
+		}
+
+		if (IsKeyPressed(KEY_A) && selectedPosPlayer2 > 0) {
+			selectedPosPlayer2--;
+		}
 	}
 
 
@@ -195,38 +220,55 @@ void ModuleGame::SelectCharacter() {
 	rect.width = SPRITE_WIDTH * SCALE;
 	rect.height = SPRITE_HEIGHT * SCALE;
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
-
+	if (TwoPlayerMode) App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
+	
 	//Random Car
 	std::random_device dev;
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
-	if (IsKeyPressed(KEY_SPACE)) {
-		car->SetParameters(App->physics, vehicles[selectedPos], rot);
-		car->SetPosition(pos);
-		pos.x += distanceX;
-		pos.y += distanceY;
+	Vector2 pos = { 185 * SCALE, 297 * SCALE };
+	if (IsKeyPressed(KEY_SPACE)) Player1Ready = true;
+	if (TwoPlayerMode && IsKeyPressed(KEY_Q)) Player2Ready = true;
 
-		for (auto car : enemyCars) {
-			car->SetParameters(App->physics, vehicles[dist6(rng)], rot);
+	if (TwoPlayerMode) {
+		if (Player1Ready && Player2Ready) {
+			car->SetParameters(App->physics, vehicles[selectedPos]);
 			car->SetPosition(pos);
-			pos.x += distanceX;
-			pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
-		}
+			pos.x += 20 * SCALE;
+			pos.y += 50 * SCALE;
 
-		stateGame = GAME;
-		checkpoints = App->map->GetSensors();
-		for (auto c : checkpoints) {
-			if (!c->finishLine) {
-				CheckpointSensor* s = new CheckpointSensor;
+			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], 2);
+			car2->SetPosition(pos);
+			pos.x += 20 * SCALE;
+			pos.y += 50 * SCALE;
 
-				s->id = c->id;
-				s->active = false;
-				s->changeable = true;
-
-				car->sensors.push_back(s);
-				for (auto e : enemyCars) e->sensors.push_back(s);
+			for (auto car : enemyCars) {
+				car->SetParameters(App->physics, vehicles[dist6(rng)]);
+				car->SetPosition(pos);
+				pos.x += 30 * SCALE;
+				pos.y = (pos.y == 297 * SCALE ? pos.y + (50 * SCALE) : pos.y - (50 * SCALE));
 			}
+
+			stateGame = GAME;
+			checkpoints = App->map->GetSensors();
+			for (auto c : checkpoints) {
+				if (!c->finishLine) {
+					CheckpointSensor s;
+
+					s.id = c->id;
+					s.active = false;
+					s.changeable = true;
+
+					car->sensors.push_back(s);
+					car2->sensors.push_back(s);
+					for (auto e : enemyCars) e->sensors.push_back(s);
+				}
+			}
+		}
+	}
+	else if (Player1Ready) {
+		car->SetParameters(App->physics, vehicles[selectedPos]);
 		}
 	}
 
@@ -235,6 +277,7 @@ void ModuleGame::SelectCharacter() {
 void ModuleGame::Game() {
 
 	car->Update();
+	if(TwoPlayerMode) car2->Update();
 	for (auto car : enemyCars) {
 		car->Update();
 	}

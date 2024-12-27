@@ -40,7 +40,7 @@ public:
 
 
 	GameState stateGame;
-	Texture2D titleBG, selectedVehicle;
+	Texture2D titleBG, selectedVehicle, selectedVehicle2;
 	Texture2D playBtTex, optBtTex, credBtTex;
 	std::vector<Vector2> posVehicles;
 	std::vector<Texture2D> vehicles;
@@ -48,8 +48,14 @@ public:
 
   
 	int selectedPos;
+	int selectedPosPlayer2;
+
+	bool TwoPlayerMode = true;
 
 	Player* car;
+	bool Player1Ready = false;
+	Player* car2;
+	bool Player2Ready = false;
 	std::vector<Object*> checkpoints;
 	std::vector<Entity*> ranking;
 

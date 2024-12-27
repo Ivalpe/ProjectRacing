@@ -24,10 +24,7 @@ class Entity : public Module
 public:
 	Entity(Application* parent);
 
-	virtual ~Entity() {
-		for (auto s : sensors) delete s;
-		sensors.clear();
-	};
+	virtual ~Entity() {};
 
 	int x, y;
 	float rot;
@@ -72,7 +69,7 @@ public:
 	int Lap = 1;
 	int cpCount;
 
-	std::vector<CheckpointSensor*> sensors;
+	std::vector<CheckpointSensor> sensors;
 
 	void CheckSensor(PhysBody* sensor, bool collisionEnd);
 	void CheckFinishLine();
