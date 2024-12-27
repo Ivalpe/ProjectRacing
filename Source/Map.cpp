@@ -297,21 +297,21 @@ bool Map::Load(std::string path, std::string fileName)
 		{
 			for (Object* object : objectGroup->object)
 			{
-				//TraceLog(LOG_INFO, "%d", object->x);
 				PhysBody* c = App->physics->CreateChain((object->x) * SCALE, (object->y) * SCALE, object->vertices, object->vertNum, STATIC);
 				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				c->ctype = ColliderType::WALL;
 				collisions.push_back(c);
 				initialPos.push_back({ (float)object->x, (float)object->y });
+
 			}
 		}
 		else if (objectGroup->name == "Sensors") {
 			for (Object* object : objectGroup->object)
 			{
 				//TraceLog(LOG_INFO, "%d", object->x);
-				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width*SCALE, object->height*SCALE, STATIC);
+				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, STATIC);
 				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
-				if(object->finishLine) s->ctype = ColliderType::FINISH_LINE;
+				if (object->finishLine) s->ctype = ColliderType::FINISH_LINE;
 				else s->ctype = ColliderType::SENSOR;
 				s->id = object->id;
 				sensors.push_back(s);
@@ -377,6 +377,38 @@ bool Map::Load(std::string path, std::string fileName)
 	/*}*/
 	delete[] intVertices;
 	mapLoaded = ret;
+	return ret;
+}
+
+int Map::RayCastGlobal(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const {
+	int ret = -1;
+
+	b2Transform transform;
+	transform.SetIdentity();
+
+	b2RayCastInput input;
+	input.p1 = { PIXEL_TO_METERS(x1),PIXEL_TO_METERS(y1) };
+	input.p2 = { PIXEL_TO_METERS(x2),PIXEL_TO_METERS(y2) };
+	input.maxFraction = 1.0f;
+	int32 childIndex = 0;
+
+	b2RayCastOutput output;
+	for (auto& phys : collisions) {
+		b2Body* b = phys->body;
+
+		for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) {
+			if (f->GetShape()->RayCast(&output, input, b->GetTransform(), childIndex)) {
+				normal_x = output.normal.x;
+				normal_y = output.normal.y;
+
+				float dx = (x2 - x1);
+				float dy = (y2 - y1);
+				float dist = sqrt((dx * dx) + (dy * dy));
+				return (dist * output.fraction);
+			}
+		}
+	}
+
 	return ret;
 }
 

@@ -23,6 +23,8 @@ public:
 
 	update_status Update() override;
 
+	void Render();
+
 	void SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int player = 1);
 
 	float speed;

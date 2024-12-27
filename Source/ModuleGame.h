@@ -33,7 +33,6 @@ public:
 	void SelectCharacter();
 	void Game();
 	bool CleanUp();
-
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
 
 	void PrintRanking();
@@ -42,6 +41,7 @@ public:
 	GameState stateGame;
 	Texture2D titleBG, selectedVehicle, selectedVehicle2;
 	Texture2D playBtTex, optBtTex, credBtTex;
+	Texture2D timer3, timer2, timer1;
 	std::vector<Vector2> posVehicles;
 	std::vector<Texture2D> vehicles;
 	std::vector<Enemy*> enemyCars;
@@ -50,7 +50,7 @@ public:
 	int selectedPos;
 	int selectedPosPlayer2;
 
-	bool TwoPlayerMode = true;
+	bool TwoPlayerMode = false;
 
 	Player* car;
 	bool Player1Ready = false;
@@ -65,5 +65,5 @@ private:
 	int mapLoaded;
 	float distanceX, distanceY, initialY, rot;
 	Vector2 pos;
-	
+	int timer, delayTimer;
 };
