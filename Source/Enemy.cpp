@@ -131,25 +131,25 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 
 void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 	for (auto s : sensors) {
-		if (s->id == sensor->id) {
+		if (s.id == sensor->id) {
 			if (collisionEnd) {
-				if (!s->changeable) s->changeable = true;
+				if (!s.changeable) s.changeable = true;
 			}
 			else {
-				if (s->changeable) {
-					if (s->active) {
-						s->active = false;
-						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s->id);
+				if (s.changeable) {
+					if (s.active) {
+						s.active = false;
+						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", s.id);
 
 					}
 					else {
-						s->active = true;
-						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s->id);
+						s.active = true;
+						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", s.id);
 
 						this->cpCount++;
 					}
 
-					s->changeable = false;
+					s.changeable = false;
 
 				}
 			}
@@ -160,13 +160,13 @@ void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 void Enemy::CheckFinishLine() {
 	finishedLap = true;
 	for (auto s : sensors) {
-		if (!s->active) finishedLap = false;
+		if (!s.active) finishedLap = false;
 	}
 
 	if (finishedLap) {
 		Lap++;
 		TraceLog(LOG_INFO, "AI CAR FINISHED LAP %d, STARTED LAP %d", Lap-1, Lap);
 
-		for (auto s : sensors) s->active = false;
+		for (auto s : sensors) s.active = false;
 	}
 }

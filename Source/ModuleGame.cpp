@@ -233,18 +233,18 @@ void ModuleGame::SelectCharacter() {
 
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
-			car->SetParameters(App->physics, vehicles[selectedPos]);
+			car->SetParameters(App->physics, vehicles[selectedPos], 90 * PI / 180.f);
 			car->SetPosition(pos);
 			pos.x += 20 * SCALE;
 			pos.y += 50 * SCALE;
 
-			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], 2);
+			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], 90 * PI / 180.f, 2);
 			car2->SetPosition(pos);
 			pos.x += 20 * SCALE;
 			pos.y += 50 * SCALE;
 
 			for (auto car : enemyCars) {
-				car->SetParameters(App->physics, vehicles[dist6(rng)]);
+				car->SetParameters(App->physics, vehicles[dist6(rng)], 90 * PI / 180.f);
 				car->SetPosition(pos);
 				pos.x += 30 * SCALE;
 				pos.y = (pos.y == 297 * SCALE ? pos.y + (50 * SCALE) : pos.y - (50 * SCALE));
@@ -268,10 +268,8 @@ void ModuleGame::SelectCharacter() {
 		}
 	}
 	else if (Player1Ready) {
-		car->SetParameters(App->physics, vehicles[selectedPos]);
-		}
+		car->SetParameters(App->physics, vehicles[selectedPos], 90 * PI / 180.f);
 	}
-
 }
 
 void ModuleGame::Game() {

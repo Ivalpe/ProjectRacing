@@ -211,7 +211,7 @@ void Player::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 void Player::CheckFinishLine() {
 	finishedLap = true;
 	for (auto s : sensors) {
-		if (!s.active) FinishedLap = false;
+		if (!s.active) finishedLap = false;
 	}
 	
 	if (finishedLap) {
