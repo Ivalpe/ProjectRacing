@@ -315,13 +315,13 @@ void ModuleGame::Game() {
 	default:
 		break;
 	}
-	
+
 	car->Render();
 	if (TwoPlayerMode) car2->Render();
 	for (auto car : enemyCars) {
 		car->Render();
 	}
-	
+
 
 	if (timer <= 0) {
 		car->Update();

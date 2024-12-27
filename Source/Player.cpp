@@ -47,6 +47,7 @@ update_status Player::Update() {
 	/*TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
 	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());*/
 
+	//Turn
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {
 		isSpinning = false;
@@ -68,6 +69,7 @@ update_status Player::Update() {
 	}
 	else body->ResetAngularVelocity();
 
+	//Forward Back
 	speed = 0;
 	if (IsKeyDown(MoveForward)) {
 		stopped = false;
@@ -88,7 +90,7 @@ update_status Player::Update() {
 		else if (currentSpeed <= MaxSpeed) speed += forceIncrement;
 	}
 
-
+	//Stop
 	if (IsKeyUp(MoveForward) && IsKeyUp(MoveBack)) {
 		if (!stopped) {
 			if (currentSpeed <= MinSpeed) {
