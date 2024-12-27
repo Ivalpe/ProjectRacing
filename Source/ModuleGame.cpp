@@ -45,6 +45,12 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
+	vehicles.push_back(LoadTexture("Assets/car4.png"));
+	vehicles.push_back(LoadTexture("Assets/car5.png"));
+	vehicles.push_back(LoadTexture("Assets/car6.png"));
+	vehicles.push_back(LoadTexture("Assets/car7.png"));
+	vehicles.push_back(LoadTexture("Assets/car8.png"));
+	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	car = new Player(App);
 	ranking.push_back(car);
@@ -160,18 +166,19 @@ void ModuleGame::SelectCharacter() {
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
-	Vector2 pos = { 185 * SCALE, 297 * SCALE };
+	float distanceX = 32 * SCALE, distanceY = 49 * SCALE;
+	Vector2 pos = { 191 * SCALE, 296 * SCALE };
 	if (IsKeyPressed(KEY_SPACE)) {
 		car->SetParameters(App->physics, vehicles[selectedPos]);
 		car->SetPosition(pos);
-		pos.x += 20 * SCALE;
-		pos.y += 50 * SCALE;
+		pos.x += distanceX;
+		pos.y += distanceY;
 
 		for (auto car : enemyCars) {
 			car->SetParameters(App->physics, vehicles[dist6(rng)]);
 			car->SetPosition(pos);
-			pos.x += 30 * SCALE;
-			pos.y = (pos.y == 297 * SCALE ? pos.y + (50 * SCALE) : pos.y - (50 * SCALE));
+			pos.x += distanceX;
+			pos.y = (pos.y == 296 * SCALE ? pos.y + distanceY : pos.y - distanceY);
 		}
 
 		stateGame = GAME;
