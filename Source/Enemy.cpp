@@ -28,9 +28,9 @@ update_status Enemy::Update() {
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	currentSpeed = body->ScalarLinearVelocity();
 
-	float rayLength = 200.0f;
+	float rayLength = 70.0f;
 
-	float x2 = x + rayLength * cos(body->GetRotation());
+	float rightX = x + rayLength * cos(body->GetRotation());
 	float y2 = y - cos(body->GetRotation()) + rayLength * sin(body->GetRotation());
 
 	float x3 = x - rayLength * cos(body->GetRotation());
@@ -38,14 +38,14 @@ update_status Enemy::Update() {
 
 	float normalX, normalY;
 	int test = App->physics->RayCastGlobal(x, y, x3, y3, normalX, normalY, body->body);
-	int test2 = App->physics->RayCastGlobal(x, y, x2, y2, normalX, normalY, body->body);
+	int test2 = App->physics->RayCastGlobal(x, y, rightX, y2, normalX, normalY, body->body);
 	//int test = App->map->RayCastGlobal(x, y, x2, y2, normalX, normalY);
 	//int test2 = App->map->RayCastGlobal(x, y, x3, y3, normalX, normalY);
 
 
 	if (App->physics->GetDebug()) {
 		App->renderer->DrawRectangleDebug(x3, y3, 10, 10, RED);
-		App->renderer->DrawRectangleDebug(x2, y2, 10, 10, YELLOW);
+		App->renderer->DrawRectangleDebug(rightX, y2, 10, 10, YELLOW);
 	}
 
 	TraceLog(LOG_INFO, "%d", test2);
