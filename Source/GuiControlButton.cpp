@@ -12,7 +12,7 @@ GuiControlButton::GuiControlButton(int id, Rectangle bounds, const char* text, T
 
 	canClick = true;
 	drawBasic = false;
-	active = true;
+	this->active = false;
 }
 
 
@@ -46,45 +46,39 @@ bool GuiControlButton::Update()
 			state = GuiControlState::NORMAL;
 		}
 
-		//L16: TODO 4: Draw the button according the GuiControl State
+	}
 
+	switch (state)
+	{
+	case GuiControlState::DISABLED:
+		currentTint = disabledTint;
+		currentColor = disabledTint;
+		break;
+	case GuiControlState::NORMAL:
 
-		
-		switch (state)
-		{
-		case GuiControlState::DISABLED:
-			currentTint = disabledTint;
-			currentColor = GRAY;
-			break;
-		case GuiControlState::NORMAL:
+		currentTint = normalTint;
+		currentColor = WHITE;
+		break;
 
-			currentTint = normalTint;
-			currentColor = WHITE;
-			break;
+	case GuiControlState::FOCUSED:
 
-		case GuiControlState::FOCUSED:
+		currentTint = focusedTint;
+		currentColor = BLUE;
+		break;
 
-			currentTint = focusedTint;
-			currentColor = BLUE;
-			break;
+	case GuiControlState::PRESSED:
+		currentTint = pressedTint;
+		currentColor = DARKBLUE;
+		break;
+	}
 
-		case GuiControlState::PRESSED:
-			currentTint = pressedTint;
-			currentColor = DARKBLUE;
-			break;
+	if (active) {
+		if (texture != nullptr) {
+			DrawTexture(*texture, bounds.x, bounds.y, currentColor);
 		}
-
-		if (active) {
-			if (texture != nullptr) {
-				DrawTexture(*texture, bounds.x, bounds.y, currentColor);
-			}
-			else {
-				DrawRectangle(bounds.x, bounds.y, bounds.width, bounds.height, currentTint);
-			}
+		else {
+			DrawRectangle(bounds.x, bounds.y, bounds.width, bounds.height, currentTint);
 		}
-		
-		
-
 	}
 
 	return false;

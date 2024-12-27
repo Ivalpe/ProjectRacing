@@ -34,6 +34,13 @@ bool ModuleGame::Start()
 	optBtTex = LoadTexture("Assets/Main Menu/Options Button.png");
 	credBtTex = LoadTexture("Assets/Main Menu/Credits Button.png");
 
+	onePlayerBtTex = LoadTexture("Assets/Main Menu/1Player Button.png");
+	twoPlayersBtTex = LoadTexture("Assets/Main Menu/2Players Button.png");
+
+	selectBG = LoadTexture("Assets/Main Menu/selection screen.png");
+	nextBtTex = LoadTexture("Assets/Main Menu/siguiente.png");
+	backBtTex = LoadTexture("Assets/Main Menu/atrás.png");
+
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
@@ -75,6 +82,22 @@ bool ModuleGame::Start()
 
 	Rectangle playBtPos = { 703, 239, 482, 149 };
 	playButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "", playBtPos, this, { 0,0,0,0 }, &playBtTex);
+
+	Rectangle onePlayerBtPos = { 738, 247, 436, 135 };
+	onePlayerButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "", onePlayerBtPos, this, { 0,0,0,0 }, &onePlayerBtTex);
+	
+
+	Rectangle twoPlayersBtPos = { 738, 364, 436, 135 };
+	twoPlayersButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "", twoPlayersBtPos, this, { 0,0,0,0 }, &twoPlayersBtTex);
+	
+
+	Rectangle nextBtPos = { 844, 580, 356, 111};
+	nextButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 4, "", nextBtPos, this, { 0,0,0,0 }, &nextBtTex);
+	
+
+	Rectangle backBtPos = { 388, 580, 356, 111 };
+	backButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "", backBtPos, this, { 0,0,0,0 }, &backBtTex);
+	
 
 
 
@@ -145,38 +168,77 @@ update_status ModuleGame::Update()
 		break;
 	case SELECT_CHARACTER:
 		SelectCharacter();
+
 		break;
 	case GAME:
 		Game();
 		break;
+
+	default:
+
+		break;
 	}
+	
 
 
 	return UPDATE_CONTINUE;
 }
 
 void ModuleGame::MainMenu() {
+
+	nextButton->active = false;
+	backButton->active = false;
+
 	Rectangle rect;
 	rect.x = 0;
 	rect.y = 0;
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
-
+	DrawTexture(titleBG, 0, 0, WHITE);
+	
 
 	/*GuiControlType type, int id, const char* text, Rectangle bounds, Module* observer, Rectangle sliderBounds, Texture2D* texture*/
 
-	App->renderer->Draw(titleBG, 0, 0, &rect);
-	playButton->Update();
-	DrawTexture(titleBG, 0, 0, WHITE);
+	/*App->renderer->Draw(titleBG, 0, 0, &rect);*/
+	/*playButton->Update();*/
+	
 
+	if (!pressedPlay) {
+		onePlayerButton->active = false;
+		twoPlayersButton->active = false;
+		playButton->active = true;
+		OnGuiMouseClickEvent(playButton);
+	}
+	else {
+		onePlayerButton->active = true;
+		twoPlayersButton->active = true;
+		playButton->active = false;
+		OnGuiMouseClickEvent(onePlayerButton);
+		OnGuiMouseClickEvent(twoPlayersButton);
+	}
 
 	//TODO: Change to click button
-	OnGuiMouseClickEvent(playButton);
+	
+	
+	
+	
 
 
 }
 
 void ModuleGame::SelectCharacter() {
+
+
+	/*Rectangle bgRect = { 0,0,SCREEN_WIDTH, SCREEN_HEIGHT };*/
+
+	DrawTexture(selectBG, 0, 0, WHITE);
+
+	onePlayerButton->active = false;
+	twoPlayersButton->active = false;
+
+	nextButton->active = true;
+	nextButton->state = GuiControlState::DISABLED;
+	backButton->active = true;
 
 	if (!Player1Ready) {
 		if (IsKeyPressed(KEY_RIGHT) && selectedPos < vehicles.size() - 1) {
@@ -213,6 +275,10 @@ void ModuleGame::SelectCharacter() {
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
 	if (TwoPlayerMode) App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
 
+
+	
+	OnGuiMouseClickEvent(backButton);
+
 	//Random Car
 	std::random_device dev;
 	std::mt19937 rng(dev());
@@ -223,46 +289,64 @@ void ModuleGame::SelectCharacter() {
 
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
-			car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
-			car->SetPosition(pos);
-			pos.x += distanceX;
-			pos.y += distanceY;
+			nextButton->state = GuiControlState::NORMAL;
+			nextButton->Update();
+			OnGuiMouseClickEvent(nextButton);
 
-			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot, 2);
-			car2->SetPosition(pos);
-			pos.x += distanceX;
-			pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
-
-			for (auto car : enemyCars) {
-				car->SetParameters(App->physics, vehicles[dist6(rng)], rot);
+			if (loadCars) {
+				car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
 				car->SetPosition(pos);
 				pos.x += distanceX;
+				pos.y += distanceY;
+
+				car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot, 2);
+				car2->SetPosition(pos);
+				pos.x += distanceX;
 				pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
-			}
 
-			stateGame = GAME;
-			checkpoints = App->map->GetSensors();
-			for (auto c : checkpoints) {
-				if (!c->finishLine) {
-					CheckpointSensor s;
+				for (auto car : enemyCars) {
+					car->SetParameters(App->physics, vehicles[dist6(rng)], rot);
+					car->SetPosition(pos);
+					pos.x += distanceX;
+					pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
 
-					s.id = c->id;
-					s.active = false;
-					s.changeable = true;
+				}
 
-					car->sensors.push_back(s);
-					car2->sensors.push_back(s);
-					for (auto e : enemyCars) e->sensors.push_back(s);
+				checkpoints = App->map->GetSensors();
+				for (auto c : checkpoints) {
+					if (!c->finishLine) {
+						CheckpointSensor s;
+
+						s.id = c->id;
+						s.active = false;
+						s.changeable = true;
+
+						car->sensors.push_back(s);
+						car2->sensors.push_back(s);
+						for (auto e : enemyCars) e->sensors.push_back(s);
+					}
 				}
 			}
+			
+
+			
+			
+			
 		}
 	}
 	else if (Player1Ready) {
+		nextButton->state = GuiControlState::NORMAL;
+		OnGuiMouseClickEvent(nextButton);
 		car->SetParameters(App->physics, vehicles[selectedPos], 90 * PI / 180.f);
 	}
+
+	
 }
 
 void ModuleGame::Game() {
+
+	nextButton->active = false;
+	backButton->active = false;
 
 	car->Update();
 	if (TwoPlayerMode) car2->Update();
@@ -307,11 +391,28 @@ void ModuleGame::Game() {
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 
-	if (control->id == 1 && control->state == GuiControlState::PRESSED)
-	{
-		stateGame = SELECT_CHARACTER;
+	if (control->state == GuiControlState::PRESSED) {
+		switch (control->id) {
+		case 1:
+			stateGame = MAIN_MENU;
+			pressedPlay = true;
+			break;
+		case 2:
+			stateGame = SELECT_CHARACTER;
+			TwoPlayerMode = false;
+			break;
+		case 3:
+			stateGame = SELECT_CHARACTER;
+			TwoPlayerMode = true;
+			break;
+		case 4:
+			stateGame = GAME;
+			loadCars = true;
+			break;
+		}
 		control->active = false;
 	}
+	
 	return true;
 }
 

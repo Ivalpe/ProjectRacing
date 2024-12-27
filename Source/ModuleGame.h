@@ -40,8 +40,8 @@ public:
 
 
 	GameState stateGame;
-	Texture2D titleBG, selectedVehicle, selectedVehicle2;
-	Texture2D playBtTex, optBtTex, credBtTex;
+	Texture2D titleBG, selectBG, selectedVehicle, selectedVehicle2;
+	Texture2D playBtTex, onePlayerBtTex, twoPlayersBtTex, optBtTex, credBtTex, nextBtTex, backBtTex;
 	std::vector<Vector2> posVehicles;
 	std::vector<Texture2D> vehicles;
 	std::vector<Enemy*> enemyCars;
@@ -50,7 +50,9 @@ public:
 	int selectedPos;
 	int selectedPosPlayer2;
 
+	bool pressedPlay = false;
 	bool TwoPlayerMode = true;
+	bool loadCars = false;
 
 	Player* car;
 	bool Player1Ready = false;
@@ -61,7 +63,7 @@ public:
 
 private:
 
-	GuiControlButton* playButton;
+	GuiControlButton *playButton, *onePlayerButton, *twoPlayersButton, *nextButton, *backButton;
 	int mapLoaded;
 	float distanceX, distanceY, initialY, rot;
 	Vector2 pos;
