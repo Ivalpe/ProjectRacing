@@ -17,10 +17,6 @@ void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt, float rot) {
 
 	carType = AI;
 
-	carType = AI;
-
-	carType = AI;
-
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	body->listenerptr = this;
 }

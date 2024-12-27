@@ -36,7 +36,6 @@ bool ModuleGame::Start()
 
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
-	App->map->Load("Assets/Maps/", "racing.tmx");
 
 	//Random Map
 	std::random_device dev;
@@ -90,22 +89,13 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	car = new Player(App);
-	if(TwoPlayerMode) car2 = new Player(App);
-	if (TwoPlayerMode) {
-		for (auto i = 0; i < 2; i++) {
-			Enemy* enemyCar = new Enemy(App);
-		  enemyCars.push_back(enemyCar);
-		  ranking.push_back(enemyCar);
-		}
+	if (TwoPlayerMode) car2 = new Player(App);
+	for (auto i = 0; i < 7; i++) {
+		Enemy* enemyCar = new Enemy(App);
+		enemyCars.push_back(enemyCar);
+		ranking.push_back(enemyCar);
 	}
-	else {
-		for (auto i = 0; i < 3; i++) {
-			Enemy* enemyCar = new Enemy(App);
-		  enemyCars.push_back(enemyCar);
-		  ranking.push_back(enemyCar);
-		}
 
-	}
 
 	selectedPos = 0;
 	selectedPosPlayer2 = 0;
@@ -138,7 +128,7 @@ bool ModuleGame::CleanUp()
 		car->CleanUp();
 	}
 	car->CleanUp();
-	if(TwoPlayerMode) car2->CleanUp();
+	if (TwoPlayerMode) car2->CleanUp();
 	App->map->CleanUp();
 
 
@@ -222,33 +212,32 @@ void ModuleGame::SelectCharacter() {
 	rect.height = SPRITE_HEIGHT * SCALE;
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
 	if (TwoPlayerMode) App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
-	
+
 	//Random Car
 	std::random_device dev;
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
-	Vector2 pos = { 185 * SCALE, 297 * SCALE };
 	if (IsKeyPressed(KEY_SPACE)) Player1Ready = true;
 	if (TwoPlayerMode && IsKeyPressed(KEY_Q)) Player2Ready = true;
 
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
-			car->SetParameters(App->physics, vehicles[selectedPos], 90 * PI / 180.f);
+			car->SetParameters(App->physics, vehicles[selectedPos], rot);
 			car->SetPosition(pos);
-			pos.x += 20 * SCALE;
-			pos.y += 50 * SCALE;
+			pos.x += distanceX;
+			pos.y += distanceY;
 
-			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], 90 * PI / 180.f, 2);
+			car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot);
 			car2->SetPosition(pos);
-			pos.x += 20 * SCALE;
-			pos.y += 50 * SCALE;
+			pos.x += distanceX;
+			pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
 
 			for (auto car : enemyCars) {
-				car->SetParameters(App->physics, vehicles[dist6(rng)], 90 * PI / 180.f);
+				car->SetParameters(App->physics, vehicles[dist6(rng)], rot);
 				car->SetPosition(pos);
-				pos.x += 30 * SCALE;
-				pos.y = (pos.y == 297 * SCALE ? pos.y + (50 * SCALE) : pos.y - (50 * SCALE));
+				pos.x += distanceX;
+				pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
 			}
 
 			stateGame = GAME;
@@ -276,7 +265,7 @@ void ModuleGame::SelectCharacter() {
 void ModuleGame::Game() {
 
 	car->Update();
-	if(TwoPlayerMode) car2->Update();
+	if (TwoPlayerMode) car2->Update();
 	for (auto car : enemyCars) {
 		car->Update();
 	}
@@ -299,14 +288,14 @@ void ModuleGame::Game() {
 	//drew the camera outline and yep, it encloses the map
 
 	for (int i = 1; i < ranking.size(); ++i) {
-		if (ranking[i-1]->cpCount < ranking[i]->cpCount) {
-			Entity* tempCar = ranking[i-1];
-			ranking[i-1] = ranking[i];
+		if (ranking[i - 1]->cpCount < ranking[i]->cpCount) {
+			Entity* tempCar = ranking[i - 1];
+			ranking[i - 1] = ranking[i];
 			ranking[i] = tempCar;
 		}
-		
+
 	}
-	
+
 
 	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
 	PrintRanking();
