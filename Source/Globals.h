@@ -34,12 +34,13 @@ enum update_status
 #define SCREEN_HEIGHT		  720
 #define SCREEN_SIZE				1
 #define SCALE					2
+#define CARS					10
 #define WIN_FULLSCREEN		false
 #define WIN_RESIZABLE		false
 #define WIN_BORDERLESS		false
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC				true
-#define TITLE "Physics 2D Playground"
+#define TITLE "Vroom Vroom - Subete vamos a terapia"
 #define SPRITE_WIDTH		   16
 #define SPRITE_HEIGHT		   32
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too

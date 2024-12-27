@@ -23,10 +23,13 @@ public:
 
 	update_status Update() override;
 
+	void Render();
+
 	void SetParameters(ModulePhysics* physics, Texture2D txt, float rot);
 
 	float speed;
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const;
 	void OnCollisionEnd(PhysBody* bodyA, PhysBody* bodyB);
 
 	void CheckSensor(PhysBody* sensor, bool collisionEnd);

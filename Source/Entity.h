@@ -57,6 +57,8 @@ public:
 
 	};
 
+	void Render();
+
 	virtual void OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 
 	};
