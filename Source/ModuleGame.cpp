@@ -154,7 +154,6 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
 
 	items.push_back(LoadTexture("Assets/Item1.png"));
-	items.push_back(LoadTexture("Assets/coin power up.png"));
 
 	for (int i = 0; i < 8; ++i) {
 		/*std::random_device dev;*/
