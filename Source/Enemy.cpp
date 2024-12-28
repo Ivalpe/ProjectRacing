@@ -4,10 +4,16 @@
 #include "Module.h"
 #include "Enemy.h"
 #include "box2d/b2_math.h"
+#include <random>
 
 Enemy::Enemy(Application* parent) : Entity(parent)
 {
 	speed = 0.f;
+
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> randomSpeed(3, 7);
+	MaxSpeed = (randomSpeed(rng));
 }
 
 void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt, float rot) {
