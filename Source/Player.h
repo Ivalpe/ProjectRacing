@@ -35,7 +35,6 @@ public:
 
 	void CheckSensor(PhysBody* sensor, bool collisionEnd);
 	void CheckFinishLine();
-	void PrintPosition(std::vector<Entity*> ranking);
 
 
 private:

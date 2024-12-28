@@ -107,7 +107,6 @@ void Enemy::Render() {
 void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::WALL:
-		TraceLog(LOG_INFO, "COLLISION");
 		stopped = true;
 		break;
 	case ColliderType::SENSOR:
@@ -119,19 +118,15 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::UP:
 		dc = Direction::UP;
-		TraceLog(LOG_INFO, "COLLISION UP");
 		break;
 	case ColliderType::RIGHT:
 		dc = Direction::RIGHT;
-		TraceLog(LOG_INFO, "COLLISION RIGHT");
 		break;
 	case ColliderType::DOWN:
 		dc = Direction::DOWN;
-		TraceLog(LOG_INFO, "COLLISION DOWN");
 		break;
 	case ColliderType::LEFT:
 		dc = Direction::LEFT;
-		TraceLog(LOG_INFO, "COLLISION LEFT");
 		break;
 	default:
 		break;
@@ -173,18 +168,9 @@ void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 			}
 			else {
 				if (sensors[i].changeable) {
-					if (sensors[i].active) {
-						sensors[i].active = false;
-						TraceLog(LOG_INFO, "ENEMY SENSOR %d NOT ACTIVE", sensors[i].id);
-
-					}
-					else {
-						sensors[i].active = true;
-						TraceLog(LOG_INFO, "ENEMY SENSOR %d ACTIVE", sensors[i].id);
-					}
-
+					if (sensors[i].active) sensors[i].active = false;
+					else sensors[i].active = true;
 					sensors[i].changeable = false;
-
 				}
 			}
 		}
@@ -198,12 +184,10 @@ void Enemy::CheckFinishLine() {
 	while (i < sensors.size()) {
 		if (!sensors[i].active) finishedLap = false;
 		++i;
-    }
+	}
 
 	if (finishedLap) {
 		Lap++;
-		TraceLog(LOG_INFO, "AI CAR FINISHED LAP %d, STARTED LAP %d", Lap - 1, Lap);
-
 		for (auto s : sensors) s.active = false;
 	}
 }

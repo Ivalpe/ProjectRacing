@@ -54,9 +54,6 @@ update_status Player::Update() {
 	update_status ret = UPDATE_CONTINUE;
 
 	currentSpeed = body->ScalarLinearVelocity();
-	/*TraceLog(LOG_INFO, "speed = %.10f", currentSpeed);
-	TraceLog(LOG_INFO, "angle: %f", GetBodyAngle());*/
-
 	//Turn
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	if (abs(currentSpeed) >= MinSpeed) {
@@ -85,7 +82,6 @@ update_status Player::Update() {
 		stopped = false;
 		forward = true;
 		if ((int)currentSpeed * 10000 == 0) {
-			TraceLog(LOG_INFO, "FASTER");
 			if (currentSpeed <= MaxSpeed) speed -= forceIncrement * 2;
 		}
 		else if (currentSpeed <= MaxSpeed) speed -= forceIncrement;
@@ -94,7 +90,6 @@ update_status Player::Update() {
 		stopped = false;
 		forward = false;
 		if ((int)currentSpeed * 10000 == 0) {
-			TraceLog(LOG_INFO, "FASTER");
 			if (currentSpeed <= MaxSpeed) speed += forceIncrement * 2;
 		}
 		else if (currentSpeed <= MaxSpeed) speed += forceIncrement;
@@ -156,7 +151,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, items.size() - 1);
 	switch (physB->ctype) {
 	case ColliderType::WALL:
-		TraceLog(LOG_INFO, "COLLISION");
 		stopped = true;
 		break;
 	case ColliderType::SENSOR:
@@ -234,14 +228,8 @@ void Player::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 				if (sensors[i].changeable) {
 					if (sensors[i].active) {
 						sensors[i].active = false;
-						TraceLog(LOG_INFO, "SENSOR %d NOT ACTIVE", sensors[i].id);
-
 					}
-					else {
-						sensors[i].active = true;
-						TraceLog(LOG_INFO, "SENSOR %d ACTIVE", sensors[i].id);
-					}
-
+					else sensors[i].active = true;
 					sensors[i].changeable = false;
 
 				}
@@ -261,17 +249,7 @@ void Player::CheckFinishLine() {
 
 	if (finishedLap) {
 		Lap++;
-
-		TraceLog(LOG_INFO, "PLAYER FINISHED LAP % d, STARTED LAP % d", Lap - 1, Lap);
 		for (auto s : sensors) s.active = false;
 	}
 
-}
-
-void Player::PrintPosition(std::vector<Entity*> ranking) {
-	for (int i = 0; i < ranking.size(); ++i) {
-		if (ranking[i]->carType == PLAYER) {
-			TraceLog(LOG_INFO, "position: %d/%d", i + 1, ranking.size());
-		}
-	}
 }
