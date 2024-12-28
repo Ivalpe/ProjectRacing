@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="68">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="80">
  <properties>
   <property name="Draw" type="bool" value="true"/>
  </properties>
@@ -1866,6 +1866,28 @@
   </object>
   <object id="67" x="32" y="0">
    <polygon points="0,0 576,0 594.727,14.2727 608,32 608,336 594.364,354.273 576,368 0,368 -18,354.091 -32,336 -32,32 -18.0909,14 -102,-78 -134.167,-55.8333 -107.458,444.167 691,471.333 673.667,-101.333 -78.3333,-86.6667 -19.125,14.5"/>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="Direction">
+  <object id="76" x="0" y="0" width="96" height="96">
+   <properties>
+    <property name="Direction" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="77" x="544" y="0" width="96" height="96">
+   <properties>
+    <property name="Direction" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="78" x="544" y="272" width="96" height="96">
+   <properties>
+    <property name="Direction" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="79" x="0" y="272" width="96" height="96">
+   <properties>
+    <property name="Direction" type="int" value="1"/>
+   </properties>
   </object>
  </objectgroup>
  <objectgroup id="3" name="Sensors">

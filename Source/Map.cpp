@@ -302,7 +302,7 @@ bool Map::Load(std::string path, std::string fileName)
 				vertices.clear();
 			}
 			object->finishLine = objectNode.child("properties").child("property").attribute("value").as_bool();
-
+			object->direction = (char)objectNode.child("properties").child("property").attribute("value").as_int();
 			objectGroup->object.push_back(object);
 		}
 		mapData.objectsGroups.push_back(objectGroup);
@@ -333,6 +333,20 @@ bool Map::Load(std::string path, std::string fileName)
 				s->id = object->id;
 				sensors.push_back(s);
 				sensorsInitialPos.push_back({ (float)(object->x + object->width / 2), (float)(object->y + object->height / 2) });
+			}
+		}
+		else if (objectGroup->name == "Direction") {
+			for (Object* object : objectGroup->object)
+			{
+				//TraceLog(LOG_INFO, "%d", object->x);
+				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, STATIC);
+				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
+				if (object->direction == 1) s->ctype = ColliderType::UP;
+				else if (object->direction == 2) s->ctype = ColliderType::RIGHT;
+				else if (object->direction == 3) s->ctype = ColliderType::DOWN;
+				else if (object->direction == 4) s->ctype = ColliderType::LEFT;
+				s->id = object->id;
+				posTurn.push_back({ (float)(object->x + object->width / 2), (float)(object->y + object->height / 2) });
 			}
 		}
 

@@ -34,7 +34,11 @@ enum update_status
 #define SCREEN_HEIGHT		  720
 #define SCREEN_SIZE				1
 #define SCALE					2
-#define CARS					7
+#define CARS					9
+#define UP_ANGLE				0 * PI / 180.0f;
+#define RIGHT_ANGLE				90 * PI / 180.0f;
+#define DOWN_ANGLE				180 * PI / 180.0f;
+#define LEFT_ANGLE				-90 * PI / 180.0f;
 #define WIN_FULLSCREEN		false
 #define WIN_RESIZABLE		false
 #define WIN_BORDERLESS		false
