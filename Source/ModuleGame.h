@@ -50,6 +50,7 @@ public:
 	std::vector<Texture2D> vehicles;
 	std::vector<Texture2D> vehicleIcons;
 	std::vector<Enemy*> enemyCars;
+	std::vector<Texture2D> items;
 
 
 

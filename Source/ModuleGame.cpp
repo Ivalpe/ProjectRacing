@@ -138,6 +138,8 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/kamek2 icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
 
+	items.push_back(LoadTexture("Assets/Item1.png"));
+
 
 
 
@@ -330,12 +332,12 @@ void ModuleGame::SelectCharacter() {
 			OnGuiMouseClickEvent(nextButton);
 
 			if (loadCars) {
-				car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
+				car->SetParameters(App->physics, vehicles[selectedPos], rot, items, 1);
 				car->SetPosition(pos);
 				pos.x += distanceX;
 				pos.y += distanceY;
 
-				car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot, 2);
+				car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot, items, 2);
 				car2->SetPosition(pos);
 				pos.x += distanceX;
 				pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
@@ -372,7 +374,7 @@ void ModuleGame::SelectCharacter() {
 		OnGuiMouseClickEvent(nextButton);
 
 		if (loadCars) {
-			car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
+			car->SetParameters(App->physics, vehicles[selectedPos], rot, items, 1);
 			car->SetPosition(pos);
 			pos.x += distanceX;
 			pos.y += distanceY;
