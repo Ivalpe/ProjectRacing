@@ -117,8 +117,6 @@ bool ModuleGame::Start()
 	backButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "", backBtPos, this, { 0,0,0,0 }, &backBtTex);
 	
 
-
-
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
@@ -144,10 +142,10 @@ bool ModuleGame::Start()
 
 
 
-	car = new Player(App);
-	if (TwoPlayerMode) car2 = new Player(App);
+	car = DBG_NEW Player(App);
+	if (TwoPlayerMode) car2 = DBG_NEW Player(App);
 	for (auto i = 0; i < CARS; i++) {
-		Enemy* enemyCar = new Enemy(App);
+		Enemy* enemyCar = DBG_NEW Enemy(App);
 		enemyCars.push_back(enemyCar);
 		ranking.push_back(enemyCar);
 	}
@@ -182,9 +180,15 @@ bool ModuleGame::CleanUp()
 	LOG("Unloading Intro scene");
 	for (auto car : enemyCars) {
 		car->CleanUp();
+		delete car;
 	}
+	enemyCars.clear();
 	car->CleanUp();
-	if (TwoPlayerMode) car2->CleanUp();
+	delete car;
+
+	car2->CleanUp();
+	delete car2;
+
 	App->map->CleanUp();
 
 
@@ -343,14 +347,6 @@ void ModuleGame::SelectCharacter() {
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
-	//if (IsKeyPressed(KEY_Z) && !Player1Ready) {
-	//	Player1Ready = true;
-	//}
-	//if (IsKeyPressed(KEY_X) && !Player2Ready) {
-	//	Player1Ready = false;
-	//}
-	//if (TwoPlayerMode && IsKeyPressed(KEY_Z) && Player1Ready) Player2Ready = true;
-	//if (TwoPlayerMode && IsKeyPressed(KEY_X) && Player1Ready) Player2Ready = false;
 
 	if (TwoPlayerMode) {
 		if (IsKeyPressed(KEY_Z)) {
@@ -370,6 +366,7 @@ void ModuleGame::SelectCharacter() {
 			Player1Ready = false;
 		}
 	}
+
 
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
@@ -481,13 +478,6 @@ void ModuleGame::Game() {
 
 	nextButton->active = false;
 	backButton->active = false;
-
-	car->Update();
-	if (TwoPlayerMode) car2->Update();
-	for (auto car : enemyCars) {
-		car->Update();
-	}
-
 
 	if (timer >= 0) delayTimer--;
 
