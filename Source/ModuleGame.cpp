@@ -63,7 +63,8 @@ bool ModuleGame::Start()
 	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.ogg");
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.ogg");
-	RaceStart_fx = App->audio->LoadFx("Audio/Effects/RaceStart.ogg");
+	bep_fx = App->audio->LoadFx("Audio/Fx/bep timer.ogg");
+	beep_fx = App->audio->LoadFx("Audio/Fx/beep timer.ogg");
 
 	if (!mainMenuMusic.stream.buffer) {
 		LOG("Failed to load main menu music");
@@ -470,12 +471,15 @@ void ModuleGame::Game() {
 	switch (timer)
 	{
 	case 1:
+		App->audio->PlayFx(bep_fx);
 		DrawTexture(timer1, (SCREEN_WIDTH / 2) - (timer1.width / 2), (SCREEN_HEIGHT / 2) - (timer1.height / 2), WHITE);
 		break;
 	case 2:
+		App->audio->PlayFx(bep_fx);
 		DrawTexture(timer2, (SCREEN_WIDTH / 2) - (timer2.width / 2), (SCREEN_HEIGHT / 2) - (timer2.height / 2), WHITE);
 		break;
 	case 3:
+		App->audio->PlayFx(beep_fx);
 		DrawTexture(timer3, (SCREEN_WIDTH / 2) - (timer3.width / 2), (SCREEN_HEIGHT / 2) - (timer3.height / 2), WHITE);
 		break;
 	default:

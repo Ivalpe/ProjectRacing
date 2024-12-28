@@ -85,5 +85,6 @@ private:
 	Music gameMusic;
 	Music charSelectMusic;
 	Music mainMenuMusic;
-	int RaceStart_fx;
+	int bep_fx;
+	int beep_fx;
 };
