@@ -32,6 +32,7 @@ public:
 	void MainMenu();
 	void SelectCharacter();
 	void Game();
+	void DrawUI();
 	bool CleanUp();
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
 
