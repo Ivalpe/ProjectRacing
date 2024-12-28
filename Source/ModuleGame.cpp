@@ -28,6 +28,8 @@ bool ModuleGame::Start()
 	bool ret = true;
 	stateGame = MAIN_MENU;
 	timer = 3, delayTimer = 60;
+    timeInitial = true;
+	timeMinus = 0;
 
 	titleBG = LoadTexture("Assets/Main Menu/title screen.png");
 	playBtTex = LoadTexture("Assets/Main Menu/Play Button.png");
@@ -403,18 +405,26 @@ void ModuleGame::SelectCharacter() {
 		}
 	}
 }
-void ModuleGame::DrawUI() {
 
+void ModuleGame::DrawUI() {
+	
+	if (timeInitial == true) {
+		
+		timeMinus = GetTime();
+		timeInitial = false;
+	}
 	float spacing = 1.0f;
 	Color color = BLACK;
+	double timer = GetTime() - timeMinus;
+	int timelap = car->Lap;
+	
 
-	char timeText[20];
-	char positionText[20];
-	char lapText[20];
-
-	App->renderer->DrawText(TextFormat("%d TIME", timeText), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
-	App->renderer->DrawText(TextFormat("%d LAP", lapText), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
-	App->renderer->DrawText(TextFormat("%d POSITION", positionText), SCREEN_WIDTH - 120, 50, GetFontDefault(), (int)spacing, color);
+	App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
+	App->renderer->DrawText(TextFormat("%d LAP", timelap), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
+	if (TwoPlayerMode) {
+		int timelap2 = car2->Lap;
+		App->renderer->DrawText(TextFormat("%d LAP", timelap2), SCREEN_WIDTH - 120, 50, GetFontDefault(), (int)spacing, color);
+	}
 
 }
 
@@ -460,6 +470,7 @@ void ModuleGame::Game() {
 		for (auto car : enemyCars) {
 			car->Update();
 		}
+		DrawUI();
 	}
 
 	for (int i = 1; i < ranking.size(); ++i) {
@@ -474,7 +485,7 @@ void ModuleGame::Game() {
 	PrintRanking();
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
-	DrawUI();
+
 
 
 }
