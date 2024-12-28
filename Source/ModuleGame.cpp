@@ -8,7 +8,6 @@
 #include "Enemy.h"
 #include "ModuleWindow.h"
 #include "Map.h"
-#include "Item.h"
 
 #include "GuiControl.h"
 #include "GuiManager.h"
@@ -61,9 +60,10 @@ bool ModuleGame::Start()
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
-	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.mp3");
-	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.mp3");
-	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.mp3");
+	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.ogg");
+	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.ogg");
+	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.ogg");
+	RaceStart_fx = App->audio->LoadFx("Audio/Effects/RaceStart.ogg");
 
 	if (!mainMenuMusic.stream.buffer) {
 		LOG("Failed to load main menu music");
@@ -152,33 +152,10 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/police cat icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/kamek2 icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
-	
 
 	items.push_back(LoadTexture("Assets/Item1.png"));
 
 
-	
-	
-
-	for (int i = 0; i < 8; ++i) {
-		/*std::random_device dev;*/
-		std::mt19937 rng(dev());
-		std::uniform_int_distribution<std::mt19937::result_type> randTex(0, 3);
-		itemBox = DBG_NEW Item(App);
-		itemBox->SetParameters(App->physics, randTex(rng));
-		if (mapLoaded == 1) {
-			if (i < 4) itemBox->SetPosition({ 224.0f * SCALE, (19.0f * (i + 1)) * SCALE });
-			else itemBox->SetPosition({ (488.0f + (19 * i)) * SCALE, 192 * SCALE });
-		}
-		else if (mapLoaded == 2){
-			if (i < 4) itemBox->SetPosition({ (564.0f + 19 * i) * SCALE, 192 * SCALE });
-			else itemBox->SetPosition({ (19.0f * (i%4 + 1)) * SCALE, 192 * SCALE });
-		}
-		itemList.push_back(itemBox);
-		
-	}
-
-	
 
 
 
@@ -228,10 +205,6 @@ bool ModuleGame::CleanUp()
 
 	car2->CleanUp();
 	delete car2;
-
-	itemList.clear();
-	itemBox->CleanUp();
-	delete itemBox;
 
 	App->map->CleanUp();
 
@@ -454,8 +427,6 @@ void ModuleGame::SelectCharacter() {
 					for (auto e : enemyCars) e->sensors.push_back(s);
 				}
 			}
-
-			
 		}
 	}
 }
@@ -509,11 +480,6 @@ void ModuleGame::Game() {
 		break;
 	default:
 		break;
-	}
-
-	for (Item* item : itemList) {
-		item->Update();
-		item->Render();
 	}
 
 	car->Render();

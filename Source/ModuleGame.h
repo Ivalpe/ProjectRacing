@@ -5,7 +5,6 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Map.h"
-#include "Item.h"
 #include "p2Point.h"
 
 #include "raylib.h"
@@ -47,7 +46,7 @@ public:
 	Texture2D titleBG, selectBG, selectedVehicle, selectedVehicle2;
 	Texture2D playBtTex, onePlayerBtTex, twoPlayersBtTex, optBtTex, credBtTex, nextBtTex, backBtTex;
 	Texture2D bluePressZ, bluePressX, redPressZ, redPressX, useWASD, useArrows;
-	
+
 	Texture2D timer3, timer2, timer1;
 
 	std::vector<Vector2> posVehicles;
@@ -56,13 +55,6 @@ public:
 	std::vector<Enemy*> enemyCars;
 	std::vector<Texture2D> items;
 
-
-
-	std::vector<Item*>itemList;
-
-	/*std::vector<Item*> map1Items;*/
-
-	
 
 
   
@@ -82,8 +74,6 @@ public:
 	std::vector<Object*> checkpoints;
 	std::vector<Entity*> ranking;
 
-	Item* itemBox;
-
 private:
 
 	GuiControlButton *playButton, *onePlayerButton, *twoPlayersButton, *nextButton, *backButton;
@@ -95,4 +85,5 @@ private:
 	Music gameMusic;
 	Music charSelectMusic;
 	Music mainMenuMusic;
+	int RaceStart_fx;
 };
