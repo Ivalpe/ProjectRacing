@@ -456,13 +456,6 @@ void ModuleGame::Game() {
 	nextButton->active = false;
 	backButton->active = false;
 
-	car->Update();
-	if (TwoPlayerMode) car2->Update();
-	for (auto car : enemyCars) {
-		car->Update();
-	}
-
-
 	if (timer >= 0) delayTimer--;
 
 	if (delayTimer <= 0 && timer >= 0) {
