@@ -62,6 +62,18 @@ bool ModuleGame::Start()
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.mp3");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.mp3");
 
+	if (!mainMenuMusic.stream.buffer) {
+		LOG("Failed to load main menu music");
+	}
+
+	if (!charSelectMusic.stream.buffer) {
+		LOG("Failed to load character select music");
+	}
+
+	if (!gameMusic.stream.buffer) {
+		LOG("Failed to load game music");
+	}
+
 	//Random Map
 	std::random_device dev;
 	std::mt19937 rng(dev());
@@ -128,7 +140,7 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/mcqueen icon.png"));
-	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/grunty icon.png"));
+	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/marge icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/falcon icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/ken icon.png"));
 	//vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/hamster icon.png"));
@@ -191,6 +203,9 @@ bool ModuleGame::CleanUp()
 
 	App->map->CleanUp();
 
+	UnloadMusicStream(mainMenuMusic);
+	UnloadMusicStream(charSelectMusic);
+	UnloadMusicStream(gameMusic);
 
 	return true;
 }
@@ -201,13 +216,22 @@ update_status ModuleGame::Update()
 	switch (stateGame)
 	{
 	case MAIN_MENU:
+		if (App->audio->GetCurrentMusic().stream.buffer != mainMenuMusic.stream.buffer) {
+			App->audio->PlayMusic(mainMenuMusic, 0.5f);
+		}
 		MainMenu();
 		break;
 	case SELECT_CHARACTER:
+		if (App->audio->GetCurrentMusic().stream.buffer != charSelectMusic.stream.buffer) {
+			App->audio->PlayMusic(charSelectMusic, 0.5f);
+		}
 		SelectCharacter();
 
 		break;
 	case GAME:
+		if (App->audio->GetCurrentMusic().stream.buffer != gameMusic.stream.buffer) {
+			App->audio->PlayMusic(gameMusic, 0.5f);
+		}
 		Game();
 		break;
 

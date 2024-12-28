@@ -52,17 +52,23 @@ bool ModuleAudio::CleanUp()
 	return true;
 }
 
+
+
 // Play a music file
-bool ModuleAudio::PlayMusic(Music& selectedMusic, float fade_time)
-{
-	if (!IsEnabled())
+bool ModuleAudio::PlayMusic(Music& selectedMusic, float fade_time) {
+	if (!IsEnabled()) {
+		LOG("Audio module is disabled. Cannot play music.");
 		return false;
+	}
 
-	StopMusicStream(music); 
-	music = selectedMusic;  
-	PlayMusicStream(music); 
+	LOG("Stopping current music stream...");
+	StopMusicStream(music);
 
-	LOG("Successfully playing music.");
+	LOG("Assigning new music stream...");
+	music = selectedMusic;
+
+	LOG("Playing new music stream...");
+	PlayMusicStream(music);
 
 	return true;
 }
@@ -104,3 +110,4 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 
 	return ret;
 }
+
