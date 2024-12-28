@@ -13,8 +13,9 @@ Player::Player(Application* parent) : Entity(parent)
 }
 
 
-void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int player) {
+void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, std::vector<Texture2D> it, int player) {
 
+	items = it;
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
 	carType = PLAYER;
@@ -24,6 +25,8 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int
 		TurnRight = KEY_RIGHT;
 		MoveBack = KEY_DOWN;
 		MoveForward = KEY_UP;
+		Power = KEY_LEFT_SHIFT;
+		posItem = { 10, (float)SCREEN_HEIGHT - (items[0].height * 2) - 10 };
 
 		body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	}
@@ -32,6 +35,8 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int
 		TurnRight = KEY_D;
 		MoveBack = KEY_S;
 		MoveForward = KEY_W;
+		Power = KEY_RIGHT_SHIFT;
+		posItem = { (float)SCREEN_WIDTH - (items[0].width * 2) - 10, (float)SCREEN_HEIGHT - (items[0].height * 2) - 10 };
 
 		body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	}
@@ -90,8 +95,28 @@ update_status Player::Update() {
 		else if (currentSpeed <= MaxSpeed) speed += forceIncrement;
 	}
 
+	//Power
+	if (hasPower) {
+		App->renderer->Draw(items[0], posItem.x, posItem.y);
+	}
+
+	if (hasPower && IsKeyPressed(Power) && !powerActive) {
+		powerActive = true;
+		hasPower = false;
+	}
+
+	if (powerActive) {
+		speed -= forceIncrement * 2;
+		timerTurbo--;
+	}
+
+	if (timerTurbo == 0) {
+		powerActive = false;
+		timerTurbo = 60;
+	}
+
 	//Stop
-	if (IsKeyUp(MoveForward) && IsKeyUp(MoveBack)) {
+	if (IsKeyUp(MoveForward) && IsKeyUp(MoveBack) && !powerActive) {
 		if (!stopped) {
 			if (currentSpeed <= MinSpeed) {
 				stopped = true;
