@@ -161,6 +161,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		CheckSensor(physB, false);
 		CheckFinishLine();
 		break;
+	case ColliderType::ITEM:
+		hasPower = true;
+		break;
 	default:
 		break;
 	}

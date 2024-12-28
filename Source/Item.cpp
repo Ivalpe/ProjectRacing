@@ -32,14 +32,6 @@ void Item::SetParameters(ModulePhysics* physics, int _texIndex) {
 
 	texIndex = _texIndex;
 
-	
-}
-
-update_status Item::Update()
-{
-	update_status ret = UPDATE_CONTINUE;
-	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-	
 	switch (texIndex) {
 	case 0:
 		type = TURBO;
@@ -48,7 +40,13 @@ update_status Item::Update()
 	case 2:
 		type = SHELL;
 	}
+	
+}
 
+update_status Item::Update()
+{
+	update_status ret = UPDATE_CONTINUE;
+	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 	
 	if (isPicked) {
 		if (reappearTimer.ReadSec() > reappearTime) {
@@ -84,7 +82,6 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 		if (!isPicked) {
 			isPicked = true;
 			reappearTimer.Start();
-			
 		}
 		break;
 	default:
