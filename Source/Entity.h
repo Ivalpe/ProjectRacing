@@ -45,6 +45,14 @@ public:
 
 	void TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const;
 
+	void NewRaceReset() {
+		FinishedLaps = false;
+		for (int i = 0; i < sensors.size(); ++i) {
+			sensors[i].active = false;
+			sensors[i].changeable = true;
+		}
+	}
+
 	void SetPosition(Vector2 pos);
 
 	Texture2D GetTexture() {
@@ -74,7 +82,10 @@ public:
 	float forceIncrement = 10.f;
 	float torqueSpeed = 0.8f * SCALE;
 	int Lap = 1;
+	int MaxLap = 2;
 	int cpCount;
+
+	bool FinishedLaps = false;
 
 	std::vector<CheckpointSensor> sensors;
 

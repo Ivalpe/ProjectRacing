@@ -44,6 +44,7 @@ public:
 	
 public:
 	bool finishedLap;
+	bool EndedRace = false;
 
 private:
 	float currentSpeed = 0.f;

@@ -123,7 +123,7 @@ void Player::Render() {
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::WALL:
-		TraceLog(LOG_INFO, "COLLISION");
+		//TraceLog(LOG_INFO, "COLLISION");
 		stopped = true;
 		break;
 	case ColliderType::SENSOR:
@@ -220,11 +220,13 @@ void Player::CheckFinishLine() {
 		++i;
 	}
 
-	if (finishedLap) {
+	if (finishedLap && !FinishedLaps) {
 		Lap++;
 
 		TraceLog(LOG_INFO, "PLAYER FINISHED LAP % d, STARTED LAP % d", Lap - 1, Lap);
 		for (auto s : sensors) s.active = false;
+
+		if (Lap >= MaxLap) FinishedLaps = true;
 	}
 
 }

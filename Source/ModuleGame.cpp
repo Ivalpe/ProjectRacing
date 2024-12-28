@@ -58,6 +58,9 @@ bool ModuleGame::Start()
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
+	endRaceOnePlayer = LoadTexture("Assets/RaceEnd/OnePlayer_RaceEnd.png");
+	endRaceTwoPlayers = LoadTexture("Assets/RaceEnd/TwoPlayer_RaceEnd.png");
+
 	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.mp3");
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.mp3");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.mp3");
@@ -167,7 +170,42 @@ bool ModuleGame::Start()
 		else posX += 125;
 	}
 
+	checkpoints = App->map->GetSensors();
+	for (auto c : checkpoints) {
+		if (!c->finishLine) {
+			CheckpointSensor s;
+
+			s.id = c->id;
+			s.active = false;
+			s.changeable = true;
+
+			car->sensors.push_back(s);
+			if(TwoPlayerMode) car2->sensors.push_back(s);
+			for (auto e : enemyCars) e->sensors.push_back(s);
+		}
+	}
+
 	return ret;
+}
+
+void ModuleGame::NewGame() {
+	car->FinishedLaps = false;
+	car->NewRaceReset();
+	PlayerOneDone = false;
+
+	if (TwoPlayerMode) {
+		car2->FinishedLaps = false;
+		car2->NewRaceReset();
+		PlayerTwoDone = false;
+	}
+
+	for (auto e : enemyCars) {
+		e->EndedRace = false;
+		e->NewRaceReset();
+	}
+
+	selectedPos = 0;
+	selectedPosPlayer2 = 0;
 }
 
 // Load assets
@@ -205,10 +243,12 @@ update_status ModuleGame::Update()
 		break;
 	case SELECT_CHARACTER:
 		SelectCharacter();
-
 		break;
 	case GAME:
 		Game();
+		break;
+	case END_RACE:
+		RaceEnd();
 		break;
 
 	default:
@@ -239,6 +279,7 @@ void ModuleGame::MainMenu() {
 		twoPlayersButton->active = false;
 		playButton->active = true;
 		OnGuiMouseClickEvent(playButton);
+		selectedPos = 0;
 	}
 	else {
 		onePlayerButton->active = true;
@@ -246,6 +287,8 @@ void ModuleGame::MainMenu() {
 		playButton->active = false;
 		OnGuiMouseClickEvent(onePlayerButton);
 		OnGuiMouseClickEvent(twoPlayersButton);
+		selectedPos = 0;
+		selectedPosPlayer2 = 0;
 	}	
 
 
@@ -393,20 +436,6 @@ void ModuleGame::SelectCharacter() {
 
 				}
 
-				checkpoints = App->map->GetSensors();
-				for (auto c : checkpoints) {
-					if (!c->finishLine) {
-						CheckpointSensor s;
-
-						s.id = c->id;
-						s.active = false;
-						s.changeable = true;
-
-						car->sensors.push_back(s);
-						car2->sensors.push_back(s);
-						for (auto e : enemyCars) e->sensors.push_back(s);
-					}
-				}
 			}
 			
 
@@ -435,23 +464,7 @@ void ModuleGame::SelectCharacter() {
 			}
 
 
-			checkpoints = App->map->GetSensors();
-			for (auto c : checkpoints) {
-				if (!c->finishLine) {
-					CheckpointSensor s;
-
-					s.id = c->id;
-					s.active = false;
-					s.changeable = true;
-
-					car->sensors.push_back(s);
-					for (auto e : enemyCars) e->sensors.push_back(s);
-				}
-			}
 		}
-		
-
-
 	}
 
 	
@@ -502,18 +515,18 @@ void ModuleGame::Game() {
 		break;
 	}
 
-	car->Render();
-	if (TwoPlayerMode) car2->Render();
+	if (!PlayerOneDone) car->Render();
+	if (TwoPlayerMode && !PlayerTwoDone) car2->Render();
 	for (auto car : enemyCars) {
-		car->Render();
+		if (!car->EndedRace) car->Render();
 	}
 
 
 	if (timer <= 0) {
-		car->Update();
-		if (TwoPlayerMode) car2->Update();
+		if(!PlayerOneDone)car->Update();
+		if (TwoPlayerMode && !PlayerTwoDone) car2->Update();
 		for (auto car : enemyCars) {
-			car->Update();
+			if(!car->EndedRace) car->Update();
 		}
 	}
 
@@ -525,13 +538,75 @@ void ModuleGame::Game() {
 		}
 	}
 
+	if (car->FinishedLaps) {
+		PlayerOneDone = true;
+		++FinalRankingTracker;
+		PlayerOneFinalPos = FinalRankingTracker;
+
+		if (!TwoPlayerMode) FinishRace = true;
+		else if (PlayerTwoDone) FinishRace = true;
+	}
+
+	if (TwoPlayerMode) {
+		if (car2->FinishedLaps) {
+			PlayerTwoDone = true;
+			++FinalRankingTracker;
+			PlayerTwoFinalPos = FinalRankingTracker;
+
+			if (PlayerOneDone) FinishRace = true;
+		}
+	}
+
+	for (auto e : enemyCars) {
+		if (e->FinishedLaps) {
+			++FinalRankingTracker;
+			e->FinishedLaps = false;
+		}
+	}
+
 	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
 	PrintRanking();
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 	DrawUI();
 
+	if (FinishRace) {
+		stateGame = END_RACE;
+	}
 
+
+}
+
+void ModuleGame::RaceEnd() {
+
+	if (TwoPlayerMode) {
+		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
+	}
+	else {
+		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
+	}
+
+	if (IsKeyPressed(KEY_SPACE)) {
+		/*car->FinishedLaps = false;
+		PlayerOneDone = false;
+
+		if (TwoPlayerMode) {
+			car2->FinishedLaps = false;
+			PlayerTwoDone = false;
+		}
+
+		for (auto e : enemyCars) e->EndedRace = false;*/
+
+		FinishRace = false;
+		Player1Ready = false;
+		Player2Ready = false;
+		FinalRankingTracker = 0;
+		timer = 3;
+		delayTimer = 60;
+		loadCars = false;
+		stateGame = MAIN_MENU;
+		NewGame();
+	}
 }
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {

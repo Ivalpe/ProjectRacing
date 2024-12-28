@@ -168,12 +168,12 @@ void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 				if (sensors[i].changeable) {
 					if (sensors[i].active) {
 						sensors[i].active = false;
-						TraceLog(LOG_INFO, "ENEMY SENSOR %d NOT ACTIVE", sensors[i].id);
+						//TraceLog(LOG_INFO, "ENEMY SENSOR %d NOT ACTIVE", sensors[i].id);
 
 					}
 					else {
 						sensors[i].active = true;
-						TraceLog(LOG_INFO, "ENEMY SENSOR %d ACTIVE", sensors[i].id);
+						//TraceLog(LOG_INFO, "ENEMY SENSOR %d ACTIVE", sensors[i].id);
 					}
 
 					sensors[i].changeable = false;
@@ -193,10 +193,15 @@ void Enemy::CheckFinishLine() {
 		++i;
     }
 
-	if (finishedLap) {
+	if (finishedLap && !FinishedLaps) {
 		Lap++;
 		TraceLog(LOG_INFO, "AI CAR FINISHED LAP %d, STARTED LAP %d", Lap - 1, Lap);
 
 		for (auto s : sensors) s.active = false;
+
+		if (Lap >= MaxLap) {
+			FinishedLaps = true;
+			EndedRace = true;
+		}
 	}
 }

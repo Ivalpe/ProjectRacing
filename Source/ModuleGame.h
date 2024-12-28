@@ -17,7 +17,8 @@ class PhysicEntity;
 enum GameState {
 	MAIN_MENU,
 	SELECT_CHARACTER,
-	GAME
+	GAME,
+	END_RACE
 };
 
 
@@ -31,7 +32,9 @@ public:
 	update_status Update();
 	void MainMenu();
 	void SelectCharacter();
+	void NewGame();
 	void Game();
+	void RaceEnd();
 	void DrawUI();
 	bool CleanUp();
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
@@ -43,6 +46,8 @@ public:
 	Texture2D titleBG, selectBG, selectedVehicle, selectedVehicle2;
 	Texture2D playBtTex, onePlayerBtTex, twoPlayersBtTex, optBtTex, credBtTex, nextBtTex, backBtTex;
 	Texture2D bluePressZ, bluePressX, redPressZ, redPressX, useWASD, useArrows;
+
+	Texture2D endRaceOnePlayer, endRaceTwoPlayers;
 
 	Texture2D timer3, timer2, timer1;
 
@@ -69,6 +74,13 @@ public:
 	bool Player2Ready = false;
 	std::vector<Object*> checkpoints;
 	std::vector<Entity*> ranking;
+
+	int FinalRankingTracker = 0;
+	bool FinishRace = false;
+	bool PlayerOneDone = false;
+	bool PlayerTwoDone = false;
+
+	int PlayerOneFinalPos, PlayerTwoFinalPos;
 
 private:
 
