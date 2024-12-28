@@ -10,6 +10,7 @@
 #include "raylib.h"
 #include <vector>
 #include "GuiControlButton.h"
+#include "Item.h"
 
 class PhysBody;
 class PhysicEntity;
@@ -54,9 +55,9 @@ public:
 	std::vector<Texture2D> vehicleIcons;
 	std::vector<Enemy*> enemyCars;
 	std::vector<Texture2D> items;
+	std::vector<Item*>itemList;
 
-
-
+	Item* itemBox;
   
 	int selectedPos;
 	int selectedPosPlayer2;

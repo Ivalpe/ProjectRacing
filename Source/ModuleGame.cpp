@@ -155,7 +155,23 @@ bool ModuleGame::Start()
 
 	items.push_back(LoadTexture("Assets/Item1.png"));
 
+	for (int i = 0; i < 8; ++i) {
+		/*std::random_device dev;*/
+		std::mt19937 rng(dev());
+		std::uniform_int_distribution<std::mt19937::result_type> randTex(0, 3);
+		itemBox = DBG_NEW Item(App);
+		itemBox->SetParameters(App->physics, randTex(rng));
+		if (mapLoaded == 1) {
+			if (i < 4) itemBox->SetPosition({ 224.0f * SCALE, (19.0f * (i + 1)) * SCALE });
+			else itemBox->SetPosition({ (488.0f + (19 * i)) * SCALE, 192 * SCALE });
+		}
+		else if (mapLoaded == 2) {
+			if (i < 4) itemBox->SetPosition({ (564.0f + 19 * i) * SCALE, 192 * SCALE });
+			else itemBox->SetPosition({ (19.0f * (i % 4 + 1)) * SCALE, 192 * SCALE });
+		}
+		itemList.push_back(itemBox);
 
+	}
 
 
 
@@ -480,6 +496,11 @@ void ModuleGame::Game() {
 		break;
 	default:
 		break;
+	}
+
+	for (Item* item : itemList) {
+		item->Update();
+		item->Render();
 	}
 
 	car->Render();
