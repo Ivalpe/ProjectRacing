@@ -26,7 +26,7 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	switch (type)
 	{
 	case GuiControlType::BUTTON:
-		guiControl = new GuiControlButton(id, bounds, text, texture);
+		guiControl = DBG_NEW GuiControlButton(id, bounds, text, texture);
 		break;
 	}
 

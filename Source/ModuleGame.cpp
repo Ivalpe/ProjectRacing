@@ -117,8 +117,6 @@ bool ModuleGame::Start()
 	backButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "", backBtPos, this, { 0,0,0,0 }, &backBtTex);
 	
 
-
-
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
@@ -144,10 +142,10 @@ bool ModuleGame::Start()
 
 
 
-	car = new Player(App);
-	if (TwoPlayerMode) car2 = new Player(App);
+	car = DBG_NEW Player(App);
+	if (TwoPlayerMode) car2 = DBG_NEW Player(App);
 	for (auto i = 0; i < CARS; i++) {
-		Enemy* enemyCar = new Enemy(App);
+		Enemy* enemyCar = DBG_NEW Enemy(App);
 		enemyCars.push_back(enemyCar);
 		ranking.push_back(enemyCar);
 	}
@@ -182,9 +180,15 @@ bool ModuleGame::CleanUp()
 	LOG("Unloading Intro scene");
 	for (auto car : enemyCars) {
 		car->CleanUp();
+		delete car;
 	}
+	enemyCars.clear();
 	car->CleanUp();
-	if (TwoPlayerMode) car2->CleanUp();
+	delete car;
+
+	car2->CleanUp();
+	delete car2;
+
 	App->map->CleanUp();
 
 

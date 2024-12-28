@@ -15,7 +15,7 @@
 int* Map::ConvertToIntArray(const std::vector<b2Vec2>& vertices) {
 
 	vertNum = vertices.size();
-	intVertices = new int[vertNum * 2];
+	intVertices = DBG_NEW int[vertNum * 2];
 
 	for (size_t i = 0; i < vertices.size(); ++i) {
 		size_t j = vertNum - 1 - i; //reversed index
@@ -34,7 +34,8 @@ Map::Map(Application* app, bool start_enabled) : Module(app, start_enabled), map
 
 // Destructor
 Map::~Map()
-{}
+{
+}
 
 // Called before render is available
 bool Map::Awake()
@@ -133,6 +134,7 @@ bool Map::CleanUp()
 
 	// L06: TODO 2: Make sure you clean up any memory allocated from tilesets/map
 	for (const auto& tileset : mapData.tilesets) {
+		delete tileset->texture;
 		delete tileset;
 	}
 	mapData.tilesets.clear();
@@ -143,6 +145,21 @@ bool Map::CleanUp()
 		delete layer;
 	}
 	mapData.layers.clear();
+
+	for (auto objectGroup : mapData.objectsGroups) {
+		delete objectGroup;
+	}
+	mapData.objectsGroups.clear();
+
+	for (auto c : collisions) {
+		delete c;
+	}
+	collisions.clear();
+
+	for (auto s : sensors) {
+		delete s;
+	}
+	sensors.clear();
 
 	return true;
 }
@@ -176,7 +193,7 @@ bool Map::Load(std::string path, std::string fileName)
 	for (pugi::xml_node tilesetNode = mapFileXML.child("map").child("tileset"); tilesetNode != NULL; tilesetNode = tilesetNode.next_sibling("tileset"))
 	{
 		//Load Tileset attributes
-		TileSet* tileSet = new TileSet();
+		TileSet* tileSet = DBG_NEW TileSet();
 		tileSet->firstGid = tilesetNode.attribute("firstgid").as_int();
 		tileSet->name = tilesetNode.attribute("name").as_string();
 		tileSet->tileWidth = tilesetNode.attribute("tilewidth").as_int() * SCALE;
@@ -199,7 +216,7 @@ bool Map::Load(std::string path, std::string fileName)
 
 		// L07: TODO 4: Implement the load of a single layer 
 		//Load the attributes and saved in a new MapLayer
-		MapLayer* mapLayer = new MapLayer();
+		MapLayer* mapLayer = DBG_NEW MapLayer();
 		mapLayer->id = layerNode.attribute("id").as_int();
 		mapLayer->name = layerNode.attribute("name").as_string();
 		mapLayer->width = layerNode.attribute("width").as_int();
@@ -258,11 +275,11 @@ bool Map::Load(std::string path, std::string fileName)
 
 	for (pugi::xml_node objectGroupNode = mapFileXML.child("map").child("objectgroup"); objectGroupNode != NULL; objectGroupNode = objectGroupNode.next_sibling("objectgroup")) {
 
-		ObjectGroup* objectGroup = new ObjectGroup();
+		ObjectGroup* objectGroup = DBG_NEW ObjectGroup();
 		objectGroup->id = objectGroupNode.attribute("id").as_int();
 		objectGroup->name = objectGroupNode.attribute("name").as_string();
 		for (pugi::xml_node objectNode = objectGroupNode.child("object"); objectNode != NULL; objectNode = objectNode.next_sibling("object")) {
-			Object* object = new Object();
+			Object* object = DBG_NEW Object();
 			object->id = objectNode.attribute("id").as_int();
 			object->x = objectNode.attribute("x").as_int();
 			object->y = objectNode.attribute("y").as_int();
@@ -455,7 +472,7 @@ bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 
 	for (pugi::xml_node propertieNode = node.child("properties").child("property"); propertieNode; propertieNode = propertieNode.next_sibling("property"))
 	{
-		Properties::Property* p = new Properties::Property();
+		Properties::Property* p = DBG_NEW Properties::Property();
 		p->name = propertieNode.attribute("name").as_string();
 		p->value = propertieNode.attribute("value").as_bool(); // (!!) I'm assuming that all values are bool !!
 
