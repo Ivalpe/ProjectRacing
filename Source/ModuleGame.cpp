@@ -71,9 +71,9 @@ bool ModuleGame::Start()
 	songId = randMusic(rng);
 
 	//Random Map
-	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 2);
+	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 2);
 
-	switch (dist6(rng))
+	switch (randMap(rng))
 	{
 	case 1:
 		App->map->Load("Assets/Maps/", "map1.tmx");
