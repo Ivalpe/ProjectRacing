@@ -344,10 +344,10 @@ void ModuleGame::SelectCharacter() {
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
+	if (TwoPlayerMode && Player1Ready && IsKeyPressed(KEY_Z)) Player2Ready = true;
+	if (TwoPlayerMode && IsKeyPressed(KEY_X) && Player1Ready) Player2Ready = false;
 	if (IsKeyPressed(KEY_Z)) Player1Ready = true;
 	if (IsKeyPressed(KEY_X) && !Player2Ready) Player1Ready = false;
-	if (TwoPlayerMode && IsKeyPressed(KEY_X)) Player2Ready = true;
-	if (TwoPlayerMode && IsKeyPressed(KEY_X) && Player1Ready) Player2Ready = false;
 
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
