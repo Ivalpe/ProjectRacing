@@ -130,14 +130,14 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/mcqueen icon.png"));
-	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/goblin icon.png"));
+	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/grunty icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/falcon icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/ken icon.png"));
 	//vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/hamster icon.png"));
-	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/barbie icon.png"));
+	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/hamster icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/catbus icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/police cat icon.png"));
-	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/blue potter icon.png"));
+	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/kamek2 icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
 	
 
@@ -299,16 +299,19 @@ void ModuleGame::SelectCharacter() {
 		
 	}
 
-	if (TwoPlayerMode&& Player1Ready) {
+	if (TwoPlayerMode && Player1Ready) {
 		DrawTexture(useWASD, 940, 20, WHITE);
 		DrawTexture(bluePressZ, 880, 60, WHITE);
 		DrawTexture(bluePressX, 900, 100, WHITE);
+		DrawTexture(vehicleIcons[selectedPosPlayer2], 52, 0, WHITE);
+
 		
 	}
 	else {
 		DrawTexture(useArrows, 940, 20, WHITE);
 		DrawTexture(redPressZ, 880, 60, WHITE);
 		DrawTexture(redPressX, 900, 100, WHITE);
+		DrawTexture(vehicleIcons[selectedPos], 52, 0, WHITE);
 	}
 
 	Rectangle rect;
@@ -326,10 +329,10 @@ void ModuleGame::SelectCharacter() {
 	rect.height = SPRITE_HEIGHT * SCALE;
 	
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
-	DrawTexture(vehicleIcons[selectedPos], 52, 0, WHITE);
+	
 	if (TwoPlayerMode) {
 		App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
-		DrawTexture(vehicleIcons[selectedPosPlayer2], 52, 0, WHITE);
+		
 	}
 
 	
@@ -340,10 +343,33 @@ void ModuleGame::SelectCharacter() {
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 
-	if (IsKeyPressed(KEY_Z)) Player1Ready = true;
-	if (IsKeyPressed(KEY_X) && !Player2Ready) Player1Ready = false;
-	if (TwoPlayerMode && IsKeyPressed(KEY_X)) Player2Ready = true;
-	if (TwoPlayerMode && IsKeyPressed(KEY_X) && Player1Ready) Player2Ready = false;
+	//if (IsKeyPressed(KEY_Z) && !Player1Ready) {
+	//	Player1Ready = true;
+	//}
+	//if (IsKeyPressed(KEY_X) && !Player2Ready) {
+	//	Player1Ready = false;
+	//}
+	//if (TwoPlayerMode && IsKeyPressed(KEY_Z) && Player1Ready) Player2Ready = true;
+	//if (TwoPlayerMode && IsKeyPressed(KEY_X) && Player1Ready) Player2Ready = false;
+
+	if (TwoPlayerMode) {
+		if (IsKeyPressed(KEY_Z)) {
+			if (!Player1Ready) Player1Ready = true;
+			else Player2Ready = true;
+		}
+		if (IsKeyPressed(KEY_X)) {
+			if (Player1Ready && !Player2Ready) Player1Ready = false;
+			else if (Player1Ready && Player2Ready) Player2Ready = false;
+		}
+	}
+	else {
+		if (IsKeyPressed(KEY_Z)) {
+			Player1Ready = true;
+		} 
+		if (IsKeyPressed(KEY_X) && Player1Ready) {
+			Player1Ready = false;
+		}
+	}
 
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
