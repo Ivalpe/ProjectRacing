@@ -46,11 +46,12 @@ private:
 	bool forward = false;
 	bool stopped = true;
 	bool powerActive = false;
-	bool hasPower = true;
+	bool hasPower = false;
 	bool finishedLap;
 
 	KeyboardKey TurnRight, TurnLeft, MoveForward, MoveBack, Power;
 	std::vector<Texture2D> items;
+	int item;
 	Vector2 posItem;
 	int timerTurbo = 60;
 };

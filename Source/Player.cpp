@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "box2d/b2_math.h"
 #include <algorithm>
+#include <random>
 
 
 Player::Player(Application* parent) : Entity(parent)
@@ -15,11 +16,12 @@ Player::Player(Application* parent) : Entity(parent)
 
 void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, std::vector<Texture2D> it, int player) {
 
+	item = 0;
 	items = it;
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
 	carType = PLAYER;
-	
+
 
 	if (player == 1) {
 		TurnLeft = KEY_LEFT;
@@ -100,7 +102,7 @@ update_status Player::Update() {
 
 	//Power
 	if (hasPower) {
-		App->renderer->Draw(items[0], posItem.x, posItem.y);
+		App->renderer->Draw(items[item], posItem.x, posItem.y);
 	}
 
 	if (hasPower && IsKeyPressed(Power) && !powerActive) {
@@ -149,6 +151,9 @@ void Player::Render() {
 }
 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, items.size() - 1);
 	switch (physB->ctype) {
 	case ColliderType::WALL:
 		TraceLog(LOG_INFO, "COLLISION");
@@ -162,7 +167,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		CheckFinishLine();
 		break;
 	case ColliderType::ITEM:
-		hasPower = true;
+		if (!hasPower) {
+			hasPower = true;
+			item = dist6(rng);
+		}
 		break;
 	default:
 		break;

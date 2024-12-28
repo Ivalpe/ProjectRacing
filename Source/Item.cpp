@@ -89,13 +89,3 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	}
 	
 }
-void Item::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
-	switch (physB->ctype) {
-	case ColliderType::CAR:
-		/*reappearTimer.Start();*/
-		break;
-	default:
-		break;
-	}
-
-}

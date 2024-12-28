@@ -61,9 +61,9 @@ bool ModuleGame::Start()
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
 	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.ogg");
-	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.ogg");
-	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.ogg");
-	RaceStart_fx = App->audio->LoadFx("Audio/Effects/RaceStart.ogg");
+	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
+	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
+	//RaceStart_fx = App->audio->LoadFx("Audio/Effects/RaceStart.ogg");
 
 	if (!mainMenuMusic.stream.buffer) {
 		LOG("Failed to load main menu music");
@@ -154,6 +154,7 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
 
 	items.push_back(LoadTexture("Assets/Item1.png"));
+	items.push_back(LoadTexture("Assets/coin power up.png"));
 
 	for (int i = 0; i < 8; ++i) {
 		/*std::random_device dev;*/
@@ -223,11 +224,7 @@ bool ModuleGame::CleanUp()
 	delete car2;
 
 	App->map->CleanUp();
-
-	UnloadMusicStream(mainMenuMusic);
-	UnloadMusicStream(charSelectMusic);
-	UnloadMusicStream(gameMusic);
-
+	
 	return true;
 }
 
@@ -261,7 +258,9 @@ update_status ModuleGame::Update()
 		break;
 	}
 
-
+	UpdateMusicStream(mainMenuMusic);
+	UpdateMusicStream(charSelectMusic);
+	UpdateMusicStream(gameMusic);
 
 	return UPDATE_CONTINUE;
 }
