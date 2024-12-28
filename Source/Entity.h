@@ -51,6 +51,11 @@ public:
 		return texture;
 	}
 
+	bool CleanUp() {
+		delete body;
+		return true;
+	}
+
 	update_status Update() = 0;
 
 	virtual void OnCollision(PhysBody* physA, PhysBody* physB) {

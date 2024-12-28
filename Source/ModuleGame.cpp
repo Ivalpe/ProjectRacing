@@ -117,8 +117,6 @@ bool ModuleGame::Start()
 	backButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "", backBtPos, this, { 0,0,0,0 }, &backBtTex);
 	
 
-
-
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
 	vehicles.push_back(LoadTexture("Assets/car3.png"));
@@ -187,10 +185,8 @@ bool ModuleGame::CleanUp()
 	car->CleanUp();
 	delete car;
 
-	if (TwoPlayerMode) {
-		car2->CleanUp();
-		delete car2;
-	}
+	car2->CleanUp();
+	delete car2;
 
 	App->map->CleanUp();
 

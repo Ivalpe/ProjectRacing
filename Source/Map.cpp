@@ -34,7 +34,8 @@ Map::Map(Application* app, bool start_enabled) : Module(app, start_enabled), map
 
 // Destructor
 Map::~Map()
-{}
+{
+}
 
 // Called before render is available
 bool Map::Awake()
@@ -133,6 +134,7 @@ bool Map::CleanUp()
 
 	// L06: TODO 2: Make sure you clean up any memory allocated from tilesets/map
 	for (const auto& tileset : mapData.tilesets) {
+		delete tileset->texture;
 		delete tileset;
 	}
 	mapData.tilesets.clear();
@@ -143,6 +145,21 @@ bool Map::CleanUp()
 		delete layer;
 	}
 	mapData.layers.clear();
+
+	for (auto objectGroup : mapData.objectsGroups) {
+		delete objectGroup;
+	}
+	mapData.objectsGroups.clear();
+
+	for (auto c : collisions) {
+		delete c;
+	}
+	collisions.clear();
+
+	for (auto s : sensors) {
+		delete s;
+	}
+	sensors.clear();
 
 	return true;
 }

@@ -120,7 +120,6 @@ bool Application::CleanUp()
 		ret = item->CleanUp();
 	}
 
-	_CrtDumpMemoryLeaks();
 	
 	return ret;
 }
