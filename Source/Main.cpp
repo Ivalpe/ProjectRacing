@@ -29,7 +29,7 @@ int main(int argc, char ** argv)
 		case MAIN_CREATION:
 
 			LOG("-------------- Application Creation --------------");
-			App = new Application();
+			App = DBG_NEW Application();
 			state = MAIN_START;
 			break;
 

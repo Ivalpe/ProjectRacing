@@ -58,7 +58,7 @@ Texture2D* const ModuleTextures::Load(const char* path)
 	}
 	else
 	{
-		texture = new Texture2D(LoadTextureFromImage(image));
+		texture = DBG_NEW Texture2D(LoadTextureFromImage(image));
 
 		if (texture == NULL)
 		{

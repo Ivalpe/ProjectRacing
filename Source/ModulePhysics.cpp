@@ -14,7 +14,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 {
 	debug = true;
 
-	world = new b2World(b2Vec2(0, 0));
+	world = DBG_NEW b2World(b2Vec2(0, 0));
 	world->SetContactListener(this);
 
 	b2BodyDef bd;
@@ -156,7 +156,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 
 	b->CreateFixture(&fixture);
 
-	PhysBody* pbody = new PhysBody();
+	PhysBody* pbody = DBG_NEW PhysBody();
 	pbody->body = b;
 	b->GetUserData().pointer = (uintptr_t)pbody;
 	pbody->width = (int)(width * 0.5f);
@@ -193,7 +193,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radious, bodyType type)
 	b->CreateFixture(&fixture);
 
 	// Create our custom PhysBody class
-	PhysBody* pbody = new PhysBody();
+	PhysBody* pbody = DBG_NEW PhysBody();
 	pbody->body = b;
 	b->GetUserData().pointer = (uintptr_t)pbody;
 	pbody->width = radious * 0.5f;
@@ -232,7 +232,7 @@ PhysBody* ModulePhysics::CreateCircleSensor(int x, int y, int radious, bodyType 
 	b->CreateFixture(&fixture);
 
 	// Create our custom PhysBody class
-	PhysBody* pbody = new PhysBody();
+	PhysBody* pbody = DBG_NEW PhysBody();
 	pbody->body = b;
 	b->GetUserData().pointer = (uintptr_t)pbody;
 	pbody->width = radious * 0.5f;
@@ -268,7 +268,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	b->CreateFixture(&fixture);
 
 	// Create our custom PhysBody class
-	PhysBody* pbody = new PhysBody();
+	PhysBody* pbody = DBG_NEW PhysBody();
 	pbody->body = b;
 	//b->SetUserData(pbody);
 	b->GetUserData().pointer = (uintptr_t)pbody;
@@ -293,7 +293,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bodyTy
 
 	// Create SHAPE
 	b2ChainShape shape;
-	b2Vec2* p = new b2Vec2[size / 2];
+	b2Vec2* p = DBG_NEW b2Vec2[size / 2];
 	for (unsigned int i = 0; i < size / 2; ++i)
 	{
 		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
@@ -312,7 +312,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bodyTy
 	delete p;
 
 	// Create our custom PhysBody class
-	PhysBody* pbody = new PhysBody();
+	PhysBody* pbody = DBG_NEW PhysBody();
 	pbody->body = b;
 	pbody->ctype = ColliderType::WALL;
 	b->GetUserData().pointer = (uintptr_t)pbody;

@@ -13,14 +13,14 @@
 
 Application::Application()
 {
-	window = new ModuleWindow(this);
-	renderer = new ModuleRender(this);
-	textures = new ModuleTextures(this);
-	audio = new ModuleAudio(this, true);
-	map = new Map(this, true);
-	physics = new ModulePhysics(this);
-	scene_intro = new ModuleGame(this);
-	guiManager = new GuiManager(this);
+	window = DBG_NEW ModuleWindow(this);
+	renderer = DBG_NEW ModuleRender(this);
+	textures = DBG_NEW ModuleTextures(this);
+	audio = DBG_NEW ModuleAudio(this, true);
+	map = DBG_NEW Map(this, true);
+	physics = DBG_NEW ModulePhysics(this);
+	scene_intro = DBG_NEW ModuleGame(this);
+	guiManager = DBG_NEW GuiManager(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -119,6 +119,8 @@ bool Application::CleanUp()
 		Module* item = *it;
 		ret = item->CleanUp();
 	}
+
+	_CrtDumpMemoryLeaks();
 	
 	return ret;
 }
