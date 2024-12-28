@@ -44,6 +44,7 @@ enum update_status
 #define WIN_BORDERLESS		false
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC				true
+#define FPS					   60
 #define TITLE "Vroom Vroom - Subete vamos a terapia"
 #define SPRITE_WIDTH		   16
 #define SPRITE_HEIGHT		   32

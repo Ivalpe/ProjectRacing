@@ -49,6 +49,9 @@
     <ClCompile Include="Source\GuiManager.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Item.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source/p2Point.h">
@@ -103,6 +106,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Source\GuiManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Item.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

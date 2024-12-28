@@ -8,7 +8,7 @@
 #include "Map.h"
 #include "ModuleTextures.h"
 #include "Module.h"
-#include "Globals.h"
+
 
 
 class Application;

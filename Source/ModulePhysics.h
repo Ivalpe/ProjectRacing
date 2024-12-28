@@ -9,11 +9,13 @@ enum ColliderType {
 	CAR,
 	WALL,
 	SENSOR,
+	ITEM,
 	FINISH_LINE,
 	UP,
 	RIGHT,
 	DOWN,
 	LEFT
+
 };
 
 enum bodyType {
