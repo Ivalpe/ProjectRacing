@@ -67,8 +67,7 @@ bool ModuleGame::Start()
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 2);
 
-	//switch (dist6(rng))
-	switch (2)
+	switch (dist6(rng))
 	{
 	case 1:
 		App->map->Load("Assets/Maps/", "map1.tmx");
