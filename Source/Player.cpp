@@ -18,6 +18,7 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
 	carType = PLAYER;
+	
 
 	if (player == 1) {
 		TurnLeft = KEY_LEFT;
@@ -36,7 +37,9 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int
 		body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	}
 
+	body->ctype = ColliderType::CAR;
 	body->listenerptr = this;
+
 }
 
 update_status Player::Update() {

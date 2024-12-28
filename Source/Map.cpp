@@ -314,7 +314,7 @@ bool Map::Load(std::string path, std::string fileName)
 		{
 			for (Object* object : objectGroup->object)
 			{
-				PhysBody* c = App->physics->CreateChain((object->x) * SCALE, (object->y) * SCALE, object->vertices, object->vertNum, STATIC);
+				PhysBody* c = App->physics->CreateChain((object->x) * SCALE, (object->y) * SCALE, object->vertices, object->vertNum, b2_staticBody);
 				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				c->ctype = ColliderType::WALL;
 				collisions.push_back(c);
@@ -326,7 +326,7 @@ bool Map::Load(std::string path, std::string fileName)
 			for (Object* object : objectGroup->object)
 			{
 				//TraceLog(LOG_INFO, "%d", object->x);
-				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, STATIC);
+				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, b2_staticBody);
 				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				if (object->finishLine) s->ctype = ColliderType::FINISH_LINE;
 				else s->ctype = ColliderType::SENSOR;
@@ -339,7 +339,7 @@ bool Map::Load(std::string path, std::string fileName)
 			for (Object* object : objectGroup->object)
 			{
 				//TraceLog(LOG_INFO, "%d", object->x);
-				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, STATIC);
+				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, b2_staticBody);
 				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				if (object->direction == 1) s->ctype = ColliderType::UP;
 				else if (object->direction == 2) s->ctype = ColliderType::RIGHT;

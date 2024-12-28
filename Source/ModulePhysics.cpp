@@ -165,14 +165,15 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radious, bodyType type)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radious, b2BodyType type)
 {
 	// Create BODY at position x,y
 	b2BodyDef body;
 
-	if (type == DYNAMIC) body.type = b2_dynamicBody;
-	if (type == STATIC) body.type = b2_staticBody;
-	if (type == KINEMATIC) body.type = b2_kinematicBody;
+	//if (type == DYNAMIC) body.type = b2_dynamicBody;
+	//if (type == STATIC) body.type = b2_staticBody;
+	//if (type == KINEMATIC) body.type = b2_kinematicBody;
+	body.type = type;
 
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
@@ -203,14 +204,15 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radious, bodyType type)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateCircleSensor(int x, int y, int radious, bodyType type)
+PhysBody* ModulePhysics::CreateCircleSensor(int x, int y, int radious, b2BodyType type)
 {
 	// Create BODY at position x,y
 	b2BodyDef body;
 
-	if (type == DYNAMIC) body.type = b2_dynamicBody;
-	if (type == STATIC) body.type = b2_staticBody;
-	if (type == KINEMATIC) body.type = b2_kinematicBody;
+	//if (type == DYNAMIC) body.type = b2_dynamicBody;
+	//if (type == STATIC) body.type = b2_staticBody;
+	//if (type == KINEMATIC) body.type = b2_kinematicBody;
+	body.type = type;
 
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
@@ -242,13 +244,14 @@ PhysBody* ModulePhysics::CreateCircleSensor(int x, int y, int radious, bodyType 
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, bodyType type)
+PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int height, b2BodyType type)
 {
 	// Create BODY at position x,y
 	b2BodyDef body;
-	if (type == DYNAMIC) body.type = b2_dynamicBody;
-	if (type == STATIC) body.type = b2_staticBody;
-	if (type == KINEMATIC) body.type = b2_kinematicBody;
+	//if (type == DYNAMIC) body.type = b2_dynamicBody;
+	//if (type == STATIC) body.type = b2_staticBody;
+	//if (type == KINEMATIC) body.type = b2_kinematicBody;
+	body.type = type;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	// Add BODY to the world
@@ -279,13 +282,14 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bodyType type)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, b2BodyType type)
 {
 	// Create BODY at position x,y
 	b2BodyDef body;
-	if (type == DYNAMIC) body.type = b2_dynamicBody;
-	if (type == STATIC) body.type = b2_staticBody;
-	if (type == KINEMATIC) body.type = b2_kinematicBody;
+	//if (type == DYNAMIC) body.type = b2_dynamicBody;
+	//if (type == STATIC) body.type = b2_staticBody;
+	//if (type == KINEMATIC) body.type = b2_kinematicBody;
+	body.type = type;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	// Add BODY to the world

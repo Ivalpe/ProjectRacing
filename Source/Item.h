@@ -7,7 +7,13 @@
 #include "ModuleRender.h"
 #include "ModuleTextures.h"
 #include "Module.h"
+#include "Timer.h"
 
+enum ItemType {
+	TURBO,
+	COIN,
+	SHELL
+};
 
 
 class Application;
@@ -20,17 +26,23 @@ public:
 
 	virtual ~Item() {};
 
-	void SetParameters(ModulePhysics* physics, Texture2D itemTex); //start
+	void SetParameters(ModulePhysics* physics, int texIndex); //start
 
 	update_status Update() override;
 
 	void Render(); //postupdate
 
-	/*void OnCollision(PhysBody* physA, PhysBody* physB);
-	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);*/
+	void OnCollision(PhysBody* physA, PhysBody* physB);
+	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
 public:
 	bool isPicked;
 private:
-	Texture2D boxTex, itemTex;
+	std::vector<Texture2D>itemTex;
+	Texture2D boxTex;
+	ItemType type;
+	int texIndex;
+	int width, height;
+	Timer reappearTimer;
+	float reappearTime = 5.0f;
 };

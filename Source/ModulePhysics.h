@@ -18,11 +18,11 @@ enum ColliderType {
 
 };
 
-enum bodyType {
-	DYNAMIC,
-	STATIC,
-	KINEMATIC
-};
+//enum bodyType {
+//	DYNAMIC,
+//	STATIC,
+//	KINEMATIC
+//};
 
 // Module --------------------------------------
 class PhysBody
@@ -59,12 +59,12 @@ public:
 	~ModulePhysics();
 
 	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType bodyType);
-	PhysBody* CreateCircle(int x, int y, int radious, bodyType type);
-	PhysBody* CreateChain(int x, int y, int* points, int size, bodyType type);
+	PhysBody* CreateCircle(int x, int y, int radious, b2BodyType type);
+	PhysBody* CreateChain(int x, int y, int* points, int size, b2BodyType type);
 
 	
-	PhysBody* CreateCircleSensor(int x, int y, int radious, bodyType type);
-	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, bodyType type);
+	PhysBody* CreateCircleSensor(int x, int y, int radious, b2BodyType type);
+	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, b2BodyType type);
 	int RayCastGlobal(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y, b2Body* body) const;
 
 
