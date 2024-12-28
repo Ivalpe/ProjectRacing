@@ -35,6 +35,9 @@ public:
 	void DrawUI();
 	bool CleanUp();
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
+	bool timeInitial;
+	double timeMinus;
+
 
 	void PrintRanking();
 
