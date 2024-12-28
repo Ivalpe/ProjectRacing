@@ -103,19 +103,19 @@ bool ModuleGame::Start()
 
 	Rectangle onePlayerBtPos = { 738, 247, 436, 135 };
 	onePlayerButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "", onePlayerBtPos, this, { 0,0,0,0 }, &onePlayerBtTex);
-	
+
 
 	Rectangle twoPlayersBtPos = { 738, 364, 436, 135 };
 	twoPlayersButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "", twoPlayersBtPos, this, { 0,0,0,0 }, &twoPlayersBtTex);
-	
 
-	Rectangle nextBtPos = { 844, 580, 356, 111};
+
+	Rectangle nextBtPos = { 844, 580, 356, 111 };
 	nextButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 4, "", nextBtPos, this, { 0,0,0,0 }, &nextBtTex);
-	
+
 
 	Rectangle backBtPos = { 388, 580, 356, 111 };
 	backButton = (GuiControlButton*)App->guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "", backBtPos, this, { 0,0,0,0 }, &backBtTex);
-	
+
 
 	vehicles.push_back(LoadTexture("Assets/car1.png"));
 	vehicles.push_back(LoadTexture("Assets/car2.png"));
@@ -137,7 +137,7 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/police cat icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/kamek2 icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
-	
+
 
 
 
@@ -160,7 +160,7 @@ bool ModuleGame::Start()
 	for (int i = 0; i < vehicles.size(); i++) {
 		posVehicles.push_back(Vector2{ posX,posY });
 
-		if ((i+1) % 3 == 0) {
+		if ((i + 1) % 3 == 0) {
 			posY += 125;
 			posX = 875;
 		}
@@ -215,7 +215,7 @@ update_status ModuleGame::Update()
 
 		break;
 	}
-	
+
 
 
 	return UPDATE_CONTINUE;
@@ -232,7 +232,7 @@ void ModuleGame::MainMenu() {
 	rect.width = SCREEN_WIDTH;
 	rect.height = SCREEN_HEIGHT;
 	DrawTexture(titleBG, 0, 0, WHITE);
-	
+
 
 	if (!pressedPlay) {
 		onePlayerButton->active = false;
@@ -246,9 +246,7 @@ void ModuleGame::MainMenu() {
 		playButton->active = false;
 		OnGuiMouseClickEvent(onePlayerButton);
 		OnGuiMouseClickEvent(twoPlayersButton);
-	}	
-
-
+	}
 }
 
 void ModuleGame::SelectCharacter() {
@@ -264,43 +262,17 @@ void ModuleGame::SelectCharacter() {
 	int cols = 3;
 
 	if (!Player1Ready) {
-		if (IsKeyPressed(KEY_RIGHT) && selectedPos % cols < cols-1) {
-			selectedPos++;
-		}
-
-		if (IsKeyPressed(KEY_LEFT) && selectedPos % cols > 0) {
-			selectedPos--;
-		}
-
-		if (IsKeyPressed(KEY_UP) && selectedPos - cols >= 0) {
-			selectedPos -= cols;
-		}
-
-		if (IsKeyPressed(KEY_DOWN) && selectedPos + cols <= vehicles.size() - 1) {
-			selectedPos += cols;
-		}
-
-		
+		if (IsKeyPressed(KEY_RIGHT) && selectedPos % cols < cols - 1) selectedPos++;
+		if (IsKeyPressed(KEY_LEFT) && selectedPos % cols > 0) selectedPos--;
+		if (IsKeyPressed(KEY_UP) && selectedPos - cols >= 0) selectedPos -= cols;
+		if (IsKeyPressed(KEY_DOWN) && selectedPos + cols <= vehicles.size() - 1) selectedPos += cols;
 	}
 
 	if (TwoPlayerMode && Player1Ready && !Player2Ready) {
-		if (IsKeyPressed(KEY_D) && selectedPosPlayer2 % cols < cols - 1) {
-			selectedPosPlayer2++;
-		}
-
-		if (IsKeyPressed(KEY_A) && selectedPosPlayer2 % cols > 0) {
-			selectedPosPlayer2--;
-		}
-
-		if (IsKeyPressed(KEY_W) && selectedPosPlayer2 - cols >= 0) {
-			selectedPosPlayer2 -= cols;
-		}
-
-		if (IsKeyPressed(KEY_S) && selectedPosPlayer2 + cols <= vehicles.size() - 1) {
-			selectedPosPlayer2 += cols;
-		}
-		
-		
+		if (IsKeyPressed(KEY_D) && selectedPosPlayer2 % cols < cols - 1) selectedPosPlayer2++;
+		if (IsKeyPressed(KEY_A) && selectedPosPlayer2 % cols > 0) selectedPosPlayer2--;
+		if (IsKeyPressed(KEY_W) && selectedPosPlayer2 - cols >= 0) selectedPosPlayer2 -= cols;
+		if (IsKeyPressed(KEY_S) && selectedPosPlayer2 + cols <= vehicles.size() - 1) selectedPosPlayer2 += cols;
 	}
 
 	if (TwoPlayerMode && Player1Ready) {
@@ -309,7 +281,7 @@ void ModuleGame::SelectCharacter() {
 		DrawTexture(bluePressX, 900, 100, WHITE);
 		DrawTexture(vehicleIcons[selectedPosPlayer2], 52, 0, WHITE);
 
-		
+
 	}
 	else {
 		DrawTexture(useArrows, 940, 20, WHITE);
@@ -325,28 +297,12 @@ void ModuleGame::SelectCharacter() {
 	rect.height = SPRITE_HEIGHT * SCALE;
 	for (int i = 0; i < vehicles.size(); i++) App->renderer->Draw(vehicles[i], posVehicles[i].x, posVehicles[i].y, &rect);
 
-
-
-	rect.x = 0;
-	rect.y = 0;
-	rect.width = SPRITE_WIDTH * SCALE;
-	rect.height = SPRITE_HEIGHT * SCALE;
-	
+	//Select Vehicle
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
-	
-	if (TwoPlayerMode) {
-		App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
-		
-	}
+	if (TwoPlayerMode)	App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
 
-	
+
 	OnGuiMouseClickEvent(backButton);
-
-	//Random Car
-	std::random_device dev;
-	std::mt19937 rng(dev());
-	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
-
 
 	if (TwoPlayerMode) {
 		if (IsKeyPressed(KEY_Z)) {
@@ -359,15 +315,14 @@ void ModuleGame::SelectCharacter() {
 		}
 	}
 	else {
-		if (IsKeyPressed(KEY_Z)) {
-			Player1Ready = true;
-		} 
-		if (IsKeyPressed(KEY_X) && Player1Ready) {
-			Player1Ready = false;
-		}
+		if (IsKeyPressed(KEY_Z)) Player1Ready = true;
+		if (IsKeyPressed(KEY_X) && Player1Ready) Player1Ready = false;
 	}
 
-
+	//Random Car
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, vehicles.size() - 1);
 	if (TwoPlayerMode) {
 		if (Player1Ready && Player2Ready) {
 			nextButton->state = GuiControlState::NORMAL;
@@ -408,11 +363,6 @@ void ModuleGame::SelectCharacter() {
 					}
 				}
 			}
-			
-
-			
-			
-			
 		}
 	}
 	else if (Player1Ready) {
@@ -449,12 +399,7 @@ void ModuleGame::SelectCharacter() {
 				}
 			}
 		}
-		
-
-
 	}
-
-	
 }
 void ModuleGame::DrawUI() {
 
@@ -464,8 +409,6 @@ void ModuleGame::DrawUI() {
 	char timeText[20];
 	char positionText[20];
 	char lapText[20];
-	
-
 
 	App->renderer->DrawText(TextFormat("%d TIME", timeText), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
 	App->renderer->DrawText(TextFormat("%d LAP", lapText), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
@@ -558,10 +501,10 @@ bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 			stateGame = MAIN_MENU;
 			break;
 		}
-	
+
 		control->active = false;
 	}
-	
+
 	return true;
 }
 
@@ -569,10 +512,7 @@ bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 void ModuleGame::PrintRanking() {
 	for (int i = 0; i < ranking.size(); ++i) {
 		const char* pilot;
-		if (ranking[i]->carType == 0) {
-			pilot = "Player";
-		}
+		if (ranking[i]->carType == 0) pilot = "Player";
 		else pilot = "AI";
-		//TraceLog(LOG_INFO, "%d - %s (cpCount = %d)", i + 1, pilot, ranking[i]->cpCount);
 	}
 }
