@@ -29,6 +29,8 @@ bool ModuleGame::Start()
 	bool ret = true;
 	stateGame = MAIN_MENU;
 	timer = 3, delayTimer = 60;
+    timeInitial = true;
+	timeMinus = 0;
 
 	titleBG = LoadTexture("Assets/Main Menu/title screen.png");
 	playBtTex = LoadTexture("Assets/Main Menu/Play Button.png");
@@ -62,6 +64,18 @@ bool ModuleGame::Start()
 	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.mp3");
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character select.mp3");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main Menu.mp3");
+
+	if (!mainMenuMusic.stream.buffer) {
+		LOG("Failed to load main menu music");
+	}
+
+	if (!charSelectMusic.stream.buffer) {
+		LOG("Failed to load character select music");
+	}
+
+	if (!gameMusic.stream.buffer) {
+		LOG("Failed to load game music");
+	}
 
 	//Random Map
 	std::random_device dev;
@@ -129,7 +143,7 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/mcqueen icon.png"));
-	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/grunty icon.png"));
+	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/marge icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/falcon icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/ken icon.png"));
 	//vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/hamster icon.png"));
@@ -139,6 +153,8 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/kamek2 icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
 	
+
+	items.push_back(LoadTexture("Assets/Item1.png"));
 
 
 	
@@ -219,6 +235,9 @@ bool ModuleGame::CleanUp()
 
 	App->map->CleanUp();
 
+	UnloadMusicStream(mainMenuMusic);
+	UnloadMusicStream(charSelectMusic);
+	UnloadMusicStream(gameMusic);
 
 	return true;
 }
@@ -229,13 +248,22 @@ update_status ModuleGame::Update()
 	switch (stateGame)
 	{
 	case MAIN_MENU:
+		if (App->audio->GetCurrentMusic().stream.buffer != mainMenuMusic.stream.buffer) {
+			App->audio->PlayMusic(mainMenuMusic, 0.5f);
+		}
 		MainMenu();
 		break;
 	case SELECT_CHARACTER:
+		if (App->audio->GetCurrentMusic().stream.buffer != charSelectMusic.stream.buffer) {
+			App->audio->PlayMusic(charSelectMusic, 0.5f);
+		}
 		SelectCharacter();
 
 		break;
 	case GAME:
+		if (App->audio->GetCurrentMusic().stream.buffer != gameMusic.stream.buffer) {
+			App->audio->PlayMusic(gameMusic, 0.5f);
+		}
 		Game();
 		break;
 
@@ -358,12 +386,12 @@ void ModuleGame::SelectCharacter() {
 			OnGuiMouseClickEvent(nextButton);
 
 			if (loadCars) {
-				car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
+				car->SetParameters(App->physics, vehicles[selectedPos], rot, items, 1);
 				car->SetPosition(pos);
 				pos.x += distanceX;
 				pos.y += distanceY;
 
-				car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot, 2);
+				car2->SetParameters(App->physics, vehicles[selectedPosPlayer2], rot, items, 2);
 				car2->SetPosition(pos);
 				pos.x += distanceX;
 				pos.y = (pos.y == initialY ? pos.y + distanceY : pos.y - distanceY);
@@ -400,7 +428,7 @@ void ModuleGame::SelectCharacter() {
 		OnGuiMouseClickEvent(nextButton);
 
 		if (loadCars) {
-			car->SetParameters(App->physics, vehicles[selectedPos], rot, 1);
+			car->SetParameters(App->physics, vehicles[selectedPos], rot, items, 1);
 			car->SetPosition(pos);
 			pos.x += distanceX;
 			pos.y += distanceY;
@@ -431,18 +459,26 @@ void ModuleGame::SelectCharacter() {
 		}
 	}
 }
-void ModuleGame::DrawUI() {
 
+void ModuleGame::DrawUI() {
+	
+	if (timeInitial == true) {
+		
+		timeMinus = GetTime();
+		timeInitial = false;
+	}
 	float spacing = 1.0f;
 	Color color = BLACK;
+	double timer = GetTime() - timeMinus;
+	int timelap = car->Lap;
+	
 
-	char timeText[20];
-	char positionText[20];
-	char lapText[20];
-
-	App->renderer->DrawText(TextFormat("%d TIME", timeText), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
-	App->renderer->DrawText(TextFormat("%d LAP", lapText), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
-	App->renderer->DrawText(TextFormat("%d POSITION", positionText), SCREEN_WIDTH - 120, 50, GetFontDefault(), (int)spacing, color);
+	App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
+	App->renderer->DrawText(TextFormat("%d LAP", timelap), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
+	if (TwoPlayerMode) {
+		int timelap2 = car2->Lap;
+		App->renderer->DrawText(TextFormat("%d LAP", timelap2), SCREEN_WIDTH - 120, 50, GetFontDefault(), (int)spacing, color);
+	}
 
 }
 
@@ -493,6 +529,7 @@ void ModuleGame::Game() {
 		for (auto car : enemyCars) {
 			car->Update();
 		}
+		DrawUI();
 	}
 
 	for (int i = 1; i < ranking.size(); ++i) {
@@ -507,7 +544,7 @@ void ModuleGame::Game() {
 	PrintRanking();
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
-	DrawUI();
+
 
 
 }

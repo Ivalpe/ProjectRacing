@@ -25,7 +25,7 @@ public:
 
 	void Render();
 
-	void SetParameters(ModulePhysics* physics, Texture2D txt, float rot, int player = 1);
+	void SetParameters(ModulePhysics* physics, Texture2D txt, float rot, std::vector<Texture2D> items, int player = 1);
 
 	float speed;
 
@@ -43,11 +43,14 @@ private:
 
 	bool isSpinningRight = false;
 	bool isSpinning = false;
-
 	bool forward = false;
 	bool stopped = true;
-
+	bool powerActive = false;
+	bool hasPower = true;
 	bool finishedLap;
 
-	KeyboardKey TurnRight, TurnLeft, MoveForward, MoveBack;
+	KeyboardKey TurnRight, TurnLeft, MoveForward, MoveBack, Power;
+	std::vector<Texture2D> items;
+	Vector2 posItem;
+	int timerTurbo = 60;
 };
