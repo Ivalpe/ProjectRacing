@@ -128,12 +128,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::SENSOR:
 		CheckSensor(physB, false);
-
 		break;
 	case ColliderType::FINISH_LINE:
 		CheckSensor(physB, false);
 		CheckFinishLine();
-
 		break;
 	default:
 		break;

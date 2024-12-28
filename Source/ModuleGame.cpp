@@ -67,7 +67,8 @@ bool ModuleGame::Start()
 	std::mt19937 rng(dev());
 	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 2);
 
-	switch (dist6(rng))
+	//switch (dist6(rng))
+	switch (2)
 	{
 	case 1:
 		App->map->Load("Assets/Maps/", "map1.tmx");
@@ -76,7 +77,7 @@ bool ModuleGame::Start()
 		distanceY = 49 * SCALE;
 		pos = { 191 * SCALE, 296 * SCALE };
 		initialY = pos.y;
-		rot = rot = -90 * PI / 180.0f;
+		rot = LEFT_ANGLE;
 		break;
 	case 2:
 		App->map->Load("Assets/Maps/", "map2.tmx");
@@ -85,7 +86,7 @@ bool ModuleGame::Start()
 		distanceY = 49 * SCALE;
 		pos = { 464 * SCALE, 24 * SCALE };
 		initialY = pos.y;
-		rot = rot = 90 * PI / 180.0f;
+		rot = RIGHT_ANGLE;
 		break;
 	default: //If this switch dont work load level 1
 		App->map->Load("Assets/Maps/", "map1.tmx");
@@ -94,7 +95,7 @@ bool ModuleGame::Start()
 		distanceY = 49 * SCALE;
 		pos = { 191 * SCALE, 296 * SCALE };
 		initialY = pos.y;
-		rot = rot = -90 * PI / 180.0f;
+		rot = LEFT_ANGLE;
 		break;
 	}
 

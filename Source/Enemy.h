@@ -14,6 +14,10 @@
 class Application;
 class PhysBody;
 
+enum class Direction {
+	UP, RIGHT, DOWN, LEFT, DISABLE
+};
+
 class Enemy : public Entity
 {
 public:
@@ -26,6 +30,8 @@ public:
 	void Render();
 
 	void SetParameters(ModulePhysics* physics, Texture2D txt, float rot);
+
+	bool TurnRight(float initialAngle, float finalAngle);
 
 	float speed;
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
@@ -47,4 +53,5 @@ private:
 
 	bool forward = false;
 	bool stopped = true;
+	Direction dc;
 };

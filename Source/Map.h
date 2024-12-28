@@ -61,6 +61,13 @@ struct Object
 	int* vertices;
 	int vertNum;
 	bool finishLine;
+	int direction;
+	/*
+	1: UP
+	2: RIGHT
+	3: DOWN
+	4: LEFT
+	*/
 };
 
 struct ObjectGroup
@@ -191,5 +198,6 @@ private:
 	std::list<PhysBody*> sensors;
 	std::vector<b2Vec2> initialPos;
 	std::vector<b2Vec2> sensorsInitialPos;
+	std::vector<b2Vec2> posTurn;
 	pugi::xml_node mapParameters;
 };

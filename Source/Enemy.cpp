@@ -4,7 +4,6 @@
 #include "Module.h"
 #include "Enemy.h"
 #include "box2d/b2_math.h"
-#include <algorithm>
 
 Enemy::Enemy(Application* parent) : Entity(parent)
 {
@@ -15,10 +14,32 @@ void Enemy::SetParameters(ModulePhysics* physics, Texture2D txt, float rot) {
 	texture = txt;
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
 
+	dc = Direction::DISABLE;
+
 	carType = AI;
 
 	body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
 	body->listenerptr = this;
+}
+
+bool Enemy::TurnRight(float initialAngle, float finalAngle) {
+
+	initialAngle = fmod(initialAngle, 2 * PI);
+	if (initialAngle < 0) initialAngle += 2 * PI;
+
+	finalAngle = fmod(finalAngle, 2 * PI);
+	if (finalAngle < 0) finalAngle += 2 * PI;
+
+	float dif = finalAngle - initialAngle;
+
+	if (dif < -PI) {
+		dif += 2 * PI;
+	}
+	else if (dif >= PI) {
+		dif -= 2 * PI;
+	}
+
+	return dif < 0;
 }
 
 update_status Enemy::Update() {
@@ -28,37 +49,27 @@ update_status Enemy::Update() {
 	static b2Vec2 velocity = b2Vec2(0, 0);
 	currentSpeed = body->ScalarLinearVelocity();
 
-	float rayLength = 70.0f;
-
-	float rightX = x + rayLength * cos(body->GetRotation());
-	float y2 = y - cos(body->GetRotation()) + rayLength * sin(body->GetRotation());
-
-	float x3 = x - rayLength * cos(body->GetRotation());
-	float y3 = y - cos(body->GetRotation()) - rayLength * sin(body->GetRotation());
-
-	float normalX, normalY;
-	int test = App->physics->RayCastGlobal(x, y, x3, y3, normalX, normalY, body->body);
-	int test2 = App->physics->RayCastGlobal(x, y, rightX, y2, normalX, normalY, body->body);
-	//int test = App->map->RayCastGlobal(x, y, x2, y2, normalX, normalY);
-	//int test2 = App->map->RayCastGlobal(x, y, x3, y3, normalX, normalY);
-
-
-	if (App->physics->GetDebug()) {
-		App->renderer->DrawRectangleDebug(x3, y3, 10, 10, RED);
-		App->renderer->DrawRectangleDebug(rightX, y2, 10, 10, YELLOW);
-	}
-
-	TraceLog(LOG_INFO, "%d", test2);
-
 	if (abs(currentSpeed) >= MinSpeed) {
 		isSpinning = false;
-		if (test != -1) {
+		float up = UP_ANGLE;
+		float right = RIGHT_ANGLE;
+		float down = DOWN_ANGLE;
+		float left = LEFT_ANGLE;
+		if (dc == Direction::UP && body->GetAngleRotation() != up) {
 			isSpinning = true;
-			TurnBody(forward, true, torqueSpeed * 5, currentSpeed);
+			TurnBody(forward, TurnRight(body->GetAngleRotation(), up), torqueSpeed * 3, currentSpeed);
 		}
-		else if (test2 != -1) {
+		else if (dc == Direction::RIGHT && body->GetAngleRotation() != right) {
 			isSpinning = true;
-			TurnBody(forward, false, torqueSpeed * 5, currentSpeed);
+			TurnBody(forward, TurnRight(body->GetAngleRotation(), right), torqueSpeed * 3, currentSpeed);
+		}
+		else if (dc == Direction::DOWN && body->GetAngleRotation() != down) {
+			isSpinning = true;
+			TurnBody(forward, TurnRight(body->GetAngleRotation(), down), torqueSpeed * 3, currentSpeed);
+		}
+		else if (dc == Direction::LEFT && body->GetAngleRotation() != left) {
+			isSpinning = true;
+			TurnBody(forward, TurnRight(body->GetAngleRotation(), left), torqueSpeed * 3, currentSpeed);
 		}
 		if (!isSpinning) body->ResetAngularVelocity();
 	}
@@ -99,10 +110,37 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		CheckFinishLine();
 		CheckSensor(physB, true);
 		break;
+	case ColliderType::UP:
+		dc = Direction::UP;
+		TraceLog(LOG_INFO, "COLLISION UP");
+		break;
+	case ColliderType::RIGHT:
+		dc = Direction::RIGHT;
+		TraceLog(LOG_INFO, "COLLISION RIGHT");
+		break;
+	case ColliderType::DOWN:
+		dc = Direction::DOWN;
+		TraceLog(LOG_INFO, "COLLISION DOWN");
+		break;
+	case ColliderType::LEFT:
+		dc = Direction::LEFT;
+		TraceLog(LOG_INFO, "COLLISION LEFT");
+		break;
 	default:
 		break;
 	}
 }
+
+void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
+	switch (physB->ctype) {
+	case ColliderType::SENSOR:
+		CheckSensor(physB, true);
+		break;
+	default:
+		break;
+	}
+}
+
 
 void Enemy::TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const {
 	float FinalTorque = 0.f;
@@ -118,20 +156,6 @@ void Enemy::TurnBody(bool isGoingForward, bool isGoingRight, float torque, float
 	body->TurnWithTorque(FinalTorque);
 }
 
-void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
-	switch (physB->ctype) {
-	case ColliderType::WALL:
-		break;
-	case ColliderType::SENSOR:
-		CheckSensor(physB, true);
-		break;
-	case ColliderType::FINISH_LINE:
-
-		break;
-	default:
-		break;
-	}
-}
 
 void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 	int i = 0;
