@@ -130,7 +130,7 @@ bool ModuleGame::Start()
 	vehicles.push_back(LoadTexture("Assets/car9.png"));
 
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/mcqueen icon.png"));
-	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/kiki icon.png"));
+	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/goblin icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/falcon icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/ken icon.png"));
 	//vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/hamster icon.png"));
