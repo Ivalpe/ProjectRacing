@@ -75,7 +75,7 @@ bool ModuleGame::Start()
 	songId = randMusic(rng);
 
 	//Random Map
-	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 2);
+	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 3);
 
 	switch (randMap(rng))
 	{
@@ -91,6 +91,15 @@ bool ModuleGame::Start()
 	case 2:
 		App->map->Load("Assets/Maps/", "map2.tmx");
 		mapLoaded = 2;
+		distanceX = -(32 * SCALE);
+		distanceY = 49 * SCALE;
+		pos = { 464 * SCALE, 24 * SCALE };
+		initialY = pos.y;
+		rot = RIGHT_ANGLE;
+		break;
+	case 3:
+		App->map->Load("Assets/Maps/", "map3.tmx");
+		mapLoaded = 3;
 		distanceX = -(32 * SCALE);
 		distanceY = 49 * SCALE;
 		pos = { 464 * SCALE, 24 * SCALE };
@@ -160,6 +169,10 @@ bool ModuleGame::Start()
 		}
 		else if (mapLoaded == 2) {
 			if (i < 4) itemBox->SetPosition({ (564.0f + 19 * i) * SCALE, 192 * SCALE });
+			else itemBox->SetPosition({ (19.0f * (i % 4 + 1)) * SCALE, 192 * SCALE });
+		}
+		else if (mapLoaded == 3) {
+			if (i < 4) itemBox->SetPosition({ (564.0f + 19 * i) * SCALE, 297 * SCALE });
 			else itemBox->SetPosition({ (19.0f * (i % 4 + 1)) * SCALE, 192 * SCALE });
 		}
 		itemList.push_back(itemBox);
