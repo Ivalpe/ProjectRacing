@@ -68,14 +68,13 @@ bool ModuleGame::Start()
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
 
-	//Fonts
-	gamTex = LoadFont("Assets/Fonts/Gamtex.ttf");
 
 	bepSFX = App->audio->LoadFx("Assets/Audio/SFX/bep.wav");
 	beepSFX = App->audio->LoadFx("Assets/Audio/SFX/beep.wav");
 
 	//Fonts
 	gamTex = LoadFont("Assets/Fonts/Gamtex.ttf");
+
 
 
 	std::random_device dev;
@@ -85,6 +84,9 @@ bool ModuleGame::Start()
 
 	//Random Map
 	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 3);
+
+	
+
 
 	
 
@@ -635,9 +637,9 @@ void ModuleGame::RaceEnd() {
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
 
+
 		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 20 , 250 }, endFontSize, spacing, color);
 		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 50, 320 }, endFontSize, spacing, color);
-
 
 		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 120, 430 }, endFontSize, spacing, color);
 		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 + 120, 500 }, endFontSize, spacing, color);
