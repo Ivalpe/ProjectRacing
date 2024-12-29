@@ -56,6 +56,8 @@ bool ModuleGame::Start()
 	timer2 = LoadTexture("Assets/2.png");
 	timer1 = LoadTexture("Assets/1.png");
 
+	endRaceOnePlayer = LoadTexture("Assets/RaceEnd/OnePlayerRaceEnd.png"); 
+	endRaceTwoPlayers = LoadTexture("Assets/RaceEnd/TwoPlayerRaceEnd.png");
 
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
@@ -237,6 +239,9 @@ update_status ModuleGame::Update()
 			App->audio->PlayMusic(musicGame[songId], 0.5f);
 		}
 		Game();
+		break;
+	case RACE_END:
+		RaceEnd();
 		break;
 
 	default:
@@ -445,6 +450,9 @@ void ModuleGame::DrawUI() {
 	double timer = GetTime() - timeMinus;
 	int timelap = car->Lap;
 
+	if (PlayerOneDone && PlayerOneFinalTime <= 0) PlayerOneFinalTime = timer;
+	if (PlayerTwoDone && PlayerTwoFinalTime <= 0) PlayerTwoFinalTime = timer;
+
 
 	App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
 	App->renderer->DrawText(TextFormat("%d LAP", timelap), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
@@ -489,18 +497,44 @@ void ModuleGame::Game() {
 		item->Render();
 	}
 
-	car->Render();
-	if (TwoPlayerMode) car2->Render();
+	if (car->FinishedLaps) {
+		PlayerOneDone = true;
+		++FinalRankingTracker;
+		PlayerOneFinalPos = FinalRankingTracker;
+
+		if (!TwoPlayerMode) FinishRace = true;
+		else if (PlayerTwoDone) FinishRace = true;
+	}
+
+	if (TwoPlayerMode) {
+		if (car2->FinishedLaps) {
+			PlayerTwoDone = true;
+			++FinalRankingTracker;
+			PlayerTwoFinalPos = FinalRankingTracker;
+
+			if (PlayerOneDone) FinishRace = true;
+		}
+	}
+
+	for (auto e : enemyCars) {
+		if (e->FinishedLaps) {
+			++FinalRankingTracker;
+			e->FinishedLaps = false;
+		}
+	}
+
+	if(!PlayerOneDone) car->Render();
+	if (TwoPlayerMode && !PlayerTwoDone) car2->Render();
 	for (auto car : enemyCars) {
-		car->Render();
+		if(!car->EndedRace) car->Render();
 	}
 
 
 	if (timer <= 0) {
-		car->Update();
-		if (TwoPlayerMode) car2->Update();
+		if (!PlayerOneDone) car->Update();
+		if (TwoPlayerMode && !PlayerTwoDone) car2->Update();
 		for (auto car : enemyCars) {
-			car->Update();
+			if (!car->EndedRace) car->Update();
 		}
 		DrawUI();
 	}
@@ -513,12 +547,33 @@ void ModuleGame::Game() {
 		}
 	}
 
+
 	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
 	PrintRanking();
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
+	if (FinishRace) stateGame = RACE_END;
 
+}
+
+void ModuleGame::RaceEnd() {
+	float spacing = 1.0f;
+	Color color = BLACK;
+
+	if (TwoPlayerMode) {
+		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
+		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH / 2 - 20, 250, GetFontDefault(), (int)spacing, color);
+		App->renderer->DrawText(TextFormat("%.2f", PlayerTwoFinalTime), SCREEN_WIDTH / 2 - 50, 320, GetFontDefault(), (int)spacing, color);
+
+		App->renderer->DrawText(TextFormat("%d", PlayerOneFinalPos), SCREEN_WIDTH / 2 + 120, 430, GetFontDefault(), (int)spacing, color);
+		App->renderer->DrawText(TextFormat("%d", PlayerTwoFinalPos), SCREEN_WIDTH / 2 + 120, 500, GetFontDefault(), (int)spacing, color);
+	}
+	else {
+		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
+		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH/2 - 260, 250, GetFontDefault(), (int)spacing, color);
+		App->renderer->DrawText(TextFormat("%d", PlayerOneFinalPos), SCREEN_WIDTH/2 + 20, 430, GetFontDefault(), (int)spacing, color);
+	}
 
 }
 

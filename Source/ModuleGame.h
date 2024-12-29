@@ -18,7 +18,8 @@ class PhysicEntity;
 enum GameState {
 	MAIN_MENU,
 	SELECT_CHARACTER,
-	GAME
+	GAME,
+	RACE_END
 };
 
 
@@ -33,6 +34,7 @@ public:
 	void MainMenu();
 	void SelectCharacter();
 	void Game();
+	void RaceEnd();
 	void DrawUI();
 	bool CleanUp();
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
@@ -47,6 +49,7 @@ public:
 	Texture2D titleBG, selectBG, selectedVehicle, selectedVehicle2;
 	Texture2D playBtTex, onePlayerBtTex, twoPlayersBtTex, optBtTex, credBtTex, nextBtTex, backBtTex;
 	Texture2D bluePressZ, bluePressX, redPressZ, redPressX, useWASD, useArrows;
+	Texture2D endRaceOnePlayer, endRaceTwoPlayers;
 
 	Texture2D timer3, timer2, timer1;
 
@@ -66,7 +69,15 @@ public:
 	bool TwoPlayerMode = true;
 	bool loadCars = false;
 
+	bool FinishRace = false;
+	int FinalRankingTracker = 0;
 
+	bool PlayerOneDone = false;
+	int PlayerOneFinalPos = 0;
+	double PlayerOneFinalTime = 0.f;
+	bool PlayerTwoDone = false;
+	int PlayerTwoFinalPos = 0; 
+	double PlayerTwoFinalTime = 0.f;
 
 	Player* car;
 	bool Player1Ready = false;

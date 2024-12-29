@@ -74,7 +74,10 @@ public:
 	float forceIncrement = 10.f;
 	float torqueSpeed = 0.8f * SCALE;
 	int Lap = 1;
+	int MaxLaps = 2;
 	int cpCount;
+
+	bool FinishedLaps = false;
 
 	std::vector<CheckpointSensor> sensors;
 

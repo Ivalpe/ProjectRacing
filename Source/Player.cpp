@@ -256,6 +256,7 @@ void Player::CheckFinishLine() {
 	if (finishedLap) {
 		Lap++;
 		for (auto s : sensors) s.active = false;
+		if (Lap >= MaxLaps) FinishedLaps = true;
 	}
 
 }
