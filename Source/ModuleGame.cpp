@@ -563,8 +563,8 @@ void ModuleGame::RaceEnd() {
 
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
-		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH / 2 - 20, 250, GetFontDefault(), (int)spacing, color);
-		App->renderer->DrawText(TextFormat("%.2f", PlayerTwoFinalTime), SCREEN_WIDTH / 2 - 50, 320, GetFontDefault(), (int)spacing, color);
+		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH / 2 - 50, 250, GetFontDefault(), (int)spacing, color);
+		App->renderer->DrawText(TextFormat("%.2f", PlayerTwoFinalTime), SCREEN_WIDTH / 2 - 50, 310, GetFontDefault(), (int)spacing, color);
 
 		App->renderer->DrawText(TextFormat("%d", PlayerOneFinalPos), SCREEN_WIDTH / 2 + 120, 430, GetFontDefault(), (int)spacing, color);
 		App->renderer->DrawText(TextFormat("%d", PlayerTwoFinalPos), SCREEN_WIDTH / 2 + 120, 500, GetFontDefault(), (int)spacing, color);

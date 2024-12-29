@@ -1899,8 +1899,8 @@
     <property name="finishLine" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="60" x="544" y="176" width="96" height="16"/>
-  <object id="61" x="304" y="272" width="16" height="96"/>
-  <object id="62" x="0" y="176" width="96" height="16"/>
+  <object id="60" x="544" y="182.333" width="96" height="3"/>
+  <object id="61" x="310.333" y="272" width="3" height="96"/>
+  <object id="62" x="0" y="182.333" width="96" height="3"/>
  </objectgroup>
 </map>

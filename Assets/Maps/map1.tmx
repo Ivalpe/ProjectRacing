@@ -1914,11 +1914,11 @@
   <properties>
    <property name="Sensors" type="bool" value="true"/>
   </properties>
-  <object id="49" x="208" y="0" width="16" height="96"/>
-  <object id="50" x="336" y="128" width="96" height="16"/>
-  <object id="51" x="544" y="208" width="96" height="16"/>
-  <object id="52" x="496" y="272" width="16" height="96"/>
-  <object id="53" x="0" y="224" width="96" height="16"/>
+  <object id="49" x="214" y="0" width="3" height="96"/>
+  <object id="50" x="336" y="133.5" width="96" height="4"/>
+  <object id="51" x="544" y="214" width="96" height="3.5"/>
+  <object id="52" x="502.5" y="272" width="3" height="96"/>
+  <object id="53" x="0" y="230.333" width="96" height="2.66667"/>
   <object id="54" x="144" y="272" width="16" height="96">
    <properties>
     <property name="finishLine" type="bool" value="true"/>
