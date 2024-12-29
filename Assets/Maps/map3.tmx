@@ -1915,7 +1915,7 @@
    <property name="Sensors" type="bool" value="true"/>
   </properties>
   <object id="62" x="0" y="182.333" width="96" height="3"/>
-  <object id="88" x="464" y="0" width="16" height="96">
+  <object id="88" x="496" y="0" width="16" height="96">
    <properties>
     <property name="finishLine" type="bool" value="true"/>
    </properties>

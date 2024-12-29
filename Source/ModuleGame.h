@@ -92,6 +92,8 @@ public:
 	float raceFontSize;
 	float endFontSize;
 
+	GuiControlButton* playAgain, * exit;
+
 private:
 
 	GuiControlButton *playButton, *onePlayerButton, *twoPlayersButton, *nextButton, *backButton;
@@ -102,6 +104,11 @@ private:
 
 	Music charSelectMusic;
 	Music mainMenuMusic;
+	Music resultsMusic;
+	Music firstPlaceMusic;
+	Music secondPlaceMusic;
+	Music fifthPlaceMusic;
+
 	int bepSFX;
 	int beepSFX;
 	int buttonSFX;
