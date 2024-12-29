@@ -69,6 +69,7 @@ bool ModuleGame::Start()
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Mario-Kart-DS-Waluigi-Pinball.ogg"));
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Rascal Flatts - Life Is a Highway.ogg"));
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Coconut Mall.ogg"));
+
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Choose Your Character.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
 	firstPlaceMusic = LoadMusicStream("Assets/Audio/Music/Race Results_1st Place.ogg");
@@ -322,6 +323,8 @@ update_status ModuleGame::Update()
 
 	UpdateMusicStream(mainMenuMusic);
 	UpdateMusicStream(charSelectMusic);
+	/*UpdateMusicStream(resultsMusic);*/
+
 	for (auto m : musicGame)
 		UpdateMusicStream(m);
 
@@ -669,12 +672,16 @@ void ModuleGame::Game() {
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
 	if (FinishRace || IsKeyPressed(KEY_F4)) {
-		if (PlayerOneFinalPos == 1) resultsMusic = firstPlaceMusic;
-		else if (PlayerOneFinalPos >= 2 || PlayerOneFinalPos <= 4) resultsMusic = secondPlaceMusic;
-		else if (PlayerOneFinalPos >= 5) resultsMusic = fifthPlaceMusic;
-
-		App->audio->PlayMusic(resultsMusic, 0.5f);
+		
 		stateGame = RACE_END;
+		playResultMusic = true;
+		StopMusicStream(charSelectMusic);
+		StopMusicStream(mainMenuMusic);
+		for (Music m : musicGame) {
+			StopMusicStream(m);
+		}
+		resultsMusic = secondPlaceMusic;
+		PlayMusicStream(resultsMusic);
 	}
 
 }
@@ -685,32 +692,53 @@ void ModuleGame::RaceEnd() {
 	Color color = BLACK;
 	double bestTime = xmlFile.child("best").attribute("time").as_double();
 
+
+	if (PlayerOneFinalTime <= bestTime || bestTime == 0.0f) {
+		xmlFile.child("best").attribute("time").set_value(PlayerOneFinalTime);
+		xmlFile.save_file("ranking.xml");
+	}
+
 	if (TwoPlayerMode) {
+
+
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
 
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 20 , 240 }, endFontSize, spacing, color);
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 50, 300 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 60 , 325 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 60, 395 }, endFontSize, spacing, color);
 
 		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 - 35, 510 }, endFontSize, spacing, color);
 		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 - 35, 575 }, endFontSize, spacing, color);
-		if (PlayerOneFinalTime <= bestTime) {
-			xmlFile.child("best").attribute("time").set_value(PlayerOneFinalTime);
-			xmlFile.save_file("ranking.xml");
-		}
-		if (PlayerTwoFinalPos <= bestTime) {
+
+		
+		if (PlayerTwoFinalTime <= bestTime || bestTime == 0.0f) {
 			xmlFile.child("best").attribute("time").set_value(PlayerTwoFinalPos);
 			xmlFile.save_file("ranking.xml");
 		}
 	}
 	else {
+		
+		if (PlayerOneFinalPos == 1)
+			resultsMusic = firstPlaceMusic;
+		else if (PlayerOneFinalPos >= 2 || PlayerOneFinalPos <= 4)
+			resultsMusic = secondPlaceMusic;
+		else if (PlayerOneFinalPos >= 5)
+			resultsMusic = fifthPlaceMusic;
+		
+		
 		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 227 }, endFontSize, spacing, color);
-		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 20, 415 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 325 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 - 240, 420 }, endFontSize, spacing, color);
 		
 	}
 
+	if (playResultMusic) {
+		App->audio->PlayMusic(resultsMusic, 0.5f);
+		playResultMusic = false;
+	}
+	bestTime = xmlFile.child("best").attribute("time").as_double();
+	DrawTextEx(gamTex, TextFormat("%.2f", bestTime), { SCREEN_WIDTH / 2 - 140, 225 }, endFontSize, spacing, color);
 
-	DrawTextEx(gamTex, TextFormat("%.2f", bestTime), { SCREEN_WIDTH / 2 - 140, 225 }, endFontSize, (int)spacing, color);
+	UpdateMusicStream(resultsMusic);
 }
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {

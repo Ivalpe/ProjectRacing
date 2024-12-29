@@ -71,6 +71,7 @@ public:
 	bool loadCars = false;
 
 	bool FinishRace = false;
+	bool playResultMusic = false;
 	int FinalRankingTracker = 0;
 
 	bool PlayerOneDone = false;
@@ -108,6 +109,8 @@ private:
 	Music firstPlaceMusic;
 	Music secondPlaceMusic;
 	Music fifthPlaceMusic;
+
+	
 
 	int bepSFX;
 	int beepSFX;
