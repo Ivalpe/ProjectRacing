@@ -63,6 +63,8 @@ bool ModuleGame::Start()
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/In-game.ogg"));
+	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Mario-Kart-DS-Waluigi-Pinball.ogg"));
+	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Rascal Flatts - Life Is a Highway.ogg"));
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
 
