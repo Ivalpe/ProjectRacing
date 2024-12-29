@@ -63,6 +63,8 @@ bool ModuleGame::Start()
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/In-game.ogg"));
+	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Mario-Kart-DS-Waluigi-Pinball.ogg"));
+	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Rascal Flatts - Life Is a Highway.ogg"));
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
 
@@ -75,7 +77,7 @@ bool ModuleGame::Start()
 	songId = randMusic(rng);
 
 	//Random Map
-	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 2);
+	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 3);
 
 	switch (randMap(rng))
 	{
@@ -91,6 +93,15 @@ bool ModuleGame::Start()
 	case 2:
 		App->map->Load("Assets/Maps/", "map2.tmx");
 		mapLoaded = 2;
+		distanceX = -(32 * SCALE);
+		distanceY = 49 * SCALE;
+		pos = { 464 * SCALE, 24 * SCALE };
+		initialY = pos.y;
+		rot = RIGHT_ANGLE;
+		break;
+	case 3:
+		App->map->Load("Assets/Maps/", "map3.tmx");
+		mapLoaded = 3;
 		distanceX = -(32 * SCALE);
 		distanceY = 49 * SCALE;
 		pos = { 464 * SCALE, 24 * SCALE };
@@ -160,6 +171,10 @@ bool ModuleGame::Start()
 		}
 		else if (mapLoaded == 2) {
 			if (i < 4) itemBox->SetPosition({ (564.0f + 19 * i) * SCALE, 192 * SCALE });
+			else itemBox->SetPosition({ (19.0f * (i % 4 + 1)) * SCALE, 192 * SCALE });
+		}
+		else if (mapLoaded == 3) {
+			if (i < 4) itemBox->SetPosition({ (564.0f + 19 * i) * SCALE, 297 * SCALE });
 			else itemBox->SetPosition({ (19.0f * (i % 4 + 1)) * SCALE, 192 * SCALE });
 		}
 		itemList.push_back(itemBox);
@@ -595,8 +610,8 @@ void ModuleGame::RaceEnd() {
 
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
-		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH / 2 - 20, 250, GetFontDefault(), (int)spacing, color);
-		App->renderer->DrawText(TextFormat("%.2f", PlayerTwoFinalTime), SCREEN_WIDTH / 2 - 50, 320, GetFontDefault(), (int)spacing, color);
+		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH / 2 - 50, 250, GetFontDefault(), (int)spacing, color);
+		App->renderer->DrawText(TextFormat("%.2f", PlayerTwoFinalTime), SCREEN_WIDTH / 2 - 50, 310, GetFontDefault(), (int)spacing, color);
 
 		App->renderer->DrawText(TextFormat("%d", PlayerOneFinalPos), SCREEN_WIDTH / 2 + 120, 430, GetFontDefault(), (int)spacing, color);
 		App->renderer->DrawText(TextFormat("%d", PlayerTwoFinalPos), SCREEN_WIDTH / 2 + 120, 500, GetFontDefault(), (int)spacing, color);
