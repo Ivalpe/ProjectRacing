@@ -94,8 +94,7 @@ bool ModuleGame::Start()
 	//Random Map
 	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 3);
 
-
-
+	
 	switch (randMap(rng))
 	{
 	case 1:
@@ -689,9 +688,8 @@ void ModuleGame::RaceEnd() {
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
 
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 60 , 325 }, endFontSize, spacing, color);
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 60, 395 }, endFontSize, spacing, color);
-
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 20 , 240 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 50, 300 }, endFontSize, spacing, color);
 
 		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 - 35, 510 }, endFontSize, spacing, color);
 		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 - 35, 575 }, endFontSize, spacing, color);
@@ -706,12 +704,9 @@ void ModuleGame::RaceEnd() {
 	}
 	else {
 		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 325 }, endFontSize, (int)spacing, color);
-		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 - 240, 420 }, endFontSize, (int)spacing, color);
-		if (PlayerOneFinalTime <= bestTime) {
-			xmlFile.child("best").attribute("time").set_value(PlayerOneFinalTime);
-			xmlFile.save_file("ranking.xml");
-		}
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 227 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 20, 415 }, endFontSize, spacing, color);
+		
 	}
 
 
