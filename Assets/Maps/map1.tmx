@@ -1911,9 +1911,6 @@
   </object>
  </objectgroup>
  <objectgroup id="3" name="Sensors">
-  <properties>
-   <property name="Sensors" type="bool" value="true"/>
-  </properties>
   <object id="49" x="214" y="0" width="3" height="96"/>
   <object id="50" x="336" y="133.5" width="96" height="4"/>
   <object id="51" x="544" y="214" width="96" height="3.5"/>
