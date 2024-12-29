@@ -168,9 +168,9 @@ void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
 			}
 			else {
 				if (sensors[i].changeable) {
-					if (sensors[i].active) sensors[i].active = false;
-					else sensors[i].active = true;
-					sensors[i].changeable = false;
+					/*if (sensors[i].active) sensors[i].active = false;
+					else */sensors[i].active = true;
+					/*sensors[i].changeable = false;*/
 				}
 			}
 		}

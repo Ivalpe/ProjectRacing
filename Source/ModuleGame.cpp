@@ -611,7 +611,7 @@ void ModuleGame::Game() {
 		item->Render();
 	}
 
-	if (car->FinishedLaps) {
+	if (car->FinishedLaps && !PlayerOneDone) {
 		PlayerOneDone = true;
 		++FinalRankingTracker;
 		PlayerOneFinalPos = FinalRankingTracker;
@@ -625,7 +625,7 @@ void ModuleGame::Game() {
 	}
 
 	if (TwoPlayerMode) {
-		if (car2->FinishedLaps) {
+		if (car2->FinishedLaps && !PlayerTwoDone) {
 			PlayerTwoDone = true;
 			++FinalRankingTracker;
 			PlayerTwoFinalPos = FinalRankingTracker;
@@ -638,6 +638,7 @@ void ModuleGame::Game() {
 		if (e->FinishedLaps) {
 			++FinalRankingTracker;
 			e->FinishedLaps = false;
+			e->body->body->SetEnabled(false);
 		}
 	}
 
@@ -711,18 +712,17 @@ void ModuleGame::RaceEnd() {
 
 		
 		if (PlayerTwoFinalTime <= bestTime || bestTime == 0.0f) {
-			xmlFile.child("best").attribute("time").set_value(PlayerTwoFinalPos);
+			xmlFile.child("best").attribute("time").set_value(PlayerTwoFinalTime);
 			xmlFile.save_file("ranking.xml");
 		}
 	}
-	else {
+	else if (!TwoPlayerMode) {
 		
-		if (PlayerOneFinalPos == 1)
-			resultsMusic = firstPlaceMusic;
-		else if (PlayerOneFinalPos >= 2 || PlayerOneFinalPos <= 4)
-			resultsMusic = secondPlaceMusic;
-		else if (PlayerOneFinalPos >= 5)
-			resultsMusic = fifthPlaceMusic;
+		if (PlayerOneFinalPos == 1)resultsMusic = firstPlaceMusic;
+		else if (PlayerOneFinalPos >= 2 && PlayerOneFinalPos <= 4) resultsMusic = secondPlaceMusic;
+		else resultsMusic = fifthPlaceMusic;
+		
+			
 		
 		
 		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
