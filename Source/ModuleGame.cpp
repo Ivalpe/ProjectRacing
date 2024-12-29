@@ -28,7 +28,7 @@ bool ModuleGame::Start()
 	bool ret = true;
 	stateGame = MAIN_MENU;
 	timer = 3, delayTimer = 60;
-    timeInitial = true;
+	timeInitial = true;
 	timeMinus = 0;
 
 	titleBG = LoadTexture("Assets/Main Menu/title screen.png");
@@ -60,29 +60,20 @@ bool ModuleGame::Start()
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
 
-	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.ogg");
+	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/In-game.ogg"));
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
 
 
-	if (!mainMenuMusic.stream.buffer) {
-		LOG("Failed to load main menu music");
-	}
-
-	if (!charSelectMusic.stream.buffer) {
-		LOG("Failed to load character select music");
-	}
-
-	if (!gameMusic.stream.buffer) {
-		LOG("Failed to load game music");
-	}
+	std::random_device dev;
+	std::uniform_int_distribution<std::mt19937::result_type> randMusic(0, musicGame.size() - 1);
+	std::mt19937 rng(dev());
+	songId = randMusic(rng);
 
 	//Random Map
-	std::random_device dev;
-	std::mt19937 rng(dev());
-	std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 2);
+	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 2);
 
-	switch (dist6(rng))
+	switch (randMap(rng))
 	{
 	case 1:
 		App->map->Load("Assets/Maps/", "map1.tmx");
@@ -146,7 +137,6 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/marge icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/falcon icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/ken icon.png"));
-	//vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/hamster icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/hamster icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/catbus icon.png"));
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/police cat icon.png"));
@@ -154,10 +144,8 @@ bool ModuleGame::Start()
 	vehicleIcons.push_back(LoadTexture("Assets/Main Menu/Car Icons/red potter icon.png"));
 
 	items.push_back(LoadTexture("Assets/Item1.png"));
-	items.push_back(LoadTexture("Assets/coin power up.png"));
 
 	for (int i = 0; i < 8; ++i) {
-		/*std::random_device dev;*/
 		std::mt19937 rng(dev());
 		std::uniform_int_distribution<std::mt19937::result_type> randTex(0, 3);
 		itemBox = DBG_NEW Item(App);
@@ -173,8 +161,6 @@ bool ModuleGame::Start()
 		itemList.push_back(itemBox);
 
 	}
-
-
 
 	car = DBG_NEW Player(App);
 	if (TwoPlayerMode) car2 = DBG_NEW Player(App);
@@ -224,7 +210,7 @@ bool ModuleGame::CleanUp()
 	delete car2;
 
 	App->map->CleanUp();
-	
+
 	return true;
 }
 
@@ -247,8 +233,8 @@ update_status ModuleGame::Update()
 
 		break;
 	case GAME:
-		if (App->audio->GetCurrentMusic().stream.buffer != gameMusic.stream.buffer) {
-			App->audio->PlayMusic(gameMusic, 0.5f);
+		if (App->audio->GetCurrentMusic().stream.buffer != musicGame[songId].stream.buffer) {
+			App->audio->PlayMusic(musicGame[songId], 0.5f);
 		}
 		Game();
 		break;
@@ -260,7 +246,8 @@ update_status ModuleGame::Update()
 
 	UpdateMusicStream(mainMenuMusic);
 	UpdateMusicStream(charSelectMusic);
-	UpdateMusicStream(gameMusic);
+	for (auto m : musicGame)
+		UpdateMusicStream(m);
 
 	return UPDATE_CONTINUE;
 }
@@ -447,9 +434,9 @@ void ModuleGame::SelectCharacter() {
 }
 
 void ModuleGame::DrawUI() {
-	
+
 	if (timeInitial == true) {
-		
+
 		timeMinus = GetTime();
 		timeInitial = false;
 	}
@@ -457,7 +444,7 @@ void ModuleGame::DrawUI() {
 	Color color = BLACK;
 	double timer = GetTime() - timeMinus;
 	int timelap = car->Lap;
-	
+
 
 	App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
 	App->renderer->DrawText(TextFormat("%d LAP", timelap), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);

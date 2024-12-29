@@ -74,6 +74,7 @@ public:
 	bool Player2Ready = false;
 	std::vector<Object*> checkpoints;
 	std::vector<Entity*> ranking;
+	std::vector<Music> musicGame;
 
 private:
 
@@ -83,8 +84,8 @@ private:
 	Vector2 pos;
 	int timer, delayTimer;
 
-	Music gameMusic;
 	Music charSelectMusic;
 	Music mainMenuMusic;
 	int RaceStart_fx;
+	int songId;
 };

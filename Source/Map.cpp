@@ -87,22 +87,16 @@ update_status Map::Update()
 
 		int pos = 0;
 		for (PhysBody* col : collisions) {
-			//int a, b;
 			float x = PIXEL_TO_METERS(initialPos.at(pos).x * 2) + (App->renderer->camera.x / 50);
 			float y = PIXEL_TO_METERS(initialPos.at(pos).y * 2) + (App->renderer->camera.y / 50);
-			//TraceLog(LOG_INFO, "x: %f, y: %f", initialPos.at(pos).x, 0);
-			//col->GetPhysicPositionWithCamera(a, b, App->renderer->camera);
 			col->body->SetTransform({ x, y }, 0);
 			pos++;
 		}
 
 		pos = 0;
 		for (PhysBody* sensor : sensors) {
-			//int a, b;
 			float x = PIXEL_TO_METERS(sensorsInitialPos.at(pos).x * 2) + (App->renderer->camera.x / 50);
 			float y = PIXEL_TO_METERS(sensorsInitialPos.at(pos).y * 2) + (App->renderer->camera.y / 50);
-			//TraceLog(LOG_INFO, "x: %f, y: %f", sensorsInitialPos.at(pos).x, 0);
-			//col->GetPhysicPositionWithCamera(a, b, App->renderer->camera);
 			sensor->body->SetTransform({ x, y }, 0);
 			pos++;
 		}
@@ -315,7 +309,6 @@ bool Map::Load(std::string path, std::string fileName)
 			for (Object* object : objectGroup->object)
 			{
 				PhysBody* c = App->physics->CreateChain((object->x) * SCALE, (object->y) * SCALE, object->vertices, object->vertNum, b2_staticBody);
-				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				c->ctype = ColliderType::WALL;
 				collisions.push_back(c);
 				initialPos.push_back({ (float)object->x, (float)object->y });
@@ -325,9 +318,7 @@ bool Map::Load(std::string path, std::string fileName)
 		else if (objectGroup->name == "Sensors") {
 			for (Object* object : objectGroup->object)
 			{
-				//TraceLog(LOG_INFO, "%d", object->x);
 				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, b2_staticBody);
-				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				if (object->finishLine) s->ctype = ColliderType::FINISH_LINE;
 				else s->ctype = ColliderType::SENSOR;
 				s->id = object->id;
@@ -338,9 +329,7 @@ bool Map::Load(std::string path, std::string fileName)
 		else if (objectGroup->name == "Direction") {
 			for (Object* object : objectGroup->object)
 			{
-				//TraceLog(LOG_INFO, "%d", object->x);
 				PhysBody* s = App->physics->CreateRectangleSensor((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width * SCALE, object->height * SCALE, b2_staticBody);
-				/*PhysBody* c = App->physics->CreateRectangle((object->x + object->width / 2) * SCALE, (object->y + object->height / 2) * SCALE, object->width *SCALE, object->height *SCALE, b2BodyType::b2_staticBody);*/
 				if (object->direction == 1) s->ctype = ColliderType::UP;
 				else if (object->direction == 2) s->ctype = ColliderType::RIGHT;
 				else if (object->direction == 3) s->ctype = ColliderType::DOWN;
@@ -357,19 +346,10 @@ bool Map::Load(std::string path, std::string fileName)
 		//Check if the property Draw exist get the value, if it's true draw the lawyer
 		for (int i = 0; i < mapData.width; i++) {
 			for (int j = 0; j < mapData.height; j++) {
-
 				//Get the gid from tile
 				int gid = mapLayer->Get(i, j);
 				//Check if the gid is different from 0 - some tiles are empty
-				if (gid != 0) {
-
-					if (gid == 1) {
-						Vector2 mapCoord = MapToWorld(i, j);
-						/*PhysBody* c1 = App->physics->CreateRectangle(mapCoord.x + 16, mapCoord.y + 16, 32, 32, b2BodyType::b2_staticBody);
-						c1->ctype = ColliderType::WALL;*/
-					}
-
-				}
+				if (gid != 0 && gid == 1) Vector2 mapCoord = MapToWorld(i, j);
 			}
 		}
 	}
