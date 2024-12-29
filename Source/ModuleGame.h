@@ -99,6 +99,7 @@ private:
 	Music mainMenuMusic;
 	int bepSFX;
 	int beepSFX;
+	int buttonSFX;
 	int songId;
 
 };

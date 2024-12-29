@@ -24,6 +24,9 @@ private:
 	Color currentTint;
 	bool canClick = true;
 	bool drawBasic = false;
+
+	
+
 };
 
 #pragma once

@@ -70,6 +70,8 @@ bool ModuleGame::Start()
 
 	bepSFX = App->audio->LoadFx("Assets/Audio/SFX/bep.wav");
 	beepSFX = App->audio->LoadFx("Assets/Audio/SFX/beep.wav");
+	buttonSFX = App->audio->LoadFx("Assets/Audio/SFX/button.wav");
+
 
 	std::random_device dev;
 	std::uniform_int_distribution<std::mt19937::result_type> randMusic(0, musicGame.size() - 1);

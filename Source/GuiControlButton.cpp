@@ -3,6 +3,8 @@
 #include "ModuleAudio.h"
 #include "Application.h"
 #include "Module.h"
+#include "Modulegame.h"
+#include "Modulegame.cpp"
 
 GuiControlButton::GuiControlButton(int id, Rectangle bounds, const char* text, Texture2D* texture = nullptr) : GuiControl(GuiControlType::BUTTON, id)
 {
@@ -14,8 +16,6 @@ GuiControlButton::GuiControlButton(int id, Rectangle bounds, const char* text, T
 	drawBasic = false;
 	this->active = false;
 }
-
-
 
 GuiControlButton::~GuiControlButton()
 {
@@ -31,6 +31,8 @@ bool GuiControlButton::Update()
 
 		//If the position of the mouse if inside the bounds of the button 
 		if (mousePos.x > bounds.x && mousePos.x < bounds.x + bounds.width && mousePos.y > bounds.y && mousePos.y < bounds.y + bounds.height) {
+
+			
 
 			state = GuiControlState::FOCUSED;
 
