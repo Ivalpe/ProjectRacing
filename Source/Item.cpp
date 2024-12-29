@@ -85,7 +85,6 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::CAR:
 		if (!isPicked) {
 			isPicked = true;
-			/*PlaySound(boxBreak);*/
 			App->audio->PlayFx(boxBreak);
 			reappearTimer.Start();
 		}

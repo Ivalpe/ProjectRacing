@@ -53,4 +53,7 @@ private:
 	int item;
 	Vector2 posItem;
 	int timerTurbo = 60;
+
+	//SFX
+	int turboSFX;
 };

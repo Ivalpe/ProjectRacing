@@ -6,6 +6,8 @@
 #include "box2d/b2_math.h"
 #include <algorithm>
 #include <random>
+#include "Application.h"
+#include "ModuleAudio.h"
 
 
 Player::Player(Application* parent) : Entity(parent)
@@ -22,6 +24,9 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, std
 	body = physics->CreateRectangle(0, 0, SPRITE_WIDTH * SCALE, SPRITE_HEIGHT * SCALE, b2_dynamicBody);
 	carType = PLAYER;
 
+
+	//SFX Load
+	turboSFX = App->audio->LoadFx("Assets/Audio/SFX/Mushroom Boost.wav");
 
 	if (player == 1) {
 		TurnLeft = KEY_LEFT;
@@ -101,6 +106,7 @@ update_status Player::Update() {
 	}
 
 	if (hasPower && IsKeyPressed(Power) && !powerActive) {
+		App->audio->PlayFx(turboSFX);
 		powerActive = true;
 		hasPower = false;
 	}
