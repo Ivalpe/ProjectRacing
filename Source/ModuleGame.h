@@ -104,5 +104,6 @@ private:
 	int bepSFX;
 	int beepSFX;
 	int songId;
-
+	pugi::xml_document xmlFile;
+	pugi::xml_parse_result result;
 };

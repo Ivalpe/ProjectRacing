@@ -33,7 +33,7 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, std
 		TurnRight = KEY_RIGHT;
 		MoveBack = KEY_DOWN;
 		MoveForward = KEY_UP;
-		Power = KEY_LEFT_SHIFT;
+		Power = KEY_RIGHT_SHIFT;
 		posItem = { 10, (float)SCREEN_HEIGHT - (items[0].height * 2) - 10 };
 
 		body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);
@@ -43,7 +43,7 @@ void Player::SetParameters(ModulePhysics* physics, Texture2D txt, float rot, std
 		TurnRight = KEY_D;
 		MoveBack = KEY_S;
 		MoveForward = KEY_W;
-		Power = KEY_RIGHT_SHIFT;
+		Power = KEY_LEFT_SHIFT;
 		posItem = { (float)SCREEN_WIDTH - (items[0].width * 2) - 10, (float)SCREEN_HEIGHT - (items[0].height * 2) - 10 };
 
 		body->body->SetTransform({ PIXEL_TO_METERS(x), PIXEL_TO_METERS(y) }, rot);

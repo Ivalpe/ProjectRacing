@@ -24,6 +24,9 @@ ModuleGame::~ModuleGame()
 // Load assets
 bool ModuleGame::Start()
 {
+	//Xml
+	result = xmlFile.load_file("ranking.xml");
+
 	LOG("Loading Intro assets");
 	bool ret = true;
 	stateGame = MAIN_MENU;
@@ -56,7 +59,7 @@ bool ModuleGame::Start()
 	timer2 = LoadTexture("Assets/2.png");
 	timer1 = LoadTexture("Assets/1.png");
 
-	endRaceOnePlayer = LoadTexture("Assets/RaceEnd/OnePlayerRaceEnd.png"); 
+	endRaceOnePlayer = LoadTexture("Assets/RaceEnd/OnePlayerRaceEnd.png");
 	endRaceTwoPlayers = LoadTexture("Assets/RaceEnd/TwoPlayerRaceEnd.png");
 
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
@@ -85,13 +88,13 @@ bool ModuleGame::Start()
 	//Random Map
 	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 3);
 
-	
 
 
-	
 
 
-	
+
+
+
 
 
 	switch (randMap(rng))
@@ -486,14 +489,14 @@ void ModuleGame::DrawUI() {
 
 	if (PlayerOneDone && PlayerOneFinalTime <= 0) PlayerOneFinalTime = timer;
 	if (PlayerTwoDone && PlayerTwoFinalTime <= 0) PlayerTwoFinalTime = timer;
-	
+
 
 	/*App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);*/
 	//DrawTextEx(gamTex, TextFormat("TIME: %.2f", timer), { SCREEN_WIDTH - 140.0f, 32 }, strokeSize, spacing, BLACK);
 	DrawTextEx(gamTex, TextFormat("TIME: %.2f", timer), { SCREEN_WIDTH - 210, 30 }, raceFontSize, spacing, WHITE);
-	
-	
-	
+
+
+
 	if (TwoPlayerMode) {
 		int timelap2 = car2->Lap;
 		DrawTextEx(gamTex, TextFormat("LAP (P1): %d/3 ", timelap), { SCREEN_WIDTH - 210, 60 }, raceFontSize, spacing, color);
@@ -524,15 +527,15 @@ void ModuleGame::Game() {
 	switch (timer)
 	{
 	case 1:
-		
+
 		DrawTexture(timer1, (SCREEN_WIDTH / 2) - (timer1.width / 2), (SCREEN_HEIGHT / 2) - (timer1.height / 2), WHITE);
 		break;
 	case 2:
-		
+
 		DrawTexture(timer2, (SCREEN_WIDTH / 2) - (timer2.width / 2), (SCREEN_HEIGHT / 2) - (timer2.height / 2), WHITE);
 		break;
 	case 3:
-		
+
 		DrawTexture(timer3, (SCREEN_WIDTH / 2) - (timer3.width / 2), (SCREEN_HEIGHT / 2) - (timer3.height / 2), WHITE);
 		break;
 	default:
@@ -543,12 +546,12 @@ void ModuleGame::Game() {
 		switch (timer) {
 		case 1:
 
-			
+
 			App->audio->PlayFx(beepSFX, 0);
 			break;
 		case 2:
 
-			
+
 			App->audio->PlayFx(bepSFX, 0);
 			break;
 		case 3:
@@ -595,10 +598,10 @@ void ModuleGame::Game() {
 		}
 	}
 
-	if(!PlayerOneDone) car->Render();
+	if (!PlayerOneDone) car->Render();
 	if (TwoPlayerMode && !PlayerTwoDone) car2->Render();
 	for (auto car : enemyCars) {
-		if(!car->EndedRace) car->Render();
+		if (!car->EndedRace) car->Render();
 	}
 
 
@@ -633,6 +636,7 @@ void ModuleGame::RaceEnd() {
 	endFontSize = 40.0f;
 	float spacing = 1.0f;
 	Color color = BLACK;
+	double bestTime = xmlFile.child("best").attribute("time").as_double();
 
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
@@ -643,13 +647,27 @@ void ModuleGame::RaceEnd() {
 
 		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 120, 430 }, endFontSize, spacing, color);
 		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 + 120, 500 }, endFontSize, spacing, color);
+		if (PlayerOneFinalTime <= bestTime) {
+			xmlFile.child("best").attribute("time").set_value(PlayerOneFinalTime);
+			xmlFile.save_file("ranking.xml");
+		}
+		if (PlayerTwoFinalPos <= bestTime) {
+			xmlFile.child("best").attribute("time").set_value(PlayerTwoFinalPos);
+			xmlFile.save_file("ranking.xml");
+		}
 	}
 	else {
 		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
 		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 250 }, endFontSize, (int)spacing, color);
 		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 20, 430 }, endFontSize, (int)spacing, color);
+		if (PlayerOneFinalTime <= bestTime) {
+			xmlFile.child("best").attribute("time").set_value(PlayerOneFinalTime);
+			xmlFile.save_file("ranking.xml");
+		}
 	}
 
+
+	DrawTextEx(gamTex, TextFormat("%.2f", bestTime), { SCREEN_WIDTH / 2 + 20, 550 }, endFontSize, (int)spacing, color);
 }
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
