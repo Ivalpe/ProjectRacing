@@ -14,10 +14,19 @@
 
 ## Controls  
 
+### Menu
+- **Arrow Keys**: Player 1 select
+- **W, A, S, D**: Player 2 select
+- **Z**: Select character
+- **X**: Deselect character
+
 ### Player 1  
 - **Arrow Keys**: Movement  
-- **Space**: Select  
+- **Left Shift**: Turbo  
 
 ### Player 2  
 - **W, A, S, D**: Movement  
-- **Q**: Select  
+- **Right Shift**: Turbo  
+
+### Debug
+- **F4**: Go to final screen
