@@ -45,7 +45,7 @@ bool ModuleGame::Start()
 
 	selectBG = LoadTexture("Assets/Main Menu/selection screen.png");
 	nextBtTex = LoadTexture("Assets/Main Menu/siguiente.png");
-	backBtTex = LoadTexture("Assets/Main Menu/atr�s.png");
+	backBtTex = LoadTexture("Assets/Main Menu/atras.png");
 
 	bluePressX = LoadTexture("Assets/Main Menu/blue Press x to go back.png");
 	bluePressZ = LoadTexture("Assets/Main Menu/blue Press z to confirm.png");
@@ -64,12 +64,16 @@ bool ModuleGame::Start()
 
 	selectedVehicle = LoadTexture("Assets/selectVehicle.png");
 	selectedVehicle2 = LoadTexture("Assets/selectVehicle2.png");
-
+	
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/In-game.ogg"));
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Mario-Kart-DS-Waluigi-Pinball.ogg"));
 	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Rascal Flatts - Life Is a Highway.ogg"));
-	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
+	musicGame.push_back(LoadMusicStream("Assets/Audio/Music/Coconut Mall.ogg"));
+	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Choose Your Character.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
+	firstPlaceMusic = LoadMusicStream("Assets/Audio/Music/Race Results_1st Place.ogg");
+	secondPlaceMusic = LoadMusicStream("Assets/Audio/Music/Race Results_2nd-4th Place.ogg");
+	fifthPlaceMusic = LoadMusicStream("Assets/Audio/Music/Race Results_5th-8th Place.ogg");
 
 
 	bepSFX = App->audio->LoadFx("Assets/Audio/SFX/bep.wav");
@@ -89,13 +93,6 @@ bool ModuleGame::Start()
 
 	//Random Map
 	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 3);
-
-
-
-
-
-
-
 
 
 
@@ -412,7 +409,7 @@ void ModuleGame::SelectCharacter() {
 	App->renderer->Draw(selectedVehicle, posVehicles[selectedPos].x, posVehicles[selectedPos].y, &rect);
 	if (TwoPlayerMode)	App->renderer->Draw(selectedVehicle2, posVehicles[selectedPosPlayer2].x, posVehicles[selectedPosPlayer2].y, &rect);
 
-
+	backButton->Update();
 	OnGuiMouseClickEvent(backButton);
 
 	if (TwoPlayerMode) {
@@ -617,8 +614,12 @@ void ModuleGame::Game() {
 		++FinalRankingTracker;
 		PlayerOneFinalPos = FinalRankingTracker;
 
-		if (!TwoPlayerMode) FinishRace = true;
-		else if (PlayerTwoDone) FinishRace = true;
+		if (!TwoPlayerMode) {
+			FinishRace = true;
+		}
+		else if (PlayerTwoDone) {
+			FinishRace = true;
+		}
 	}
 
 	if (TwoPlayerMode) {
@@ -640,16 +641,16 @@ void ModuleGame::Game() {
 
 	if (!PlayerOneDone) car->Render();
 	if (TwoPlayerMode && !PlayerTwoDone) car2->Render();
-	for (auto car : enemyCars) {
-		if (!car->EndedRace) car->Render();
+	for (auto eCar : enemyCars) {
+		if (!eCar->EndedRace) eCar->Render();
 	}
 
 
 	if (timer <= 0) {
 		if (!PlayerOneDone) car->Update();
 		if (TwoPlayerMode && !PlayerTwoDone) car2->Update();
-		for (auto car : enemyCars) {
-			if (!car->EndedRace) car->Update();
+		for (auto eCar : enemyCars) {
+			if (!eCar->EndedRace) eCar->Update();
 		}
 		DrawUI();
 	}
@@ -668,12 +669,19 @@ void ModuleGame::Game() {
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
-	if (FinishRace || IsKeyPressed(KEY_F4)) stateGame = RACE_END;
+	if (FinishRace || IsKeyPressed(KEY_F4)) {
+		if (PlayerOneFinalPos == 1) resultsMusic = firstPlaceMusic;
+		else if (PlayerOneFinalPos >= 2 || PlayerOneFinalPos <= 4) resultsMusic = secondPlaceMusic;
+		else if (PlayerOneFinalPos >= 5) resultsMusic = fifthPlaceMusic;
+
+		App->audio->PlayMusic(resultsMusic, 0.5f);
+		stateGame = RACE_END;
+	}
 
 }
 
 void ModuleGame::RaceEnd() {
-	endFontSize = 40.0f;
+	endFontSize = 45.0f;
 	float spacing = 1.0f;
 	Color color = BLACK;
 	double bestTime = xmlFile.child("best").attribute("time").as_double();
@@ -681,9 +689,8 @@ void ModuleGame::RaceEnd() {
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
 
-
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 20 , 250 }, endFontSize, spacing, color);
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 50, 320 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 20 , 240 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 50, 300 }, endFontSize, spacing, color);
 
 		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 120, 430 }, endFontSize, spacing, color);
 		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 + 120, 500 }, endFontSize, spacing, color);
