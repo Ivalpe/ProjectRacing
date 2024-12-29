@@ -4,6 +4,11 @@
 
 **Vroom Vroom** is a fun racing game that mixes creativity with a touch of madness. It features original assets along with elements from Mario Kart (models, sounds, and music).
 
+##Github
+
+[Project](https://github.com/Ivalpe/ProjectRacing--VroomVroom-Subete-vamos-a-terapia)
+
+
 ## Development Team
 
 - **Maria Besora**  
@@ -30,3 +35,4 @@
 
 ### Debug
 - **F4**: Go to final screen
+- **Mouse click on car** Move car freely
