@@ -97,6 +97,8 @@ private:
 
 	Music charSelectMusic;
 	Music mainMenuMusic;
-	int RaceStart_fx;
+	int bepSFX;
+	int beepSFX;
 	int songId;
+
 };

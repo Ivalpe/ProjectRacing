@@ -66,6 +66,8 @@ bool ModuleGame::Start()
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
 
+	bepSFX = App->audio->LoadFx("Assets/Audio/SFX/bep.wav");
+	beepSFX = App->audio->LoadFx("Assets/Audio/SFX/beep.wav");
 
 	std::random_device dev;
 	std::uniform_int_distribution<std::mt19937::result_type> randMusic(0, musicGame.size() - 1);
@@ -469,6 +471,8 @@ void ModuleGame::Game() {
 	nextButton->active = false;
 	backButton->active = false;
 
+	static int lastTimer = -1;
+
 	if (timer >= 0) delayTimer--;
 
 	if (delayTimer <= 0 && timer >= 0) {
@@ -480,17 +484,45 @@ void ModuleGame::Game() {
 	switch (timer)
 	{
 	case 1:
+		
 		DrawTexture(timer1, (SCREEN_WIDTH / 2) - (timer1.width / 2), (SCREEN_HEIGHT / 2) - (timer1.height / 2), WHITE);
 		break;
 	case 2:
+		
 		DrawTexture(timer2, (SCREEN_WIDTH / 2) - (timer2.width / 2), (SCREEN_HEIGHT / 2) - (timer2.height / 2), WHITE);
 		break;
 	case 3:
+		
 		DrawTexture(timer3, (SCREEN_WIDTH / 2) - (timer3.width / 2), (SCREEN_HEIGHT / 2) - (timer3.height / 2), WHITE);
 		break;
 	default:
 		break;
 	}
+
+	if (timer != lastTimer) {
+		switch (timer) {
+		case 1:
+
+			
+			App->audio->PlayFx(beepSFX, 0);
+			break;
+		case 2:
+
+			
+			App->audio->PlayFx(bepSFX, 0);
+			break;
+		case 3:
+
+			App->audio->PlayFx(bepSFX, 0);
+			break;
+		default:
+			break;
+		}
+
+
+		lastTimer = timer;
+	}
+
 
 	for (Item* item : itemList) {
 		item->Update();
