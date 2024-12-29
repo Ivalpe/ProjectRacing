@@ -4,7 +4,7 @@
 #include "Application.h"
 #include "Module.h"
 #include "Modulegame.h"
-#include "Modulegame.cpp"
+
 
 GuiControlButton::GuiControlButton(int id, Rectangle bounds, const char* text, Texture2D* texture = nullptr) : GuiControl(GuiControlType::BUTTON, id)
 {
