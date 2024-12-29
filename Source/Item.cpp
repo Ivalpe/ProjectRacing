@@ -2,6 +2,8 @@
 #include "ModulePhysics.h"
 #include "Globals.h"
 #include "Entity.h"
+#include "ModuleAudio.h"
+#include "Application.h"
 
 
 
@@ -23,6 +25,8 @@ void Item::SetParameters(ModulePhysics* physics, int _texIndex) {
 	itemTex.push_back(LoadTexture("Assets/shell power up.png"));
 
 	// L08 TODO 4: Add a physics to an item - initialize the physics body
+
+	boxBreak = App->audio->LoadFx("Assets/Audio/SFX/SE_ITM_BOX_BRK.wav");
 	
 	body = physics->CreateRectangleSensor(0, 0, texture.width * SCALE, texture.height * SCALE, b2_staticBody);
 	// L08 TODO 7: Assign collider type
@@ -81,6 +85,8 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::CAR:
 		if (!isPicked) {
 			isPicked = true;
+			/*PlaySound(boxBreak);*/
+			App->audio->PlayFx(boxBreak);
 			reappearTimer.Start();
 		}
 		break;

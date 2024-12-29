@@ -63,7 +63,7 @@ bool ModuleGame::Start()
 	gameMusic = LoadMusicStream("Assets/Audio/Music/In-game.ogg");
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
-	//RaceStart_fx = App->audio->LoadFx("Audio/Effects/RaceStart.ogg");
+
 
 	if (!mainMenuMusic.stream.buffer) {
 		LOG("Failed to load main menu music");

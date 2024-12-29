@@ -44,4 +44,6 @@ private:
 	int width, height;
 	Timer reappearTimer;
 	float reappearTime = 5.0f;
+	/*Sound boxBreak;*/
+	int boxBreak;
 };
