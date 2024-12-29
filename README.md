@@ -27,3 +27,6 @@
 ### Player 2  
 - **W, A, S, D**: Movement  
 - **Right Shift**: Turbo  
+
+### Debug
+- **F4**: Go to final screen
