@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include "ModulePhysics.h"
+#include "box2d\box2d.h"
 #include <list>
 #include <vector>
 
@@ -52,22 +53,31 @@ struct MapLayer
 
 struct Object
 {
-	int id;
+	int id = -1;
 	int x;
 	int y;
 	int width;
 	int height;
-	const char* pointString;
-	int* vertices;
-	int vertNum;
+	const char* pointString = nullptr;
+	int* vertices = nullptr;
+	int vertNum = -1;
 	bool finishLine;
 	int direction;
-	/*
-	1: UP
-	2: RIGHT
-	3: DOWN
-	4: LEFT
-	*/
+
+	~Object() {
+		/*if (vertNum > 0) {
+			if (vertices) {
+				TraceLog(LOG_INFO, "Deleting vertices of object ID: %d", id);
+				delete[] vertices;
+				vertices = nullptr;
+			}
+		}*/
+		if (vertices) {
+			TraceLog(LOG_INFO, "Deleting vertices of object ID: %d", id);
+			delete[] vertices;
+			vertices = nullptr;
+		}
+	}
 };
 
 struct ObjectGroup
@@ -183,7 +193,7 @@ public:
 	std::string mapFileName;
 	std::string mapPath;
 	std::vector<b2Vec2> vertices;
-	int* intVertices;
+	int* intVertices = nullptr;
 	int vertNum;
 
 private:
@@ -192,6 +202,7 @@ private:
 	MapData mapData;
 	std::list<PhysBody*> collisions;
 	std::list<PhysBody*> sensors;
+	std::list<PhysBody*> direction;
 	std::vector<b2Vec2> initialPos;
 	std::vector<b2Vec2> sensorsInitialPos;
 	std::vector<b2Vec2> posTurn;

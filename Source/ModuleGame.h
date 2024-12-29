@@ -37,6 +37,7 @@ public:
 	void RaceEnd();
 	void DrawUI();
 	bool CleanUp();
+	void UnloadAllTextures();
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
 	bool timeInitial;
 	double timeMinus;
@@ -103,6 +104,7 @@ private:
 	Music mainMenuMusic;
 	int bepSFX;
 	int beepSFX;
+	int buttonSFX;
 	int songId;
 	pugi::xml_document xmlFile;
 	pugi::xml_parse_result result;

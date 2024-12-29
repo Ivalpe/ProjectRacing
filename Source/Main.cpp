@@ -4,6 +4,7 @@
 #include "raylib.h"
 
 #include <stdlib.h>
+#include <crtdbg.h>
 
 enum main_states
 {
@@ -80,7 +81,6 @@ int main(int argc, char ** argv)
 
 		}
 	}
-
 	delete App;
 	_CrtDumpMemoryLeaks();
 	LOG("Exiting game '%s'...\n", TITLE);

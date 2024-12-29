@@ -74,6 +74,8 @@ bool ModuleGame::Start()
 
 	bepSFX = App->audio->LoadFx("Assets/Audio/SFX/bep.wav");
 	beepSFX = App->audio->LoadFx("Assets/Audio/SFX/beep.wav");
+	buttonSFX = App->audio->LoadFx("Assets/Audio/SFX/button.wav");
+
 
 	//Fonts
 	gamTex = LoadFont("Assets/Fonts/Gamtex.ttf");
@@ -231,7 +233,7 @@ bool ModuleGame::Start()
 bool ModuleGame::CleanUp()
 {
 	LOG("Unloading scene");
-	for (auto c : checkpoints) delete c;
+	
 	checkpoints.clear();
 
 	LOG("Unloading Intro scene");
@@ -240,6 +242,18 @@ bool ModuleGame::CleanUp()
 		delete car;
 	}
 	enemyCars.clear();
+
+	/*for (auto e : ranking) {
+		delete e;
+	}*/
+	ranking.clear();
+
+	for (auto item : itemList) {
+		item->CleanUp();
+		delete item;
+	}
+	itemList.clear();
+
 	car->CleanUp();
 	delete car;
 
@@ -247,8 +261,34 @@ bool ModuleGame::CleanUp()
 	delete car2;
 
 	App->map->CleanUp();
+	UnloadAllTextures();
 
 	return true;
+}
+
+void ModuleGame::UnloadAllTextures() {
+	UnloadTexture(titleBG);
+	UnloadTexture(selectBG);
+	UnloadTexture(selectedVehicle); 
+	UnloadTexture(selectedVehicle2);
+	UnloadTexture(playBtTex); 
+	UnloadTexture(onePlayerBtTex);
+	UnloadTexture(twoPlayersBtTex);
+	UnloadTexture(optBtTex);
+	UnloadTexture(credBtTex);
+	UnloadTexture(nextBtTex); 
+	UnloadTexture(backBtTex);
+	UnloadTexture(bluePressZ);
+	UnloadTexture(bluePressX); 
+	UnloadTexture(redPressZ); 
+	UnloadTexture(redPressX); 
+	UnloadTexture(useWASD); 
+	UnloadTexture(useArrows);
+	UnloadTexture(endRaceOnePlayer); 
+	UnloadTexture(endRaceTwoPlayers);
+	UnloadTexture(timer3); 
+	UnloadTexture(timer2); 
+	UnloadTexture(timer1);
 }
 
 // Update: draw background
