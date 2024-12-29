@@ -87,6 +87,10 @@ public:
 	std::vector<Entity*> ranking;
 	std::vector<Music> musicGame;
 
+	Font gamTex;
+	float raceFontSize;
+	float endFontSize;
+
 private:
 
 	GuiControlButton *playButton, *onePlayerButton, *twoPlayersButton, *nextButton, *backButton;

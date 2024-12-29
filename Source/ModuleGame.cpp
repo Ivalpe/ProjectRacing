@@ -42,7 +42,7 @@ bool ModuleGame::Start()
 
 	selectBG = LoadTexture("Assets/Main Menu/selection screen.png");
 	nextBtTex = LoadTexture("Assets/Main Menu/siguiente.png");
-	backBtTex = LoadTexture("Assets/Main Menu/atrás.png");
+	backBtTex = LoadTexture("Assets/Main Menu/atrï¿½s.png");
 
 	bluePressX = LoadTexture("Assets/Main Menu/blue Press x to go back.png");
 	bluePressZ = LoadTexture("Assets/Main Menu/blue Press z to confirm.png");
@@ -68,8 +68,13 @@ bool ModuleGame::Start()
 	charSelectMusic = LoadMusicStream("Assets/Audio/Music/Character-select.ogg");
 	mainMenuMusic = LoadMusicStream("Assets/Audio/Music/Main-Menu.ogg");
 
+
 	bepSFX = App->audio->LoadFx("Assets/Audio/SFX/bep.wav");
 	beepSFX = App->audio->LoadFx("Assets/Audio/SFX/beep.wav");
+
+	//Fonts
+	gamTex = LoadFont("Assets/Fonts/Gamtex.ttf");
+
 
 	std::random_device dev;
 	std::uniform_int_distribution<std::mt19937::result_type> randMusic(0, musicGame.size() - 1);
@@ -78,6 +83,9 @@ bool ModuleGame::Start()
 
 	//Random Map
 	std::uniform_int_distribution<std::mt19937::result_type> randMap(0, 3);
+
+	
+
 
 	switch (randMap(rng))
 	{
@@ -462,20 +470,30 @@ void ModuleGame::DrawUI() {
 		timeMinus = GetTime();
 		timeInitial = false;
 	}
-	float spacing = 1.0f;
-	Color color = BLACK;
+	float spacing = 3.0f;
+	Color color = WHITE;
+	raceFontSize = 25.0f;
+	/*float strokeSize = fontSize + 4;*/
 	double timer = GetTime() - timeMinus;
 	int timelap = car->Lap;
 
 	if (PlayerOneDone && PlayerOneFinalTime <= 0) PlayerOneFinalTime = timer;
 	if (PlayerTwoDone && PlayerTwoFinalTime <= 0) PlayerTwoFinalTime = timer;
+	
 
-
-	App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);
-	App->renderer->DrawText(TextFormat("%d LAP", timelap), SCREEN_WIDTH - 120, 40, GetFontDefault(), (int)spacing, color);
+	/*App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);*/
+	//DrawTextEx(gamTex, TextFormat("TIME: %.2f", timer), { SCREEN_WIDTH - 140.0f, 32 }, strokeSize, spacing, BLACK);
+	DrawTextEx(gamTex, TextFormat("TIME: %.2f", timer), { SCREEN_WIDTH - 210, 30 }, raceFontSize, spacing, WHITE);
+	
+	
+	
 	if (TwoPlayerMode) {
 		int timelap2 = car2->Lap;
-		App->renderer->DrawText(TextFormat("%d LAP", timelap2), SCREEN_WIDTH - 120, 50, GetFontDefault(), (int)spacing, color);
+		DrawTextEx(gamTex, TextFormat("LAP (P1): %d/3 ", timelap), { SCREEN_WIDTH - 210, 60 }, raceFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("LAP (P2): %d/3", timelap2), { SCREEN_WIDTH - 210, 90 }, raceFontSize, spacing, color);
+	}
+	else {
+		DrawTextEx(gamTex, TextFormat("LAP: %d/3 ", timelap), { SCREEN_WIDTH - 210, 60 }, raceFontSize, spacing, color);
 	}
 
 }
@@ -600,26 +618,28 @@ void ModuleGame::Game() {
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
 
-	if (FinishRace) stateGame = RACE_END;
+	if (FinishRace || IsKeyPressed(KEY_F4)) stateGame = RACE_END;
 
 }
 
 void ModuleGame::RaceEnd() {
+	endFontSize = 40.0f;
 	float spacing = 1.0f;
 	Color color = BLACK;
 
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
-		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH / 2 - 50, 250, GetFontDefault(), (int)spacing, color);
-		App->renderer->DrawText(TextFormat("%.2f", PlayerTwoFinalTime), SCREEN_WIDTH / 2 - 50, 310, GetFontDefault(), (int)spacing, color);
 
-		App->renderer->DrawText(TextFormat("%d", PlayerOneFinalPos), SCREEN_WIDTH / 2 + 120, 430, GetFontDefault(), (int)spacing, color);
-		App->renderer->DrawText(TextFormat("%d", PlayerTwoFinalPos), SCREEN_WIDTH / 2 + 120, 500, GetFontDefault(), (int)spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 20 , 250 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 50, 320 }, endFontSize, spacing, color);
+
+		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 120, 430 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 + 120, 500 }, endFontSize, spacing, color);
 	}
 	else {
 		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
-		App->renderer->DrawText(TextFormat("%.2f", PlayerOneFinalTime), SCREEN_WIDTH/2 - 260, 250, GetFontDefault(), (int)spacing, color);
-		App->renderer->DrawText(TextFormat("%d", PlayerOneFinalPos), SCREEN_WIDTH/2 + 20, 430, GetFontDefault(), (int)spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 250 }, endFontSize, (int)spacing, color);
+		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 20, 430 }, endFontSize, (int)spacing, color);
 	}
 
 }
