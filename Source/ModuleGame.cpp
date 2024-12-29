@@ -689,11 +689,12 @@ void ModuleGame::RaceEnd() {
 	if (TwoPlayerMode) {
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
 
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 20 , 240 }, endFontSize, spacing, color);
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 50, 300 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 60 , 325 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerTwoFinalTime), { SCREEN_WIDTH / 2 - 60, 395 }, endFontSize, spacing, color);
 
-		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 120, 430 }, endFontSize, spacing, color);
-		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 + 120, 500 }, endFontSize, spacing, color);
+
+		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 - 35, 510 }, endFontSize, spacing, color);
+		DrawTextEx(gamTex, TextFormat("%d", PlayerTwoFinalPos), { SCREEN_WIDTH / 2 - 35, 575 }, endFontSize, spacing, color);
 		if (PlayerOneFinalTime <= bestTime) {
 			xmlFile.child("best").attribute("time").set_value(PlayerOneFinalTime);
 			xmlFile.save_file("ranking.xml");
@@ -705,8 +706,8 @@ void ModuleGame::RaceEnd() {
 	}
 	else {
 		DrawTexture(endRaceOnePlayer, 0, 0, WHITE);
-		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 250 }, endFontSize, (int)spacing, color);
-		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 + 20, 430 }, endFontSize, (int)spacing, color);
+		DrawTextEx(gamTex, TextFormat("%.2f", PlayerOneFinalTime), { SCREEN_WIDTH / 2 - 260, 325 }, endFontSize, (int)spacing, color);
+		DrawTextEx(gamTex, TextFormat("%d", PlayerOneFinalPos), { SCREEN_WIDTH / 2 - 240, 420 }, endFontSize, (int)spacing, color);
 		if (PlayerOneFinalTime <= bestTime) {
 			xmlFile.child("best").attribute("time").set_value(PlayerOneFinalTime);
 			xmlFile.save_file("ranking.xml");
@@ -714,7 +715,7 @@ void ModuleGame::RaceEnd() {
 	}
 
 
-	DrawTextEx(gamTex, TextFormat("%.2f", bestTime), { SCREEN_WIDTH / 2 + 20, 550 }, endFontSize, (int)spacing, color);
+	DrawTextEx(gamTex, TextFormat("%.2f", bestTime), { SCREEN_WIDTH / 2 - 140, 225 }, endFontSize, (int)spacing, color);
 }
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
