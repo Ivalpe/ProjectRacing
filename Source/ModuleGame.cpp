@@ -712,7 +712,10 @@ void ModuleGame::RaceEnd() {
 
 bool ModuleGame::OnGuiMouseClickEvent(GuiControl* control) {
 
+
 	if (control->state == GuiControlState::PRESSED) {
+
+		App->audio->PlayFx(buttonSFX);
 		switch (control->id) {
 		case 1:
 			stateGame = MAIN_MENU;
