@@ -37,6 +37,7 @@ public:
 	void RaceEnd();
 	void DrawUI();
 	bool CleanUp();
+	void UnloadAllTextures();
 	bool OnGuiMouseClickEvent(GuiControl* control) override;
 	bool timeInitial;
 	double timeMinus;

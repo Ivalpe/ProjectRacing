@@ -1891,9 +1891,6 @@
   </object>
  </objectgroup>
  <objectgroup id="3" name="Sensors">
-  <properties>
-   <property name="Sensors" type="bool" value="true"/>
-  </properties>
   <object id="59" x="512" y="0" width="16" height="96">
    <properties>
     <property name="finishLine" type="bool" value="true"/>

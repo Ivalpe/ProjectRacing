@@ -31,6 +31,11 @@ public:
 	PhysBody() : listenerptr(NULL), body(NULL)
 	{}
 
+	~PhysBody()
+	{
+		delete listenerptr;
+	}
+
 	void GetPhysicPosition(int& x, int& y) const;
 	float GetRotation() const;
 	float GetAngleRotation() const;
@@ -78,6 +83,10 @@ public:
 	void EndContact(b2Contact* contact);
 	bool GetDebug() {
 		return debug;
+	}
+
+	void DeleteBody(b2Body* body) {
+		world->DestroyBody(body);
 	}
 
 private:

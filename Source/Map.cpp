@@ -140,8 +140,17 @@ bool Map::CleanUp()
 	}
 	mapData.layers.clear();
 
-	for (auto objectGroup : mapData.objectsGroups) {
-		delete objectGroup;
+	for (auto og : mapData.objectsGroups) {
+		TraceLog(LOG_INFO, "Deleting object group: %d", og->id);
+		for (auto obj : og->object) {
+			if (obj && obj->id > -1) {
+				TraceLog(LOG_INFO, "Deleting object ID: %d", obj->id);
+				delete obj;
+				obj = nullptr;
+			} else TraceLog(LOG_INFO, "Invalid ID: %d", obj->id);
+		}
+		og->object.clear(); 
+		delete og;
 	}
 	mapData.objectsGroups.clear();
 
@@ -154,6 +163,11 @@ bool Map::CleanUp()
 		delete s;
 	}
 	sensors.clear();
+
+	for (auto d : direction) {
+		delete d;
+	}
+	direction.clear();
 
 	return true;
 }
@@ -336,6 +350,7 @@ bool Map::Load(std::string path, std::string fileName)
 				else if (object->direction == 4) s->ctype = ColliderType::LEFT;
 				s->id = object->id;
 				posTurn.push_back({ (float)(object->x + object->width / 2), (float)(object->y + object->height / 2) });
+				direction.push_back(s);
 			}
 		}
 
@@ -386,7 +401,6 @@ bool Map::Load(std::string path, std::string fileName)
 	if (mapFileXML) mapFileXML.reset();
 
 	/*}*/
-	delete[] intVertices;
 	mapLoaded = ret;
 	return ret;
 }

@@ -487,9 +487,9 @@ update_status ModulePhysics::PostUpdate()
 // Called before quitting
 bool ModulePhysics::CleanUp()
 {
-
 	LOG("Destroying physics world");
 	delete world;
+	world = NULL;
 
 	return true;
 }
