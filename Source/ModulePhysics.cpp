@@ -466,7 +466,7 @@ update_status ModulePhysics::PostUpdate()
 	}
 	
 	
-	if (mouse_joint && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+	if (mouseSelect != nullptr && mouse_joint != nullptr && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		mouse_joint->SetTarget(pMousePosition);
 		b2Vec2 anchorPosition = mouse_joint->GetBodyB()->GetPosition();
 		anchorPosition.x = METERS_TO_PIXELS(anchorPosition.x);
@@ -476,7 +476,7 @@ update_status ModulePhysics::PostUpdate()
 		DrawLine(anchorPosition.x, anchorPosition.y, mousePosition.x, mousePosition.y, RED);
 	}
 	
-	if (mouse_joint && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+	if (mouse_joint != nullptr && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
 		world->DestroyJoint(mouse_joint);
 		mouse_joint = nullptr;
 	}
