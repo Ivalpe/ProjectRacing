@@ -160,11 +160,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		stopped = true;
 		break;
 	case ColliderType::SENSOR:
-		CheckSensor(physB, false);
+		if (!FinishedLaps) CheckSensor(physB);
 		break;
 	case ColliderType::FINISH_LINE:
-		CheckSensor(physB, false);
-		CheckFinishLine();
+		if (!FinishedLaps) CheckSensor(physB);
+		if(!FinishedLaps) CheckFinishLine();
 		break;
 	case ColliderType::ITEM:
 		if (!hasPower) {
@@ -182,13 +182,36 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::WALL:
 		break;
 	case ColliderType::SENSOR:
-		CheckSensor(physB, true);
 		break;
 	case ColliderType::FINISH_LINE:
 		break;
 	default:
 		break;
 	}
+}
+
+void Player::CheckSensor(PhysBody* sensor) {
+	int i = 0;
+	while (i < sensors.size()) {
+		if (sensors[i].id == sensor->id) sensors[i].active = true;
+		++i;
+	}
+}
+
+void Player::CheckFinishLine() {
+	finishedLap = true;
+	int i = 0;
+	while (i < sensors.size()) {
+		if (!sensors[i].active) finishedLap = false;
+		++i;
+	}
+
+	if (finishedLap) {
+		Lap++;
+		for (auto s : sensors) s.active = false;
+		if (Lap >= MaxLaps) FinishedLaps = true;
+	}
+
 }
 
 // Entity -----------------------------------------
@@ -221,43 +244,4 @@ void Entity::TurnBody(bool isGoingForward, bool isGoingRight, float torque, floa
 	}
 
 	body->TurnWithTorque(FinalTorque);
-}
-
-void Player::CheckSensor(PhysBody* sensor, bool collisionEnd) {
-	int i = 0;
-	while (i < sensors.size()) {
-		if (sensors[i].id == sensor->id) {
-			if (collisionEnd) {
-				if (!sensors[i].changeable) sensors[i].changeable = true;
-			}
-			else {
-				if (sensors[i].changeable) {
-					//if (sensors[i].active) {
-					//	/*sensors[i].active = false;*/
-					//}
-					//else 
-					sensors[i].active = true;
-					/*sensors[i].changeable = false;*/
-
-				}
-			}
-		}
-		++i;
-	}
-}
-
-void Player::CheckFinishLine() {
-	finishedLap = true;
-	int i = 0;
-	while (i < sensors.size()) {
-		if (!sensors[i].active) finishedLap = false;
-		++i;
-	}
-
-	if (finishedLap) {
-		Lap++;
-		for (auto s : sensors) s.active = false;
-		if (Lap >= MaxLaps) FinishedLaps = true;
-	}
-
 }

@@ -33,7 +33,7 @@ public:
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
-	void CheckSensor(PhysBody* sensor, bool collisionEnd);
+	void CheckSensor(PhysBody* sensor);
 	void CheckFinishLine();
 
 

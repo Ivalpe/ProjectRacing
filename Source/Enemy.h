@@ -38,7 +38,7 @@ public:
 	void TurnBody(bool isGoingForward, bool isGoingRight, float torque, float speed) const;
 	void OnCollisionEnd(PhysBody* bodyA, PhysBody* bodyB);
 
-	void CheckSensor(PhysBody* sensor, bool collisionEnd);
+	void CheckSensor(PhysBody* sensor);
 	void CheckFinishLine();
 
 	

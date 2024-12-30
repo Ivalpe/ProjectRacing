@@ -110,11 +110,11 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		stopped = true;
 		break;
 	case ColliderType::SENSOR:
-		CheckSensor(physB, false);
+		if (!EndedRace) CheckSensor(physB);
 		break;
 	case ColliderType::FINISH_LINE:
-		CheckFinishLine();
-		CheckSensor(physB, true);
+		if (!EndedRace) CheckFinishLine();
+		if(!EndedRace) CheckSensor(physB);
 		break;
 	case ColliderType::UP:
 		dc = Direction::UP;
@@ -136,7 +136,6 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype) {
 	case ColliderType::SENSOR:
-		CheckSensor(physB, true);
 		break;
 	default:
 		break;
@@ -159,21 +158,10 @@ void Enemy::TurnBody(bool isGoingForward, bool isGoingRight, float torque, float
 }
 
 
-void Enemy::CheckSensor(PhysBody* sensor, bool collisionEnd) {
+void Enemy::CheckSensor(PhysBody* sensor) {
 	int i = 0;
 	while (i < sensors.size()) {
-		if (sensors[i].id == sensor->id) {
-			if (collisionEnd) {
-				if (!sensors[i].changeable) sensors[i].changeable = true;
-			}
-			else {
-				if (sensors[i].changeable) {
-					/*if (sensors[i].active) sensors[i].active = false;
-					else */sensors[i].active = true;
-					/*sensors[i].changeable = false;*/
-				}
-			}
-		}
+		if (sensors[i].id == sensor->id) sensors[i].active = true;
 		++i;
 	}
 }
