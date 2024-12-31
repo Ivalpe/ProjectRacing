@@ -291,6 +291,10 @@ void ModuleGame::UnloadAllTextures() {
 // Update: draw background
 update_status ModuleGame::Update()
 {
+	if (App->physics->GetDebug()) {
+		App->renderer->DrawDebug();
+	}
+
 	switch (stateGame)
 	{
 	case MAIN_MENU:
@@ -323,7 +327,6 @@ update_status ModuleGame::Update()
 
 	UpdateMusicStream(mainMenuMusic);
 	UpdateMusicStream(charSelectMusic);
-	/*UpdateMusicStream(resultsMusic);*/
 
 	for (auto m : musicGame)
 		UpdateMusicStream(m);
@@ -522,19 +525,13 @@ void ModuleGame::DrawUI() {
 	float spacing = 3.0f;
 	Color color = WHITE;
 	raceFontSize = 25.0f;
-	/*float strokeSize = fontSize + 4;*/
 	double timer = GetTime() - timeMinus;
 	int timelap = car->Lap;
 
 	if (PlayerOneDone && PlayerOneFinalTime <= 0) PlayerOneFinalTime = timer;
 	if (PlayerTwoDone && PlayerTwoFinalTime <= 0) PlayerTwoFinalTime = timer;
 
-
-	/*App->renderer->DrawText(TextFormat("%.2f TIME", timer), SCREEN_WIDTH - 120, 30, GetFontDefault(), (int)spacing, color);*/
-	//DrawTextEx(gamTex, TextFormat("TIME: %.2f", timer), { SCREEN_WIDTH - 140.0f, 32 }, strokeSize, spacing, BLACK);
 	DrawTextEx(gamTex, TextFormat("TIME: %.2f", timer), { SCREEN_WIDTH - 210, 30 }, raceFontSize, spacing, WHITE);
-
-
 
 	if (TwoPlayerMode) {
 		int timelap2 = car2->Lap;
@@ -566,15 +563,12 @@ void ModuleGame::Game() {
 	switch (timer)
 	{
 	case 1:
-
 		DrawTexture(timer1, (SCREEN_WIDTH / 2) - (timer1.width / 2), (SCREEN_HEIGHT / 2) - (timer1.height / 2), WHITE);
 		break;
 	case 2:
-
 		DrawTexture(timer2, (SCREEN_WIDTH / 2) - (timer2.width / 2), (SCREEN_HEIGHT / 2) - (timer2.height / 2), WHITE);
 		break;
 	case 3:
-
 		DrawTexture(timer3, (SCREEN_WIDTH / 2) - (timer3.width / 2), (SCREEN_HEIGHT / 2) - (timer3.height / 2), WHITE);
 		break;
 	default:
@@ -584,17 +578,12 @@ void ModuleGame::Game() {
 	if (timer != lastTimer) {
 		switch (timer) {
 		case 1:
-
-
 			App->audio->PlayFx(beepSFX, 0);
 			break;
 		case 2:
-
-
 			App->audio->PlayFx(bepSFX, 0);
 			break;
 		case 3:
-
 			App->audio->PlayFx(bepSFX, 0);
 			break;
 		default:
@@ -666,8 +655,6 @@ void ModuleGame::Game() {
 		}
 	}
 
-
-	/*if(car->finishedLap) *//*car->PrintPosition(ranking);*/
 	PrintRanking();
 
 	DrawRectangleLines(App->renderer->camera.x, App->renderer->camera.y, SCREEN_WIDTH, SCREEN_HEIGHT, Color({ 0,0,255,255 }));
@@ -700,7 +687,6 @@ void ModuleGame::RaceEnd() {
 	}
 
 	if (TwoPlayerMode) {
-
 
 		DrawTexture(endRaceTwoPlayers, 0, 0, WHITE);
 

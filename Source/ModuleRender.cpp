@@ -51,12 +51,13 @@ update_status ModuleRender::Update()
 // PostUpdate present buffer to screen
 update_status ModuleRender::PostUpdate()
 {
-    // Draw everything in our batch!
-    DrawFPS(10, 10);
-
     EndDrawing();
 
 	return UPDATE_CONTINUE;
+}
+
+void Module::DrawDebug() {
+	DrawFPS(10, 10);
 }
 
 // Called before quitting

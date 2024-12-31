@@ -90,4 +90,6 @@ public:
 	}
 
 
+	void DrawDebug();
+
 };

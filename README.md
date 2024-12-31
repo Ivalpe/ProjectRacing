@@ -36,3 +36,9 @@
 ### Debug
 - **F4**: Go to final screen
 - **Mouse click on car** Move car freely
+
+### Additional Features  
+- **User Interface for Main Menu and Character Selection**: Includes a polished and intuitive UI for navigating the main menu and selecting characters.  
+- **Character Selection System**: Allows players to choose their character prior to starting a race.  
+- **Randomized Map and Music Selection**: A random map and background music are selected from a predefined list, ensuring variety in each race.  
+- **Map Collisions and AI Integration**: Maps are designed with collision mechanics using the **Tiled** map editor.  
